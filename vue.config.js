@@ -1,4 +1,4 @@
-const url = 'http://127.0.0.1:9999'
+const url = 'http://192.168.2.75:9999'
 module.exports = {
   lintOnSave: true,
   productionSourceMap: false,

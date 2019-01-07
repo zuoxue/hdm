@@ -40,6 +40,9 @@ Vue.use(VueAxios, axios)
 
 Vue.component('basicContainer', basicContainer)
 
+// 用于兄弟组件之间事件通信
+Vue.prototype.$bus = new Vue()
+
 Object.keys(urls).forEach(key => {
   Vue.prototype[key] = urls[key]
 })

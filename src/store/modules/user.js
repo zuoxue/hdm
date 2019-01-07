@@ -211,7 +211,7 @@ const user = {
         list[permissions[i]] = true
       }
       state.permissions = list
-    }
+    },
   }
 
 }

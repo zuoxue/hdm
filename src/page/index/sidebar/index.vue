@@ -23,7 +23,7 @@
 import { mapGetters } from 'vuex'
 import logo from '../logo';
 import sidebarItem from './sidebarItem'
-import safeManage from '@/const/crud/mockmenu/index.js'
+import safeManages from '@/const/crud/mockmenu/index.js'
 
 export default {
   name: 'sidebar',
@@ -35,8 +35,8 @@ export default {
   created () {
     this.$store.dispatch("GetMenu").then(data => {
       if (data.length === 0) return
-      data.push(safeManage)
-      sessionStorage.setItem("menu",JSON.stringify(data));
+      data.push(...safeManages)
+      sessionStorage.setItem("menu",JSON.stringify(data)); //新增
       this.$router.$avueRouter.formatRoutes(data, true);
     })
   },

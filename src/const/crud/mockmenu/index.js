@@ -1,4 +1,4 @@
-const safeManage = {
+const safeManages = [{
   authority: null,
   children: [
     {
@@ -49,5 +49,92 @@ const safeManage = {
   sort: 3,
   spread: false,
   type: "0"
-}
-export default safeManage
+},
+{
+  authority: null,
+  children: [
+    {
+      authority: null,
+      children: [],
+      code: null,
+      component: "views/resourceAuth/resourceAuthhdfs",
+      icon: "icon-weibiaoti13",
+      id: 6100,
+      keepAlive: "0",
+      label: "HDFS资源授权管理",
+      name: "HDFS资源授权管理",
+      parentId: 6000,
+      path: "/resourceAuth/hdfs",
+      redirect: null,
+      sort: 1,
+      spread: false,
+      type: "0"
+    },
+    {
+      authority: null,
+      children: [],
+      code: null,
+      component: "views/resourceAuth/resourceAuthsolr",
+      icon: "icon-weibiaoti13",
+      id: 6200,
+      keepAlive: "0",
+      label: "SOLR资源授权管理",
+      name: "SOLR资源授权管理",
+      parentId: 6000,
+      path: "/resourceAuth/solr",
+      redirect: null,
+      sort: 1,
+      spread: false,
+      type: "0"
+    }
+  ],
+  code: null,
+  component: "resourceAuth",
+  icon: "icon-kuaisugongzuoliu_o",
+  id: 6000,
+  keepAlive: "0",
+  label: "资源授权",
+  name: "资源授权",
+  parentId: -1,
+  path: "/resourceAuth",
+  redirect: null,
+  sort: 3,
+  spread: false,
+  type: "0"
+},
+{
+  authority: null,
+  children: [
+    {
+      authority: null,
+      children: [],
+      code: null,
+      component: "views/resourceService/resourceServicehdfs",
+      icon: "icon-weibiaoti13",
+      id: 7100,
+      keepAlive: "0",
+      label: "HDFS资源与服务",
+      name: "HDFS资源与服务",
+      parentId: 7000,
+      path: "/resourceService/hdfs",
+      redirect: null,
+      sort: 1,
+      spread: false,
+      type: "0"
+    },
+  ],
+  code: null,
+  component: "resourceServicehdfs",
+  icon: "icon-kuaisugongzuoliu_o",
+  id: 7000,
+  keepAlive: "0",
+  label: "资源与服务",
+  name: "资源与服务",
+  parentId: -1,
+  path: "/resourceService",
+  redirect: null,
+  sort: 3,
+  spread: false,
+  type: "0"
+}]
+export default safeManages

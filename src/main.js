@@ -24,6 +24,8 @@ import VueClipboard from 'vue-clipboard2'
 // 插件 json 展示
 import vueJsonTreeView from 'vue-json-tree-view'
 
+// 引入mock
+require('@/util/mock.js')
 // //源文件包
 // import '../packages/index.js';
 // import '../packages/theme-chalk/src/index.scss';

@@ -1,4 +1,4 @@
-const url = 'http://192.168.2.75:9999'
+const url = 'http://192.168.2.150:9999'
 module.exports = {
   lintOnSave: true,
   productionSourceMap: false,
@@ -63,6 +63,14 @@ module.exports = {
         ws: true,
         pathRewrite: {
           '^/act': '/act'
+        },
+
+      },
+      '/urm': {
+        target: url,
+        ws: true,
+        pathRewrite: {
+          '^/urm': '/urm'
         }
       }
     }

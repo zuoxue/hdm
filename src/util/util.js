@@ -143,7 +143,7 @@ export const fullscreenToggel = () => {
  * esc监听全屏
  */
 export const listenfullscreen = (callback) => {
-  function listen () {
+  function listen() {
     callback()
   }
 
@@ -310,4 +310,50 @@ export const openWindow = (url, title, w, h) => {
   if (window.focus) {
     newWindow.focus()
   }
+}
+
+
+const findMenus = function (arr) {
+  return arr.filter((val) => {
+    return val.url.split("/").length == 1;
+  })
+}
+
+export const handleData = function (data, parentId = null) {
+  var initConst = 1;
+  const d = data.map(val => {
+    val.id = '' + initConst++;
+    val.parent_id = parentId;
+    val.child_num = val.flag == 0 ? 1 : 0;
+    return val;
+  });
+
+  // d.map(val => {
+  //   const url = val.url.split('/');
+  //   const suburl = url.slice(0, url.length - 1).join('/');
+  //   if (url.length == 1) {
+  //     val.parentId = null;
+  //     return val;
+  //   }
+  //   val.parentId = obj[suburl];
+  //   return val;
+  // })
+
+  return d;
+}
+
+export const handleSubData = function (data, parentId) {
+  var initConst = 1;
+  const d = data.map(val => {
+    val.id = parentId + '-' + initConst++;
+    val.parent_id = parentId;
+    return val;
+  });
+
+  return d;
+}
+
+export const findalldir = function (out, arr, level) {
+  // out.
+  // const url = arr.
 }

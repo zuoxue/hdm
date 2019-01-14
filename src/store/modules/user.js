@@ -6,7 +6,7 @@ import { deepClone, encryption } from '@/util/util'
 import webiste from '@/const/website'
 import { GetMenu } from '@/api/admin/menu'
 
-function addPath (ele, first) {
+function addPath(ele, first) {
   const propsConfig = webiste.menu.props
   const propsDefault = {
     label: propsConfig.label || 'label',
@@ -45,7 +45,7 @@ const user = {
   },
   actions: {
     // 根据用户名登录
-    LoginByUsername ({ commit }, userInfo) {
+    LoginByUsername({ commit }, userInfo) {
       const user = encryption({
         data: userInfo,
         key: 'pigxpigxpigxpigx',
@@ -65,7 +65,7 @@ const user = {
       })
     },
     // 根据手机号登录
-    LoginByPhone ({ commit }, userInfo) {
+    LoginByPhone({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
         loginByMobile(userInfo.mobile, userInfo.code).then(response => {
           const data = response.data
@@ -80,7 +80,7 @@ const user = {
       })
     },
     // 根据OpenId登录
-    LoginBySocial ({ commit }, param) {
+    LoginBySocial({ commit }, param) {
       return new Promise((resolve, reject) => {
         loginBySocial(param.state, param.code).then(response => {
           const data = response.data
@@ -94,7 +94,7 @@ const user = {
         })
       })
     },
-    GetUserInfo ({ commit }) {
+    GetUserInfo({ commit }) {
       return new Promise((resolve, reject) => {
         getUserInfo().then((res) => {
           const data = res.data.data || {}
@@ -108,7 +108,7 @@ const user = {
       })
     },
     // 刷新token
-    RefeshToken ({ commit }) {
+    RefeshToken({ commit }) {
       return new Promise((resolve, reject) => {
         logout().then(() => {
           commit('SET_TOKEN', new Date().getTime())
@@ -120,7 +120,7 @@ const user = {
       })
     },
     // 登出
-    LogOut ({ commit }) {
+    LogOut({ commit }) {
       return new Promise((resolve, reject) => {
         logout().then(() => {
           commit('SET_MENU', [])
@@ -139,7 +139,7 @@ const user = {
       })
     },
     // 注销session
-    FedLogOut ({ commit }) {
+    FedLogOut({ commit }) {
       return new Promise(resolve => {
         commit('SET_MENU', [])
         commit('SET_PERMISSIONS', [])
@@ -154,7 +154,7 @@ const user = {
       })
     },
     // 获取系统菜单
-    GetMenu ({
+    GetMenu({
       commit
     }) {
       return new Promise(resolve => {

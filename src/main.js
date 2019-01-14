@@ -23,9 +23,11 @@ import basicContainer from './components/basic-container/main'
 import VueClipboard from 'vue-clipboard2'
 // 插件 json 展示
 import vueJsonTreeView from 'vue-json-tree-view'
+// var ElTreeGrid = require('element-tree-grid');
 
+// Vue.component(ElTreeGrid.name, ElTreeGrid)
 // 引入mock
-require('@/util/mock.js')
+// require('@/util/mock.js')
 // //源文件包
 // import '../packages/index.js';
 // import '../packages/theme-chalk/src/index.scss';

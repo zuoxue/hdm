@@ -174,6 +174,7 @@
 <script>
 import { mapGetters } from "vuex";
 import { handleData, handleSubData } from "@/util/util";
+import * as hdfs from "@/api/resourceService/hdfs";
 export default {
   name: "resourceServicehdfs",
   data() {
@@ -227,19 +228,17 @@ export default {
       });
     },
     postData() {
-      this.axios
-        .post("/urm/hdfs/getHdfsAllFirst", { access_token: this.access_token })
-        .then(res => {
-          console.log(res, 88);
-          this.allData = handleData(res.data);
-          this.tableData = this.allData.slice(0, this.pagenums);
-          this.totalnum = this.allData.length;
-          this.totallen = Math.floor(this.totalnum / this.pagenums);
-        });
+      hdfs.getHdfsAllFirst({ access_token: this.access_token }).then(res => {
+        console.log(res, 88);
+        this.allData = handleData(res.data);
+        this.tableData = this.allData.slice(0, this.pagenums);
+        this.totalnum = this.allData.length;
+        this.totallen = Math.floor(this.totalnum / this.pagenums);
+      });
     },
     remote(row, callback) {
-      this.axios
-        .post("/urm/hdfs/getHdfsAllByName", {
+      hdfs
+        .remote({
           access_token: this.access_token,
           name: row.name
         })
@@ -320,37 +319,43 @@ export default {
       if (this.filename == "") {
         return;
       }
-      this.axios
-        .post("/urm/hdfs/createDir", {
+      hdfs
+        .createDir({
           access_token: this.access_token,
           name: `${this.selection[0].url}/${this.filename}`
         })
         .then(res => {
           this.dialogAdd = false;
           this._message("新建成功!", "success");
+          this.postData();
         });
     },
 
     //删除自身
     deleteFile(row) {
-      this.axios
-        .delete("/urm/hdfs/deleteHdfs", {
-          data: {
-            access_token: this.access_token,
-            name: row.url
-          }
+      this.$confirm("确认删除吗？", "删除", {
+        showCancelButton: true
+      })
+        .then(() => {
+          hdfs
+            .deleteHdfs({
+              access_token: this.access_token,
+              name: row.url
+            })
+            .then(res => {
+              console.log(res, 78);
+              if (res.data == "success") {
+                this._message("删除成功！", "success");
+                this.postData();
+              } else {
+                this._message("删除失败！", "error");
+              }
+            })
+            .catch(err => {
+              console.log(err, row);
+            });
         })
-        .then(res => {
-          console.log(res, 78);
-          if (res.data == "success") {
-            this._message("删除成功！", "success");
-          } else {
-            this._message("删除失败！", "error");
-          }
-        })
-        .catch(err => {
-          console.log(err, row);
-        });
+        .catch(() => {});
     },
 
     // 批量删除
@@ -362,17 +367,23 @@ export default {
       const allfiles = this.selection.map(res => {
         return res.url;
       });
-      this.axios
-        .delete("/urm/hdfs/deleteHdfsAll", {
-          data: {
-            access_token: this.access_token,
-            ids: allfiles
-          }
+
+      this.$confirm("确认删除吗？", "删除", {
+        showCancelButton: true
+      })
+        .then(() => {
+          hdfs
+            .deleteHdfsAll({
+              access_token: this.access_token,
+              ids: allfiles
+            })
+            .then(res => {
+              console.log(res, 777);
+              this._message("删除成功！", "success");
+              this.postData();
+            });
         })
-        .then(res => {
-          console.log(res, 777);
-          this.$message("删除成功！", "success");
-        });
+        .catch(() => {});
     },
 
     // 返回首页
@@ -393,8 +404,8 @@ export default {
         this._message("请填写新名称！", "info");
         return;
       }
-      this.axios
-        .post("/urm/hdfs/renameHdfs", {
+      hdfs
+        .renameHdfs({
           access_token: this.access_token,
           oldName: this.renameurl,
           newName: this.urlpath + "/" + this.newname
@@ -483,8 +494,10 @@ export default {
     padding-right: 7px;
   }
   .el-table {
-    /deep/ .icon {
-      cursor: pointer;
+    /deep/ .el-table_1_column_2 {
+      span {
+        cursor: pointer;
+      }
     }
   }
 }

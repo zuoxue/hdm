@@ -1,19 +1,20 @@
 export default {
-  title: 'PigX',
-  logo: 'PigX',
-  indexTitle: 'PigX Pro 快速开发框架',
+  title: '环亚HDM平台 - Health Data Manager',
+  logo: 'HDM',
+  indexTitle: '环亚HDM平台 - Health Data Manager',
   whiteList: ['/login', '/404', '/401', '/lock'], // 配置无权限可以访问的页面
   whiteTagList: ['/login', '/404', '/401', '/lock' ], // 配置不添加tags页面 （'/advanced-router/mutative-detail/*'——*为通配符）
   lockPage: '/lock',
   tokenTime: 6000,
   info: {
-    title: 'PigX Pro 快速开发框架',
+    title: '环亚 HDM 平台 - Health Data Manager',
     list: [
-      '一个基于Spring Cloud、OAuth2.0开发基于Vue前后分离的开发平台。',
-      '一个基于Avue2 开发无需前端知识，即可快速上手的开发平台。',
-      '最大程度上帮助节省学习微服务成本。',
-      'QQ群：23754102',
-      '当前版本：v2.1.0'
+      '支持关系型数据厍(Oracle、MySQL等)',
+      '支持大数据平台(HDFS、HBase、Hive、Kudu、Impala、Solr等)',
+      '支持格式化文件(XML、JSON、CSV、TXT、Excel等)',
+      '资源交换、资源共享',
+      '分类导航、资源搜索和定位',
+      '大数据应用管理'
     ]
   },
   statusWhiteList: [428],

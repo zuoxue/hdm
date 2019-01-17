@@ -4,7 +4,7 @@ import website from '@/const/website'
 const common = {
 
   state: {
-    isCollapse: false,
+    isCollapse: true,
     isFullScren: false,
     isShade: false,
     screen: -1,

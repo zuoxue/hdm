@@ -135,7 +135,7 @@
 </template>
 
 <script>
-  import {addObj, delObj, fetchTree, getObj, putObj} from '@/api/admin/menu'
+  import {addObj, delObj, fetchMenuTree, getObj, putObj} from '@/api/admin/menu'
   import {mapGetters} from 'vuex'
 
   export default {
@@ -207,7 +207,7 @@
     },
     methods: {
       getList() {
-        fetchTree(this.listQuery).then(response => {
+        fetchMenuTree(this.listQuery).then(response => {
           this.treeData = response.data.data
         })
       },
@@ -333,3 +333,4 @@
     }
   }
 </script>
+

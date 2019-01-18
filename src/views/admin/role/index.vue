@@ -23,6 +23,21 @@
                      icon="el-icon-edit">添加
           </el-button>
         </template>
+        <template slot="dsScopeForm" slot-scope="scope">
+          <div v-if="form.dsType == 1">
+            <el-tree class="filter-tree"
+                     :data="dsScopeData"
+                     :check-strictly="true"
+                     node-key="id"
+                     highlight-current
+                     :props="defaultProps"
+                     ref="scopeTree"
+                     :default-checked-keys="checkedDsScope"
+                     show-checkbox>
+            </el-tree>
+          </div>
+        </template>
+
         <template slot="menu"
                   slot-scope="scope">
           <el-button size="mini"
@@ -73,17 +88,20 @@
 
 <script>
   import {addObj, delObj, fetchList, fetchRoleTree, getObj, permissionUpd, putObj} from '@/api/admin/role'
-  import {fetchTree} from '@/api/admin/menu'
-  import {mapGetters} from 'vuex'
   import {tableOption} from '@/const/crud/admin/role'
+  import {fetchTree} from '@/api/admin/dept'
+  import {fetchMenuTree} from '@/api/admin/menu'
+  import {mapGetters} from 'vuex'
 
   export default {
     name: 'table_role',
     data() {
       return {
         tableOption: tableOption,
+        dsScopeData: [],
         treeData: [],
         checkedKeys: [],
+        checkedDsScope: [],
         defaultProps: {
           label: "name",
           value: 'id'
@@ -139,6 +157,14 @@
         this.$refs.crud.rowAdd();
       },
       handleOpenBefore(show, type) {
+        fetchTree().then(response => {
+          this.dsScopeData = response.data.data;
+          if (this.form.dsScope) {
+            this.checkedDsScope = (this.form.dsScope).split(",")
+          } else {
+            this.checkedDsScope = []
+          }
+        });
         show();
       },
       handleUpdate(row, index) {
@@ -148,7 +174,7 @@
         fetchRoleTree(row.roleId)
           .then(response => {
             this.checkedKeys = response.data
-            return fetchTree()
+            return fetchMenuTree()
           })
           .then(response => {
             this.treeData = response.data.data
@@ -187,17 +213,28 @@
         done();
       },
       handleDelete(row, index) {
-        delObj(row.roleId).then(response => {
+        var _this = this
+        this.$confirm('是否确认删除名称为"' + row.roleName + '"'+ '"的数据项?', '警告', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(function () {
+          return delObj(row.roleId)
+        }).then(() => {
+          this.getList(this.page)
           this.list.splice(index, 1);
-          this.$notify({
-            title: '成功',
+          _this.$message({
+            showClose: true,
             message: '删除成功',
-            type: 'success',
-            duration: 2000
+            type: 'success'
           })
+        }).catch(function () {
         })
       },
       create(row, done, loading) {
+        if (this.form.dsType === 1){
+          this.form.dsScope = this.$refs.scopeTree.getCheckedKeys().join(',')
+        }
         addObj(this.form).then(() => {
           this.getList(this.page)
           done();
@@ -212,6 +249,9 @@
         });
       },
       update(row, index, done, loading) {
+        if (this.form.dsType === 1){
+          this.form.dsScope = this.$refs.scopeTree.getCheckedKeys().join(',')
+        }
         putObj(this.form).then(() => {
           this.getList(this.page)
           done();
@@ -230,7 +270,7 @@
         this.menuIds = this.$refs.menuTree.getCheckedKeys().join(',').concat(',').concat(this.$refs.menuTree.getHalfCheckedKeys().join(','))
         permissionUpd(roleId, this.menuIds).then(() => {
           this.dialogPermissionVisible = false
-          fetchTree()
+          fetchMenuTree()
             .then(response => {
               this.form = response.data.data
               return fetchRoleTree(roleId)

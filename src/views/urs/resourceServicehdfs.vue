@@ -174,7 +174,7 @@
 <script>
 import { mapGetters } from "vuex";
 import { handleData, handleSubData } from "@/util/util";
-import * as hdfs from "@/api/resourceService/hdfs";
+import * as hdfs from "@/api/urs/hdfs";
 export default {
   name: "resourceServicehdfs",
   data() {
@@ -191,7 +191,7 @@ export default {
       currentPage1: 1,
       dialogAdd: false,
       filename: "",
-      uploadUrl: "/urm/hdfs/getFileToHDFS",
+      uploadUrl: "/api/urs/hdfs/getFileToHDFS",
       menus: null,
       submenus: [],
       uploadData: {},

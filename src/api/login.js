@@ -1,11 +1,13 @@
 import request from '@/router/axios'
+const scope = 'server'
 
 export const loginByUsername = (username, password, code, randomStr) => {
-  var grant_type = 'password'
-  var scope = 'server'
+  const grant_type = 'password'
+
   return request({
     url: '/auth/oauth/token',
     headers: {
+      isToken:false,
       'TENANT_ID': '1',
       'Authorization': 'Basic cGlnOnBpZw=='
     },
@@ -14,8 +16,22 @@ export const loginByUsername = (username, password, code, randomStr) => {
   })
 }
 
+export const refreshToken = (refresh_token) => {
+  const grant_type = 'refresh_token'
+  return request({
+    url: '/auth/oauth/token',
+    headers: {
+      'isToken': false,
+      'TENANT_ID': '1',
+      'Authorization': 'Basic cGlnOnBpZw==',
+    },
+    method: 'post',
+    params: { refresh_token, grant_type, scope }
+  })
+}
+
 export const loginByMobile = (mobile, code) => {
-  var grant_type = 'mobile'
+  const grant_type = 'mobile'
   return request({
     url: '/auth/mobile/token/sms',
     headers: {
@@ -28,7 +44,7 @@ export const loginByMobile = (mobile, code) => {
 }
 
 export const loginBySocial = (state, code) => {
-  var grant_type = 'mobile'
+  const grant_type = 'mobile'
   return request({
     url: '/auth/mobile/token/social',
     headers: {

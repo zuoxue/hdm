@@ -10,16 +10,6 @@ export default [{
       import( /* webpackChunkName: "views" */ '@/page/wel')
   }]
 }, {
-  path: '/crud',
-  component: Layout,
-  redirect: '/crud/index',
-  children: [{
-    path: 'index',
-    name: 'CRUD例子',
-    component: () =>
-      import( /* webpackChunkName: "views" */ '@/views/crud/index')
-  }]
-}, {
   path: '/info',
   component: Layout,
   redirect: '/info/index',

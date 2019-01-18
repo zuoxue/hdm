@@ -56,6 +56,10 @@
           </el-form-item>
         </el-form>
       </div>
+      <div slot="footer" class="useroverlay-footer">
+        <el-button type="plain" size="small">确定</el-button>
+        <el-button type="plain" size="small">关闭</el-button>
+      </div>
     </useroverlay>
   </div>
 </template>
@@ -63,7 +67,7 @@
 <script>
 import useroverlay from "@/page/user/useroverlay";
 export default {
-  name: "usergroup",
+  name: "overviewusergroup",
   props: ["recement"],
   data() {
     var checkgroup = function(rule, value, callback) {

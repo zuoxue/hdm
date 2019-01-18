@@ -17,12 +17,13 @@ export default {
       '大数据应用管理'
     ]
   },
+  statusWhiteList: [428],
   // http的status默认放行不才用统一处理的,
   // 配置首页不可关闭
   isFirstPage: false,
   fistPage: {
     label: '首页',
-    value: '/#/wel/index',
+    value: '/wel/index',
     params: {},
     query: {},
     group: [],

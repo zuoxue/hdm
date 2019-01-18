@@ -2,22 +2,18 @@
   <div class="avue-sidebar">
     <logo></logo>
     <el-scrollbar style="height:100%">
-      <el-menu
-        unique-opened
-        :default-active="nowTagValue"
-        mode="vertical"
-        :show-timeout="200"
-        background-color="#20222a"
-        text-color="rgba(255,255,255,0.7)"
-        :collapse="keyCollapse"
-      >
-        <sidebar-item
-          :menu="menu"
-          first
-          :screen="screen"
-          :props="website.menu.props"
-          :collapse="keyCollapse"
-        ></sidebar-item>
+      <div v-if="validatenull(menu)"
+           class="avue-sidebar--tip">没有发现菜单</div>
+      <el-menu unique-opened
+               :default-active="nowTagValue"
+               mode="vertical"
+               :show-timeout="200"
+               :collapse="keyCollapse">
+        <sidebar-item :menu="menu"
+                      :screen="screen"
+                      first
+                      :props="website.menu.props"
+                      :collapse="keyCollapse"></sidebar-item>
       </el-menu>
     </el-scrollbar>
   </div>
@@ -27,8 +23,6 @@
 import { mapGetters } from "vuex";
 import logo from "../logo";
 import sidebarItem from "./sidebarItem";
-import safeManages from "@/const/crud/mockmenu/index.js";
-
 export default {
   name: "sidebar",
   components: { sidebarItem, logo },
@@ -38,8 +32,6 @@ export default {
   created() {
     this.$store.dispatch("GetMenu").then(data => {
       if (data.length === 0) return;
-      // data.push(...safeManages)
-      // sessionStorage.setItem("menu",JSON.stringify(data)); //新增
       this.$router.$avueRouter.formatRoutes(data, true);
     });
   },

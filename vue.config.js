@@ -64,13 +64,12 @@ module.exports = {
         pathRewrite: {
           '^/act': '/act'
         },
-
       },
-      '/urm': {
+      '/api/urs': {
         target: url,
         ws: true,
         pathRewrite: {
-          '^/urm': '/urm'
+          '^/api/urs': '/urs'
         }
       }
     }

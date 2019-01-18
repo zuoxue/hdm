@@ -25,10 +25,6 @@ import VueClipboard from 'vue-clipboard2'
 import vueJsonTreeView from 'vue-json-tree-view'
 
 import { validatenull } from '@/util/validate'
-
-var ElTreeGrid = require('element-tree-grid');
-Vue.component(ElTreeGrid.name, ElTreeGrid);
-
 Vue.prototype.validatenull = validatenull
 
 Vue.use(Avue, { menuType: 'text' })

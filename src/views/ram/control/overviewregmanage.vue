@@ -3,7 +3,7 @@
     <header class="usergroup-header">
       <h3>
         <i class="el-icon-back back-cursor" v-if="isadd" @click="back"></i>
-        {{isadd?"新建用户":recement}}
+        {{isadd?"新建自定义权限策略":recement}}
       </h3>
     </header>
     <article class="usergroup-article">
@@ -14,9 +14,15 @@
           size="mini"
           class="usergroup-section--s-btn"
           @click="showoverlay"
-        >新建用户</el-button>
+        >新建权限策略</el-button>
+        <div class="usergroup-section--s-input">
+          <el-input v-model="input">
+            <i class="el-icon-search" slot="suffix" @click="handleIconClick" placeholder="输入策略名或备注"></i>
+          </el-input>
+        </div>
         <div class="usergroup-section--s-select">
-          <el-select v-model="selection" placeholder="用户登陆名称">
+          <span>策略类型：</span>
+          <el-select v-model="selection" placeholder="全部">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -25,12 +31,8 @@
             ></el-option>
           </el-select>
         </div>
-        <div class="usergroup-section--s-input">
-          <el-input v-model="input">
-            <i class="el-icon-search" slot="suffix" @click="handleIconClick"></i>
-          </el-input>
-        </div>
       </section>
+
       <section v-if="!isadd">
         <el-table :data="data" style="width:100%;">
           <el-table-column type="selection" width="55"></el-table-column>
@@ -139,19 +141,24 @@ export default {
       input: "",
       options: [
         {
-          value: "用户登陆名称",
-          label: "用户登陆名称",
+          value: "全部",
+          label: "全部",
           index: 1
         },
         {
-          value: "AccessKeyID",
-          label: "AccessKeyID",
+          value: "系统策略",
+          label: "系统策略",
           index: 2
+        },
+        {
+          value: "自定义策略",
+          label: "自定义策略",
+          index: 3
         }
       ],
       columns: [
         {
-          label: "用户组名称/显示名称",
+          label: "权限策略名称",
           val: "name"
         },
         {
@@ -159,8 +166,12 @@ export default {
           val: "remark"
         },
         {
-          label: "创建时间",
-          val: "createtime"
+          label: "策略类型",
+          val: "regtype"
+        },
+        {
+          label: "被引用次数",
+          val: "cite"
         },
         {
           label: "操作",
@@ -255,12 +266,15 @@ export default {
         vertical-align: top;
       }
       .usergroup-section--s-select {
-        width: 200px;
         display: inline-block;
         margin-left: 16px;
+        .el-select {
+          width: auto !important;
+        }
       }
       .usergroup-section--s-input {
         display: inline-block;
+        margin-left: 10px;
         /deep/ .el-input__suffix {
           width: 30px;
           line-height: 38px;

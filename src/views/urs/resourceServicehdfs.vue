@@ -81,8 +81,8 @@
                 <el-table-tree-column
                   fixed
                   :expand-all="!1"
-                  file-icon="iconfont icon-file"
-                  folder-icon="iconfont icon-folder"
+                  file-icon="icon icon-file"
+                  folder-icon="icon icon-folder"
                   prop="name"
                   label="名称"
                   :remote="remote"
@@ -244,7 +244,6 @@ export default {
         })
         .then(res => {
           const submenus = handleSubData(res.data, row.id);
-          console.log(submenus, 78788);
           if (submenus.length > 0) {
             callback(submenus.filter(f => f["parent_id"] == row["id"]));
           } else {

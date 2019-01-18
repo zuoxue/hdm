@@ -95,7 +95,11 @@ import useroverlay from "@/page/user/useroverlay";
 import overviewMain from "./overviewMain";
 import overviewuser from "./overviewuser";
 import overviewsetting from "./overviewsetting/overviewsetting";
+import overviewaddperm from "./overviewaddperm";
 import overviewusergroup from "./overviewusergroup";
+import overviewregmanage from "./overviewregmanage";
+import overviewrolemanage from "./overviewrolemanage";
+import overviewoauth from "./overviewoauth";
 
 export default {
   name: "overview",
@@ -173,7 +177,11 @@ export default {
     overviewMain,
     overviewusergroup,
     overviewsetting,
-    overviewuser
+    overviewuser,
+    overviewaddperm,
+    overviewregmanage,
+    overviewrolemanage,
+    overviewoauth
   },
   methods: {
     switchmenu(index, tag, name) {
@@ -199,6 +207,8 @@ export default {
   .el-aside--left {
     position: relative;
     left: -148px;
+    // width: 20px !important;
+    width: 0px !important;
     .wind-console-menu-bar {
       // left: 0px !important;
     }
@@ -216,6 +226,10 @@ export default {
   .el-aside--overview {
     border-right: 1px solid #e5e5e5;
     height: 100%;
+    transition: width 0.25s ease-out;
+    .el-scrollbar {
+      height: 100%;
+    }
     .el-side--p {
       font-size: 14px;
       font-weight: 600;
@@ -263,6 +277,8 @@ export default {
   .el-main--mg {
     margin-left: 16px;
     margin-right: 16px;
+    text-align: left;
+    font-size: 12px;
     .el-main--header {
       height: 48px;
       line-height: 48px;

@@ -20,5 +20,6 @@ export default {
 <style scoped>
 .close {
   float: right;
+  cursor: pointer;
 }
 </style>

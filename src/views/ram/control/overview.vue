@@ -92,8 +92,10 @@
 
 <script>
 import useroverlay from "@/page/user/useroverlay";
-import overviewMain from "./visitcontrol/overviewMain";
-import overviewusergroup from "./visitcontrol/overviewusergroup";
+import overviewMain from "./overviewMain";
+import overviewuser from "./overviewuser";
+import overviewsetting from "./overviewsetting/overviewsetting";
+import overviewusergroup from "./overviewusergroup";
 
 export default {
   name: "overview",
@@ -169,7 +171,9 @@ export default {
   components: {
     useroverlay,
     overviewMain,
-    overviewusergroup
+    overviewusergroup,
+    overviewsetting,
+    overviewuser
   },
   methods: {
     switchmenu(index, tag, name) {

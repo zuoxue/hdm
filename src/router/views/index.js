@@ -22,7 +22,7 @@ export default [{
   {
     path: 'overview',
     name: '访问控制',
-    component: () => import('@/views/admin/user/overview'),
+    component: () => import('@/views/ram/control/overview'),
   }
   ]
 

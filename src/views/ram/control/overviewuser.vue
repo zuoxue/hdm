@@ -42,85 +42,87 @@
           ></el-table-column>
         </el-table>
       </section>
-      <section class="overviewuser-new">
-        <p>
-          <span>*</span>用户账户信息
-        </p>
-        <el-row>
-          <el-col :span="13">
-            <p>登录名称</p>
-          </el-col>
-          <el-col :span="10">
-            <p>显示名称</p>
-          </el-col>
-        </el-row>
-        <el-row v-for="(item,index) in newLenArray" :key="index" class="mb10">
-          <el-col :span="13">
-            <el-input v-model="subdata[index].loginname" class="el-input--addwrapper">
-              <span slot="suffix">@123456213151121551.onali.com</span>
-            </el-input>
-          </el-col>
-          <el-col :span="10">
-            <el-input v-model="subdata[index].dispname" placeholder></el-input>
-          </el-col>
-          <el-col :span="1" v-if="index>0" class="el-icon-plus--wrapper">
-            <div @click="autodel(index)">
-              <i class="el-icon-close"></i>
-            </div>
-          </el-col>
-        </el-row>
-        <div>
-          <el-button icon="el-icon-plus" type="text" @click="autoadd">添加用户</el-button>
-        </div>
-      </section>
-      <section>
-        <p>访问方式</p>
-        <div>
+      <div v-if="isadd">
+        <section class="overviewuser-new">
+          <p>
+            <span>*</span>用户账户信息
+          </p>
+          <el-row>
+            <el-col :span="13">
+              <p>登录名称</p>
+            </el-col>
+            <el-col :span="10">
+              <p>显示名称</p>
+            </el-col>
+          </el-row>
+          <el-row v-for="(item,index) in newLenArray" :key="index" class="mb10">
+            <el-col :span="13">
+              <el-input v-model="subdata[index].loginname" placeholder class="el-input--addwrapper">
+                <span slot="suffix">@123456213151121551.onali.com</span>
+              </el-input>
+            </el-col>
+            <el-col :span="10">
+              <el-input v-model="subdata[index].dispname" placeholder></el-input>
+            </el-col>
+            <el-col :span="1" v-if="index>0" class="el-icon-plus--wrapper">
+              <div @click="autodel(index)">
+                <i class="el-icon-close"></i>
+              </div>
+            </el-col>
+          </el-row>
           <div>
-            <el-checkbox-group v-model="checklist">
-              <div>
-                <el-checkbox label="控制台密码登录"></el-checkbox>
-              </div>
-              <div>
-                <el-checkbox label="编程访问"></el-checkbox>
-              </div>
-            </el-checkbox-group>
+            <el-button icon="el-icon-plus" type="text" @click="autoadd">添加用户</el-button>
           </div>
+        </section>
+        <section>
+          <p>访问方式</p>
           <div>
             <div>
-              <p>控制台密码</p>
-              <div>
-                <el-radio v-model="controlpass" :label="1">自动生成默认密码</el-radio>
-              </div>
-              <div>
-                <el-radio v-model="controlpass" :label="2">自定义登录密码</el-radio>
-              </div>
+              <el-checkbox-group v-model="checklist">
+                <div>
+                  <el-checkbox label="控制台密码登录"></el-checkbox>
+                </div>
+                <div>
+                  <el-checkbox label="编程访问"></el-checkbox>
+                </div>
+              </el-checkbox-group>
             </div>
             <div>
-              <p>要求重置密码</p>
               <div>
-                <el-radio v-model="resetpass" :label="1">用户在下次登录时必须重置密码</el-radio>
+                <p>控制台密码</p>
+                <div>
+                  <el-radio v-model="controlpass" :label="1">自动生成默认密码</el-radio>
+                </div>
+                <div>
+                  <el-radio v-model="controlpass" :label="2">自定义登录密码</el-radio>
+                </div>
               </div>
               <div>
-                <el-radio v-model="resetpass" :label="2">无需重置</el-radio>
+                <p>要求重置密码</p>
+                <div>
+                  <el-radio v-model="resetpass" :label="1">用户在下次登录时必须重置密码</el-radio>
+                </div>
+                <div>
+                  <el-radio v-model="resetpass" :label="2">无需重置</el-radio>
+                </div>
               </div>
-            </div>
-            <div>
-              <p>多因素认证</p>
               <div>
-                <el-radio v-model="multifactors" :label="1">要求开启MFA认证</el-radio>
-              </div>
-              <div>
-                <el-radio v-model="multifactors" :label="2">不要求</el-radio>
+                <p>多因素认证</p>
+                <div>
+                  <el-radio v-model="multifactors" :label="1">要求开启MFA认证</el-radio>
+                </div>
+                <div>
+                  <el-radio v-model="multifactors" :label="2">不要求</el-radio>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
-      <section class="footer">
-        <el-button>确认</el-button>
-        <el-button @click="back">取消</el-button>
-      </section>
+        </section>
+        <section class="footer">
+          <el-button>确认</el-button>
+          <el-button @click="back">取消</el-button>
+        </section>
+      </div>
     </article>
   </div>
 </template>
@@ -187,7 +189,7 @@ export default {
       return;
     },
     showoverlay() {
-      this.isclose = false;
+      this.isadd = true;
     },
     // back last level
     back() {
@@ -211,15 +213,13 @@ export default {
       var arr = new Array(this.adduser);
       return arr;
     }
-  },
-  components: {
-    useroverlay
   }
 };
 </script>
 
 <style lang="scss" scoped>
 .usergroup {
+  text-align: left;
   .usergroup-header {
     height: 40px;
     line-height: 40px;

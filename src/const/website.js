@@ -1,13 +1,13 @@
 export default {
-  title: '环亚HDM平台 - Health Data Manager',
+  title: 'HDM - 健康资源管理平台',
   logo: 'HDM',
-  indexTitle: '环亚HDM平台 - Health Data Manager',
+  indexTitle: 'HDM - 健康资源管理平台',
   whiteList: ['/login', '/404', '/401', '/lock'], // 配置无权限可以访问的页面
   whiteTagList: ['/login', '/404', '/401', '/lock' ], // 配置不添加tags页面 （'/advanced-router/mutative-detail/*'——*为通配符）
   lockPage: '/lock',
   tokenTime: 6000,
   info: {
-    title: '环亚 HDM 平台 - Health Data Manager',
+    title: 'HDM - 健康资源管理平台',
     list: [
       '支持关系型数据厍(Oracle、MySQL等)',
       '支持大数据平台(HDFS、HBase、Hive、Kudu、Impala、Solr等)',

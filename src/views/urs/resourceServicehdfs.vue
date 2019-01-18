@@ -1,7 +1,7 @@
 <template>
   <div class="resource_service--hdfs">
     <el-container>
-      <el-header>
+      <el-header class="el-header--rsource">
         <div class="resource_service--header">
           <h2>HDFS资源与服务</h2>
           <div>
@@ -15,7 +15,7 @@
       </el-header>
       <el-main>
         <el-container>
-          <el-header>
+          <el-header style="line-height:60px;">
             <el-row>
               <el-col :span="4" class="mt8">
                 <div class="resource-header">
@@ -66,7 +66,7 @@
             </el-row>
           </el-header>
           <el-main class="el-resource--main_padding">
-            <div>路径：{{rootpath}}</div>
+            <div class="mh10">路径：{{rootpath}}</div>
             <div v-if="renderTable">
               <el-table
                 :data="tableData"
@@ -81,8 +81,8 @@
                 <el-table-tree-column
                   fixed
                   :expand-all="!1"
-                  file-icon="icon icon-file"
-                  folder-icon="icon icon-folder"
+                  file-icon="iconfont icon-file"
+                  folder-icon="iconfont icon-folder"
                   prop="name"
                   label="名称"
                   :remote="remote"
@@ -427,6 +427,9 @@ export default {
 <style lang="scss" scoped>
 .resource_service--hdfs {
   font-size: 16px;
+  .el-header--rsource {
+    height: 80px !important;
+  }
   .resource_service--header {
     display: flex;
     justify-content: space-between;
@@ -448,6 +451,9 @@ export default {
     .el-button {
       color: #00bdf0;
     }
+    .upload-demo {
+      text-align: right;
+    }
   }
   .el-resource--icon-pos {
     .el-button {
@@ -458,6 +464,9 @@ export default {
     padding: 0 20px !important;
     .cursorStyle {
       cursor: pointer;
+    }
+    .mh10 {
+      margin: 10px auto;
     }
   }
   .block {

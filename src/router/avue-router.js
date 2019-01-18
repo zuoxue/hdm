@@ -21,7 +21,7 @@ RouterPlugin.install = function (router, store) {
     safe: this,
     // 设置标题
     setTitle: function (title) {
-      title = title ? `${title} —— 健康大数据资源管理平台 - Health Data Manager` : '健康大数据资源管理平台 - Health Data Manager'
+      title = title ? `${title} - 健康资源管理平台` : '健康资源管理平台'
       document.title = title
     },
     closeTag: (value) => {

@@ -43,29 +43,18 @@
 
     <!-- overlay -->
     <useroverlay :title="overlayTitle" :isclose.sync="isclose" :width="width">
-      <div slot="body">
-        <el-form :rules="rule1" ref="form1" status-icon label-width="100px">
-          <el-form-item label="用户组名称" prop="usergroupname">
-            <el-input type="text" v-model="rules.usergroupname" autocomplete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="显示名称" prop="dispname">
-            <el-input type="text" v-model="rules.dispname" autocomplete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="备注">
-            <el-input type="textarea" v-model="rules.remark"></el-input>
-          </el-form-item>
-        </el-form>
-      </div>
-      <div slot="footer" class="useroverlay-footer">
-        <el-button type="plain" size="small">确定</el-button>
-        <el-button type="plain" size="small">关闭</el-button>
-      </div>
+      <el-scrollbar slot="body" class="popaside">
+        <div>
+          <auth-new :isclose.sync="isclose"></auth-new>
+        </div>
+      </el-scrollbar>
     </useroverlay>
   </div>
 </template>
 
 <script>
 import useroverlay from "@/page/user/useroverlay";
+import authNew from "./overviewauth/authNew";
 export default {
   name: "overviewoauth",
   props: ["recement"],
@@ -113,7 +102,7 @@ export default {
         }
       ],
       data: [],
-      width: "400px",
+      width: "620px",
       overlayTitle: "新建应用",
       isclose: true,
       rules: {
@@ -145,7 +134,8 @@ export default {
   },
 
   components: {
-    useroverlay
+    useroverlay,
+    authNew
   }
 };
 </script>
@@ -169,6 +159,7 @@ export default {
       font-size: 12px;
     }
     .usergroup-section--s {
+      margin-bottom: 10px;
       .usergroup-section--s-btn {
         height: 38px;
         vertical-align: top;

@@ -1,25 +1,49 @@
 <template>
-  <div class="edit-setting">
+  <div class="auth-setting">
     <el-form :rules="rule1">
-      <el-form-item v-for="(radio,index) in radioList" :key="index">
-        <p>{{radio["label"]}}</p>
-        <el-radio-group v-model="valmodel[radio.prop]">
-          <el-radio :label="1" class="ck-block">允许</el-radio>
-          <el-radio :label="2" class="ck-block">不允许</el-radio>
+      <el-form-item class="el-form-items--patch" prop="appname">
+        <p>
+          <span class="star">*</span>应用名称
+        </p>
+        <el-input v-model="appname" size="small">
+          <div slot="suffix">@app.1424731304604773.onaliyun.com</div>
+        </el-input>
+      </el-form-item>
+      <el-form-item class="el-form-items--patch" prop="appnamedisp">
+        <p>
+          <span class="star">*</span>应用名称显示
+        </p>
+        <el-input v-model="appname" size="small"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <p>应用类型</p>
+        <el-radio-group v-model="apptype">
+          <el-radio :label="ck" v-for="ck in radioLabel" :key="ck" class="ck-block"></el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item class="el-form-items--patch" prop="logindate">
-        <p>登录session过期时间</p>
+      <el-form-item prop="visittoken">
+        <p>
+          <span class="star">*</span>访问令牌有效期
+        </p>
         <span class="next-input">
-          <input type="text" class="input-setting" v-model="logindate">
+          <input type="text" class="input-setting" v-model="visittoken">
         </span>
-        <span>小时 （有效值区间为6-24小时）</span>
+        <span>秒</span>
       </el-form-item>
-
-      <el-form-item>
-        <p>登录掩码设置</p>
-        <textarea name id cols="30" rows="5" v-model="logincodeset"></textarea>
-        <div class="logindecript">{{logincodesetdesp}}</div>
+      <el-form-item prop="refreshtoken">
+        <p>
+          <span class="star">*</span>刷新令牌有效期
+        </p>
+        <span class="next-input">
+          <input type="text" class="input-setting" v-model="refreshtoken">
+        </span>
+        <span>秒</span>
+      </el-form-item>
+      <el-form-item prop="calladdress">
+        <p>回调地址</p>
+        <span>
+          <el-input type="textarea" v-model="calladdress" :rows="2"></el-input>
+        </span>
       </el-form-item>
     </el-form>
     <div slot="footer" class="useroverlay-footer">
@@ -31,7 +55,7 @@
 
 <script>
 export default {
-  name: "savesettinguser",
+  name: "authNew",
   data() {
     var validatorlen = (rule, value, callback) => {
       if (value == "") {
@@ -53,44 +77,19 @@ export default {
       callback();
     };
     return {
-      checkboxLabel: ["大写字母", "小写字母", "数字", "符号"],
-      radioList: [
-        {
-          label: "保存MFA登录状态7天",
-          prop: "savestatus",
-          name: "savestatus"
-        },
-        {
-          label: "自主管理密码",
-          prop: "managepass",
-          name: "managepass"
-        },
-        {
-          label: "自主管理AccessKey",
-          prop: "managekey",
-          name: "managekey"
-        },
-        {
-          label: "自主管理多因素设备",
-          prop: "manageset",
-          name: "manageset"
-        }
-      ],
-      valmodel: {
-        savestatus: "",
-        managepass: "",
-        managekey: "",
-        manageset: ""
-      },
-      logindate: "",
-      logincodeset: "",
-      logincodesetdesp:
-        "网络掩码决定哪些IP地址会受到登录控制台的影响，包括密码登录和SSO登录，但使用AccessKey发起的API访问并不受影响。如果指定掩码，子用户必须只能从指定的IP地址进行登录。如果不指定任何掩码，登录控制台功能将适用于整个网络。当需要配置多个掩码时，请使用分号来分隔掩码，例如：42.120.66.0/24;42.120.74.98",
+      appname: "",
+      radioLabel: ["WebApp", "NativeApp"],
+      radioValue: "",
+      appname: "",
+      apptype: "",
+      appnamedisp: "",
+      refreshtoken: "",
+      visittoken: "",
       rule1: {
-        logindate: [
+        len: [
           {
             validator: validatorlen,
-            trigger: "blur"
+            trigger: "blue"
           }
         ]
       }
@@ -106,13 +105,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.edit-setting {
+.auth-setting {
   width: 100%;
   padding: 0px 24px;
   font-size: 12px;
   margin-top: 8px;
+  .star {
+    color: #f15533;
+    margin-right: 4px;
+  }
   .el-form-items--patch {
     height: 58px;
+    width: 340px;
   }
   p,
   span {
@@ -163,9 +167,12 @@ export default {
       color: #595959;
       margin-left: 6px;
     }
-    .logindecript {
-      line-height: 14px;
-      font-size: 12px;
+  }
+  .el-textarea {
+    /deep/ textarea {
+      width: 338px;
+      border-radius: 0px;
+      resize: none;
     }
   }
   .useroverlay-footer {

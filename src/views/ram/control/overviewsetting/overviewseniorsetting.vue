@@ -56,28 +56,12 @@
         </el-row>
       </main>
     </section>
-
-    <useroverlay :title="overlayTitle" :isclose.sync="isclose" :width="width">
-      <div slot="body">
-        <updatedomain v-if="domainstatus==1"></updatedomain>
-        <!--域名更新 -->
-        <createdomain v-if="domainstatus==2"></createdomain>
-        <!--创建域别名 -->
-        <loginset v-if="domainstatus==3"></loginset>
-        <!--sso登录设置-->
-      </div>
-    </useroverlay>
   </main>
 </template>
 
 <script>
-import useroverlay from "@/page/user/useroverlay";
-import updatedomain from "./updatedomain";
-import createdomain from "./createdomain";
-import loginset from "./loginset";
-
 export default {
-  name: "overviewsavesetting",
+  name: "overviewseniorsetting",
   data() {
     return {
       options: [
@@ -143,34 +127,29 @@ export default {
             prop: "一小时内使用错误密码最大尝试 0 次登录"
           }
         ]
-      ],
-      overlayTitle: "更新默认域名",
-      width: "400px",
-      isclose: true,
-      domainstatus: 0
+      ]
     };
   },
-  components: {
-    useroverlay,
-    updatedomain,
-    createdomain,
-    loginset
-  },
+  props: ["isclose", "width", "title", "domainstatus"],
+
   methods: {
     updatedomain() {
-      this.isclose = false;
-      this.overlayTitle = "更新默认域名";
-      this.domainstatus = 1;
+      this.$emit("update:isclose", false);
+      this.$emit("update:title", "更新默认域名");
+      this.$emit("update:domainstatus", 1);
+      this.$emit("update:width", "400px");
     },
     createdomain() {
-      this.isclose = false;
-      this.overlayTitle = "创建域别名";
-      this.domainstatus = 2;
+      this.$emit("update:isclose", false);
+      this.$emit("update:title", "创建域别名");
+      this.$emit("update:domainstatus", 2);
+      this.$emit("update:width", "400px");
     },
     loginset() {
-      this.isclose = false;
-      this.overlayTitle = "编辑 SSO 登录设置";
-      this.domainstatus = 3;
+      this.$emit("update:isclose", false);
+      this.$emit("update:title", "编辑 SSO 登录设置");
+      this.$emit("update:domainstatus", 3);
+      this.$emit("update:width", "400px");
     }
   }
 };
@@ -196,13 +175,19 @@ export default {
     height: 20px;
     line-height: 20px;
     margin-bottom: 8px;
+    font-size: 12px;
     .savesetting-rule--gray {
       color: #8c8c8c;
+    }
+    /deep/ .el-col-12 {
+      margin-bottom: 0px;
     }
     .savesetting-rule--domain {
       display: flex;
       justify-content: space-between;
+      font-size: 14px;
       .savesetting-rule--delunder {
+        font-size: 12px;
         margin-right: 40px;
         a {
           text-decoration: none;

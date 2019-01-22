@@ -217,6 +217,7 @@ export default {
       line-height: 40px;
       color: #262626;
       font-size: 14px;
+      font-weight: 600;
     }
     .badge {
       background: #edf3f7 !important;

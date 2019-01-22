@@ -192,6 +192,14 @@ export default {
   }
 };
 </script>
+<style>
+.el-caontainer--wrapper .el-table th {
+  font-weight: 400 !important;
+  background: #f2f2f2 !important;
+  color: #262626 !important;
+  font-size: 12px;
+}
+</style>
 
 <style lang="scss" scoped>
 .el-caontainer--wrapper {
@@ -215,8 +223,21 @@ export default {
   }
   .el-menu {
     /deep/ .el-menu-item {
+      height: 40px;
+      line-height: 40px;
+      font-size: 12px;
       &:hover {
         color: #00c1de;
+      }
+    }
+    /deep/ .el-submenu {
+      .el-submenu__title {
+        height: 40px;
+        line-height: 40px;
+        font-size: 12px;
+      }
+      .el-menu-item-group__title {
+        padding: 0px;
       }
     }
     li.is-active {
@@ -227,6 +248,7 @@ export default {
     border-right: 1px solid #e5e5e5;
     height: 100%;
     transition: width 0.25s ease-out;
+    text-align: left;
     .el-scrollbar {
       height: 100%;
     }
@@ -238,6 +260,7 @@ export default {
       line-height: 48px;
       border-bottom: 1px solid #e5e5e5;
       padding-left: 16px;
+      margin: 0px auto;
     }
     .wind-console-menu-bar {
       width: 0;

@@ -42,17 +42,19 @@
 
     <!-- overlay -->
     <useroverlay :title="overlayTitle" :isclose.sync="isclose" :width="width">
-      <div slot="body"></div>
-      <div slot="footer" class="useroverlay-footer">
-        <el-button type="plain" size="small">确定</el-button>
-        <el-button type="plain" size="small">关闭</el-button>
-      </div>
+      <el-scrollbar slot="body" class="popaside">
+        <div>
+          <add-perm :isclose.sync="isclose"></add-perm>
+        </div>
+      </el-scrollbar>
     </useroverlay>
   </div>
 </template>
 
 <script>
 import useroverlay from "@/page/user/useroverlay";
+import addPerm from "./overviewaddperm/addPerm";
+
 export default {
   name: "overviewaddperm",
   props: ["recement"],
@@ -118,8 +120,8 @@ export default {
         }
       ],
       data: [],
-      width: "400px",
-      overlayTitle: "新增授权",
+      width: "880px",
+      overlayTitle: "添加权限",
       isclose: true,
       rules: {
         usergroupname: "",
@@ -150,7 +152,8 @@ export default {
   },
 
   components: {
-    useroverlay
+    useroverlay,
+    addPerm
   }
 };
 </script>
@@ -174,6 +177,7 @@ export default {
       font-size: 12px;
     }
     .usergroup-section--s {
+      margin-bottom: 10px;
       .usergroup-section--s-btn {
         height: 38px;
         vertical-align: top;

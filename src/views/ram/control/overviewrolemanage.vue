@@ -165,6 +165,7 @@ export default {
       font-size: 12px;
     }
     .usergroup-section--s {
+      margin-bottom: 10px;
       .usergroup-section--s-btn {
         height: 38px;
         vertical-align: top;

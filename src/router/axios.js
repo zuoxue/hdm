@@ -1,9 +1,9 @@
-import {serialize} from '@/util/util'
-import {getStore} from '../util/store'
+import { serialize } from '@/util/util'
+import { getStore } from '../util/store'
 import NProgress from 'nprogress' // progress bar
 import errorCode from '@/const/errorCode'
 import router from "@/router/router"
-import {Message} from 'element-ui'
+import { Message } from 'element-ui'
 import 'nprogress/nprogress.css'
 import store from "@/store"; // progress bar style
 axios.defaults.timeout = 30000
@@ -15,15 +15,15 @@ axios.defaults.validateStatus = function (status) {
 axios.defaults.withCredentials = true
 // NProgress Configuration
 NProgress.configure({
-  showSpinner: false
+  showSpinner: true
 })
 
 // HTTPrequest拦截
 axios.interceptors.request.use(config => {
   NProgress.start() // start progress bar
-  const TENANT_ID = getStore({name: 'tenantId'})
+  const TENANT_ID = getStore({ name: 'tenantId' })
   const isToken = (config.headers || {}).isToken === false
-  let token =  store.getters.access_token
+  let token = store.getters.access_token
   if (token && !isToken) {
     config.headers['Authorization'] = 'Bearer ' + token// token
   }
@@ -48,7 +48,7 @@ axios.interceptors.response.use(res => {
   const message = res.data.msg || errorCode[status] || errorCode['default']
   if (status === 401) {
     store.dispatch('FedLogOut').then(() => {
-      router.push({path: '/login'})
+      router.push({ path: '/login' })
     })
     return
   }

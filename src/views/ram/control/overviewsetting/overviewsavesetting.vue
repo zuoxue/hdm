@@ -42,15 +42,6 @@
         </el-row>
       </main>
     </section>
-
-    <useroverlay :title="overlayTitle" :isclose.sync="isclose" :width="width">
-      <div slot="body">
-        <savesettingedit v-if="editstatus"></savesettingedit>
-        <!--密码编辑 -->
-        <savesettinguser v-if="userstatus"></savesettinguser>
-        <!--用户编辑 -->
-      </div>
-    </useroverlay>
   </main>
 </template>
 
@@ -126,14 +117,10 @@ export default {
             prop: "一小时内使用错误密码最大尝试 0 次登录"
           }
         ]
-      ],
-      overlayTitle: "编辑密码规则",
-      width: "620px",
-      isclose: true,
-      editstatus: false,
-      userstatus: false
+      ]
     };
   },
+  props: ["isclose", "width", "editstatus", "userstatus", "overlayTitle"],
   components: {
     useroverlay,
     savesettingedit,
@@ -141,18 +128,24 @@ export default {
   },
   methods: {
     editpass() {
-      this.isclose = false;
-      this.overlayTitle = "编辑密码规则";
-      this.width = "620px";
-      this.editstatus = true;
-      this.userstatus = false;
+      this.$emit("update:isclose", false);
+      this.$emit("update:width", "620px");
+      this.$emit("update:title", "编辑密码规则");
+      this.$emit("update:editstatus", true);
+      this.$emit("update:userstatus", false);
     },
     edituser() {
-      this.isclose = false;
-      this.overlayTitle = "修改 RAM 用户安全设置";
-      this.width = "400px";
-      this.editstatus = false;
-      this.userstatus = true;
+      // this.isclose = false;
+      // this.overlayTitle = "修改 RAM 用户安全设置";
+      // this.width = "400px";
+      // this.editstatus = false;
+      // this.userstatus = true;
+
+      this.$emit("update:isclose", false);
+      this.$emit("update:width", "400px");
+      this.$emit("update:title", "修改 RAM 用户安全设置");
+      this.$emit("update:editstatus", false);
+      this.$emit("update:userstatus", true);
     }
   }
 };
@@ -172,14 +165,19 @@ export default {
     color: #0070cc;
     height: 32px;
     line-height: 32px;
+    font-size: 12px;
     cursor: pointer;
   }
   .savesetting-rule {
     height: 20px;
     line-height: 20px;
     margin-bottom: 8px;
+    font-size: 12px;
     .savesetting-rule--gray {
       color: #8c8c8c;
+    }
+    /deep/ .el-col-12 {
+      margin-bottom: 0px;
     }
   }
 }

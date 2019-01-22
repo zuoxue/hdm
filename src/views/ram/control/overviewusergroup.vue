@@ -42,24 +42,41 @@
     </article>
 
     <!-- overlay -->
-    <useroverlay :title="overlayTitle" :isclose.sync="isclose" :width="width">
-      <div slot="body">
-        <el-form :rules="rule1" ref="form1" status-icon label-width="100px">
-          <el-form-item label="用户组名称" prop="usergroupname">
-            <el-input type="text" v-model="rules.usergroupname" autocomplete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="显示名称" prop="dispname">
-            <el-input type="text" v-model="rules.dispname" autocomplete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="备注">
-            <el-input type="textarea" v-model="rules.remark"></el-input>
-          </el-form-item>
-        </el-form>
-      </div>
-      <div slot="footer" class="useroverlay-footer">
-        <el-button type="plain" size="small">确定</el-button>
-        <el-button type="plain" size="small">关闭</el-button>
-      </div>
+    <useroverlay
+      :title="overlayTitle"
+      :isclose.sync="isclose"
+      :width="width"
+      class="useroverlay-font"
+    >
+      <el-scrollbar slot="body" class="popaside">
+        <div>
+          <el-form :rules="rule1" ref="form1" status-icon style="margin:auto 30px;">
+            <el-form-item label prop="usergroupname">
+              <p>
+                <span class="star">*</span>用户组名称
+              </p>
+              <el-input type="text" v-model="rules.usergroupname" autocomplete="off"></el-input>
+              <p class="useroverlay-font--default">不超过64个字符，允许英文字母、数字，或"-"</p>
+            </el-form-item>
+            <el-form-item prop="dispname">
+              <p>
+                <span class="star">*</span>显示名称
+              </p>
+              <el-input type="text" v-model="rules.dispname" autocomplete="off"></el-input>
+              <p class="useroverlay-font--default">最大长度24个字符或汉字</p>
+            </el-form-item>
+            <el-form-item>
+              <p>备注</p>
+              <el-input type="textarea" v-model="rules.remark"></el-input>
+              <p class="useroverlay-font--default">最大长度128个字符</p>
+            </el-form-item>
+          </el-form>
+          <div class="useroverlay-footer">
+            <el-button type="plain" size="small" class="confirm">确定</el-button>
+            <el-button type="plain" size="small" @click="isclose=true">关闭</el-button>
+          </div>
+        </div>
+      </el-scrollbar>
     </useroverlay>
   </div>
 </template>
@@ -169,6 +186,7 @@ export default {
       font-size: 12px;
     }
     .usergroup-section--s {
+      margin-bottom: 10px;
       .usergroup-section--s-btn {
         height: 38px;
         vertical-align: top;
@@ -185,6 +203,41 @@ export default {
           line-height: 38px;
           border-left: 1px solid #ccc;
           cursor: pointer;
+        }
+      }
+    }
+  }
+  .useroverlay-font {
+    p {
+      font-size: 12px;
+      height: 32px;
+      margin: 0px auto;
+    }
+    .useroverlay-font--default {
+      color: #cdcdcd;
+      height: 18px;
+      line-height: 1.5;
+      margin-top: 4px;
+    }
+    .star {
+      color: #f15533;
+      margin-right: 4px;
+    }
+    .useroverlay-footer {
+      background: #fff;
+      width: 100%;
+      border-top: 1px solid #efefef;
+      overflow: hidden;
+      padding: 0 24px;
+      height: 64px;
+      line-height: 64px;
+      // position: absolute;
+      // bottom: 0;
+      .confirm {
+        background: #00c1de;
+        color: #fff;
+        &:hover {
+          opacity: 0.8;
         }
       }
     }

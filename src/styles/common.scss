@@ -18,6 +18,8 @@
 @import './media.scss';
 //通用配置
 @import './normalize.scss';
+//自定义通用设置
+@import 'custom.scss';
 
 a{
   text-decoration: none;

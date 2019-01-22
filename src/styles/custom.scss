@@ -1,0 +1,5 @@
+// 设置侧边框样式-高度+滚动条
+.popaside {
+  overflow:hidden auto;
+  height:calc(100% - 165px);
+}

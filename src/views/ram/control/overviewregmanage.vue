@@ -7,13 +7,13 @@
       </h3>
     </header>
     <article class="usergroup-article">
-      <transition name="fade">
-        <section class="usergroup-section--info" v-if="topisshow">
-          {{info}}
-          <div class="overview-close" @click="closeInfo">x</div>
-        </section>
-      </transition>
       <section class="usergroup-section--s" v-if="!isadd">
+        <transition name="fade">
+          <section class="usergroup-section--info" v-if="topisshow">
+            {{info}}
+            <div class="overview-close" @click="closeInfo">x</div>
+          </section>
+        </transition>
         <el-button
           type="primary"
           size="mini"
@@ -51,90 +51,63 @@
       </section>
       <div v-if="isadd">
         <section class="overviewuser-new">
-          <p>
-            <span>*</span>用户账户信息
-          </p>
           <el-row>
-            <el-col :span="13">
-              <p>登录名称</p>
-            </el-col>
-            <el-col :span="10">
-              <p>显示名称</p>
+            <el-col :span="12">
+              <div>
+                <p>策略名称</p>
+                <el-input v-model="regname"></el-input>
+              </div>
+              <div>
+                <p>备注</p>
+                <el-input v-model="regremark"></el-input>
+              </div>
+              <div>
+                <p>配置模式</p>
+                <el-radio-group v-model="assettype">
+                  <el-radio label="first"></el-radio>
+                  <el-radio label="second"></el-radio>
+                </el-radio-group>
+              </div>
+              <div>
+                <p>策略内容</p>
+                <el-button type="primary" size="small" @click="showAuth">添加授权语句</el-button>
+              </div>
             </el-col>
           </el-row>
-          <el-row v-for="(item,index) in newLenArray" :key="index" class="mb10">
-            <el-col :span="13">
-              <el-input v-model="subdata[index].loginname" placeholder class="el-input--addwrapper">
-                <span slot="suffix">@123456213151121551.onali.com</span>
-              </el-input>
-            </el-col>
-            <el-col :span="10">
-              <el-input v-model="subdata[index].dispname" placeholder></el-input>
-            </el-col>
-            <el-col :span="1" v-if="index>0" class="el-icon-plus--wrapper">
-              <div @click="autodel(index)">
-                <i class="el-icon-close"></i>
-              </div>
+          <el-row>
+            <el-col :span="24">
+              <el-table :data="authordata">
+                <el-table-column
+                  v-for="item in authorheader"
+                  :key="item.index"
+                  :prop="item.prop"
+                  :label="item.name"
+                ></el-table-column>
+              </el-table>
             </el-col>
           </el-row>
-          <div>
-            <el-button icon="el-icon-plus" type="text" @click="autoadd">添加用户</el-button>
-          </div>
-        </section>
-        <section>
-          <p>访问方式</p>
-          <div>
-            <div>
-              <el-checkbox-group v-model="checklist">
-                <div>
-                  <el-checkbox label="控制台密码登录"></el-checkbox>
-                </div>
-                <div>
-                  <el-checkbox label="编程访问"></el-checkbox>
-                </div>
-              </el-checkbox-group>
-            </div>
-            <div v-show="checklist.includes('控制台密码登录')">
-              <div>
-                <p>控制台密码</p>
-                <div>
-                  <el-radio v-model="controlpass" :label="1">自动生成默认密码</el-radio>
-                </div>
-                <div>
-                  <el-radio v-model="controlpass" :label="2">自定义登录密码</el-radio>
-                </div>
-              </div>
-              <div>
-                <p>要求重置密码</p>
-                <div>
-                  <el-radio v-model="resetpass" :label="1">用户在下次登录时必须重置密码</el-radio>
-                </div>
-                <div>
-                  <el-radio v-model="resetpass" :label="2">无需重置</el-radio>
-                </div>
-              </div>
-              <div>
-                <p>多因素认证</p>
-                <div>
-                  <el-radio v-model="multifactors" :label="1">要求开启MFA认证</el-radio>
-                </div>
-                <div>
-                  <el-radio v-model="multifactors" :label="2">不要求</el-radio>
-                </div>
-              </div>
-            </div>
-          </div>
         </section>
         <section class="footer">
-          <el-button type="primary">确认</el-button>
+          <el-button type="primary" size="small">确认</el-button>
           <el-button @click="back">取消</el-button>
         </section>
       </div>
     </article>
+    <!-- overlay -->
+    <useroverlay :title="overlayTitle" :isclose.sync="showside" :width="width">
+      <el-scrollbar slot="body" class="popaside">
+        <div>
+          <author-module :isclose.sync="showside"></author-module>
+        </div>
+      </el-scrollbar>
+    </useroverlay>
   </div>
 </template>
 
 <script>
+import useroverlay from "@/page/user/useroverlay";
+import authorModule from "./overviewaddperm/authorModule";
+
 export default {
   name: "overviewuser",
   props: ["recement"],
@@ -183,9 +156,43 @@ export default {
           val: "handle"
         }
       ],
+      authorheader: [
+        {
+          name: "权限效力",
+          index: 0,
+          prop: "validty"
+        },
+        {
+          name: "产品/服务",
+          index: 1,
+          prop: "service"
+        },
+        {
+          name: "操作名称",
+          index: 2,
+          prop: "hname"
+        },
+        {
+          name: "资源",
+          index: 3,
+          prop: "resource"
+        },
+        {
+          name: "限制条件",
+          index: 4,
+          prop: "restrict"
+        },
+        {
+          name: "操作",
+          index: 5,
+          prop: "handle"
+        }
+      ],
+      authordata: [],
       data: [],
-      overlayTitle: "新建用户",
+      overlayTitle: "添加授权语句",
       isclose: true,
+      showside: true,
       isadd: false,
       adduser: 1,
       topisshow: true,
@@ -198,8 +205,29 @@ export default {
       controlpass: "",
       resetpass: "",
       multifactors: "",
-      checklist: []
+      checklist: [],
+      regname: "",
+      regremark: "",
+      assettype: "",
+      width: "620px"
     };
+  },
+  components: {
+    authorModule,
+    useroverlay
+  },
+  created() {
+    document.addEventListener(
+      "keyup",
+      ev => {
+        ev.preventDefault();
+        if (ev.keyCode == 27) {
+          this.showside = true;
+        }
+        return;
+      },
+      true
+    );
   },
   methods: {
     handleIconClick() {
@@ -226,6 +254,9 @@ export default {
     },
     closeInfo() {
       this.topisshow = false;
+    },
+    showAuth() {
+      this.showside = false;
     }
   },
   computed: {
@@ -295,19 +326,11 @@ export default {
       }
     }
     .overviewuser-new {
-      width: 600px;
-      .el-input--addwrapper {
-        /deep/ .el-input__suffix-inner {
-          height: 40px;
-          line-height: 40px;
-        }
-      }
-      .mb10 {
-        margin-bottom: 10px;
-        .el-icon-plus--wrapper {
-          height: 40px;
-          line-height: 40px;
-          font-weight: bolder;
+      .el-radio {
+        display: block;
+        margin-bottom: 8px;
+        & + .el-radio {
+          margin-left: 0px;
         }
       }
     }

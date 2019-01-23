@@ -33,57 +33,88 @@
             </div>
           </el-menu>
         </el-scrollbar>
-        <div
-          class="wind-console-menu-bar"
-          :class="{'pullleft':!isshowaside}"
-          @click="isshowaside=!isshowaside"
-        >
-          <svg
-            version="1.1"
-            id="图层_1"
-            xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-            x="0px"
-            y="0px"
-            width="12px"
-            height="12px"
-            viewBox="0 0 16 16"
-            enable-background="new 0 0 16 16"
-            xml:space="preserve"
-          >
-            <title>angle-double-left</title>
-            <desc>Created with Sketch.</desc>
-            <g id="angle-double-left">
-              <polygon
-                id="Combined-Shape"
-                fill="#373D41"
-                points="3.851,8.5 8.84,13.556 7.415,15 1,8.5 7.415,2 8.84,3.444"
-              ></polygon>
-              <polygon
-                id="Combined-Shape_1_"
-                fill="#8C8C8C"
-                points="10.011,8.5 15,13.556 13.574,15 7.16,8.5 13.574,2 15,3.444"
-              ></polygon>
-            </g>
-          </svg>
-        </div>
       </el-aside>
+      <div
+        class="wind-console-menu-bar"
+        :class="{'pullleft':!isshowaside}"
+        @click="isshowaside=!isshowaside"
+      >
+        <svg
+          version="1.1"
+          id="图层_1"
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          x="0px"
+          y="0px"
+          width="12px"
+          height="12px"
+          viewBox="0 0 16 16"
+          enable-background="new 0 0 16 16"
+          xml:space="preserve"
+          v-if="!isshowaside"
+        >
+          <title>angle-double-left</title>
+          <desc>Created with Sketch.</desc>
+          <g id="angle-double-left">
+            <polygon
+              id="Combined-Shape"
+              fill="#373D41"
+              points="3.851,8.5 8.84,13.556 7.415,15 1,8.5 7.415,2 8.84,3.444"
+            ></polygon>
+            <polygon
+              id="Combined-Shape_1_"
+              fill="#8C8C8C"
+              points="10.011,8.5 15,13.556 13.574,15 7.16,8.5 13.574,2 15,3.444"
+            ></polygon>
+          </g>
+        </svg>
 
+        <svg
+          version="1.1"
+          id="图层_1"
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          x="0px"
+          y="0px"
+          width="12px"
+          height="12px"
+          viewBox="0 0 16 16"
+          enable-background="new 0 0 16 16"
+          xml:space="preserve"
+          v-else
+        >
+          <title>angle-double-right</title>
+          <desc>Created with Sketch.</desc>
+          <g id="angle-double-right">
+            <polygon
+              fill="#373D41"
+              points="12.149,8.5 7.16,3.444 8.585,2 15,8.5 8.585,15 7.16,13.556  "
+            ></polygon>
+            <polygon
+              id="Combined-Shape"
+              fill="#8C8C8C"
+              points="5.989,8.5 1,3.444 2.426,2 8.84,8.5 2.426,15 1,13.556"
+            ></polygon>
+          </g>
+        </svg>
+      </div>
       <el-main class="el-main--mg">
-        <div class="el-main--header">
-          <div class="el-main--header-pre">
-            <a href="/">RAM访问控制</a>
+        <el-scrollbar style="height:100%;">
+          <div class="el-main--header">
+            <div class="el-main--header-pre">
+              <a href="/">RAM访问控制</a>
+            </div>
+            <div class="el-main--header-next">
+              <span>/</span>
+              <span>{{recement}}</span>
+            </div>
           </div>
-          <div class="el-main--header-next">
-            <span>/</span>
-            <span>{{recement}}</span>
-          </div>
-        </div>
-        <!-- <overviewMain :recement="recement"/> -->
-        <!-- 动态组件，侧边栏点击显示不同组件 -->
-        <component :is="tagmenu" :recement="recement"></component>
+          <!-- <overviewMain :recement="recement"/> -->
+          <!-- 动态组件，侧边栏点击显示不同组件 -->
+          <component :is="tagmenu" :recement="recement"></component>
 
-        <!-- <usergroup :recement="recement"></usergroup> -->
+          <!-- <usergroup :recement="recement"></usergroup> -->
+        </el-scrollbar>
       </el-main>
     </el-container>
     <useroverlay :title="overlayTitle" :isclose="isclose" :width="width"></useroverlay>
@@ -217,8 +248,10 @@ export default {
     left: -148px;
     // width: 20px !important;
     width: 0px !important;
-    .wind-console-menu-bar {
+    & + .wind-console-menu-bar {
       // left: 0px !important;
+      right: 0px;
+      left: 2px;
     }
   }
   .el-menu {
@@ -247,7 +280,7 @@ export default {
   .el-aside--overview {
     border-right: 1px solid #e5e5e5;
     height: 100%;
-    transition: width 0.25s ease-out;
+    transition: all 0.5s ease-in-out;
     text-align: left;
     .el-scrollbar {
       height: 100%;
@@ -262,44 +295,46 @@ export default {
       padding-left: 16px;
       margin: 0px auto;
     }
-    .wind-console-menu-bar {
-      width: 0;
-      height: 64px;
+  }
+  .wind-console-menu-bar {
+    width: 0;
+    height: 64px;
+    position: absolute;
+    top: 46%;
+    right: -12px;
+    border-right: 8px solid transparent;
+    border-left: 12px solid #e5e5e5;
+    border-top: 9px solid transparent;
+    border-bottom: 9px solid transparent;
+    cursor: pointer;
+    transition: all 0.5s ease;
+    &:hover {
+      border-left-width: 11px;
+      right: -16px;
+    }
+    &:after {
+      content: "";
+      display: inline-block;
       position: absolute;
-      top: 46%;
-      right: -12px;
+      left: -13px;
+      top: -8px;
       border-right: 8px solid transparent;
-      border-left: 12px solid #e5e5e5;
+      border-left: 12px solid #fff;
       border-top: 9px solid transparent;
       border-bottom: 9px solid transparent;
-      cursor: pointer;
-      &:hover {
-        border-left-width: 11px;
-        right: -16px;
-      }
-      &:after {
-        content: "";
-        display: inline-block;
-        position: absolute;
-        left: -13px;
-        top: -8px;
-        border-right: 8px solid transparent;
-        border-left: 12px solid #fff;
-        border-top: 9px solid transparent;
-        border-bottom: 9px solid transparent;
-        height: 62px;
-      }
-      svg {
-        position: absolute;
-        left: -16px;
-        top: 16px;
-        z-index: 1;
-      }
+      height: 62px;
+    }
+    svg {
+      position: absolute;
+      left: -16px;
+      top: 16px;
+      z-index: 1;
     }
   }
   .el-main--mg {
-    margin-left: 16px;
-    margin-right: 16px;
+    // margin-left: 16px;
+    // margin-right: 16px;
+    padding: 0px 16px !important;
     text-align: left;
     font-size: 12px;
     .el-main--header {

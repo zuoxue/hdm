@@ -7,7 +7,12 @@
       </h3>
     </header>
     <article class="usergroup-article">
-      <section class="usergroup-section--info">{{info}}</section>
+      <transition name="fade">
+        <section class="usergroup-section--info" v-if="topisshow">
+          {{info}}
+          <div class="overview-close" @click="closeInfo">x</div>
+        </section>
+      </transition>
       <section class="usergroup-section--s" v-if="!isadd">
         <el-button
           type="primary"
@@ -170,6 +175,7 @@ export default {
       data: [],
       overlayTitle: "新建用户",
       isclose: true,
+      topisshow: true,
       isadd: false,
       adduser: 1,
       subdata: [
@@ -206,6 +212,9 @@ export default {
         dispname: ""
       });
       this.adduser++;
+    },
+    closeInfo() {
+      this.topisshow = false;
     }
   },
   computed: {
@@ -248,6 +257,7 @@ export default {
       padding: 16px;
       margin-bottom: 16px;
       font-size: 12px;
+      position: relative;
     }
     .usergroup-section--s {
       margin-bottom: 10px;

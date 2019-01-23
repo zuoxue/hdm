@@ -4,7 +4,12 @@
       <h3>{{recement}}</h3>
     </header>
     <article class="usergroup-article">
-      <section class="usergroup-section--info">{{info}}</section>
+      <transition name="fade">
+        <section class="usergroup-section--info" v-if="topisshow">
+          {{info}}
+          <div class="overview-close" @click="closeInfo">x</div>
+        </section>
+      </transition>
       <section class="usergroup-section--s">
         <el-button
           type="primary"
@@ -133,6 +138,7 @@ export default {
       width: "400px",
       overlayTitle: "新建用户组",
       isclose: true,
+      topisshow: true,
       rules: {
         usergroupname: "",
         dispname: "",
@@ -158,6 +164,9 @@ export default {
     },
     showoverlay() {
       this.isclose = false;
+    },
+    closeInfo() {
+      this.topisshow = false;
     }
   },
 
@@ -184,6 +193,7 @@ export default {
       padding: 16px;
       margin-bottom: 16px;
       font-size: 12px;
+      position: relative;
     }
     .usergroup-section--s {
       margin-bottom: 10px;

@@ -1,55 +1,57 @@
 <template>
-  <div class="edit-setting">
-    <el-form :rules="rule1">
-      <el-form-item class="el-form-items--patch" prop="len">
-        <p>密码长度</p>
-        <span class="next-input">
-          <input type="text" class="input-setting" v-model="passlen">
-        </span>
-        <span>至 32位（至少8位）</span>
-      </el-form-item>
-      <el-form-item>
-        <p>密码中必须包含元素</p>
-        <el-checkbox-group v-model="checkboxList">
-          <el-checkbox :label="ck" v-for="ck in checkboxLabel" :key="ck" class="ck-block"></el-checkbox>
-        </el-checkbox-group>
-      </el-form-item>
-      <el-form-item prop="period">
-        <p>密码有效期</p>
-        <span class="next-input">
-          <input type="text" class="input-setting" v-model="passperiod">
-        </span>
-        <span>天（最多1095天，输入0表示永不过期）</span>
-      </el-form-item>
-      <el-form-item>
-        <p>密码过期后</p>
-        <el-radio-group v-model="radioValue">
-          <el-radio :label="ck" v-for="ck in radioLabel" :key="ck" class="ck-block"></el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item class="el-form-items--patch" prop="regiter">
-        <p>历史密码检查策略</p>
-        <span>历史密码检查策略</span>
-        <span class="next-input">
-          <input type="text" class="input-setting" v-model="passcheck">
-        </span>
-        <span>次密码 （最大设置为24，0表示不启用历史密码检查策略）</span>
-      </el-form-item>
+  <el-scrollbar style="height:100%;">
+    <div class="edit-setting">
+      <el-form :rules="rule1">
+        <el-form-item class="el-form-items--patch" prop="len">
+          <p>密码长度</p>
+          <span class="next-input">
+            <input type="text" class="input-setting" v-model="passlen">
+          </span>
+          <span>至 32位（至少8位）</span>
+        </el-form-item>
+        <el-form-item>
+          <p>密码中必须包含元素</p>
+          <el-checkbox-group v-model="checkboxList">
+            <el-checkbox :label="ck" v-for="ck in checkboxLabel" :key="ck" class="ck-block"></el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+        <el-form-item prop="period">
+          <p>密码有效期</p>
+          <span class="next-input">
+            <input type="text" class="input-setting" v-model="passperiod">
+          </span>
+          <span>天（最多1095天，输入0表示永不过期）</span>
+        </el-form-item>
+        <el-form-item>
+          <p>密码过期后</p>
+          <el-radio-group v-model="radioValue">
+            <el-radio :label="ck" v-for="ck in radioLabel" :key="ck" class="ck-block"></el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item class="el-form-items--patch" prop="regiter">
+          <p>历史密码检查策略</p>
+          <span>历史密码检查策略</span>
+          <span class="next-input">
+            <input type="text" class="input-setting" v-model="passcheck">
+          </span>
+          <span>次密码 （最大设置为24，0表示不启用历史密码检查策略）</span>
+        </el-form-item>
 
-      <el-form-item class="el-form-items--patch" prop="restrain">
-        <p>密码重试约束</p>
-        <span>一小时内使用错误密码最多尝试登录</span>
-        <span class="next-input">
-          <input type="text" class="input-setting" v-model="passrestrict">
-        </span>
-        <span>次 （最大设置为32，0表示不启用密码重试约束）</span>
-      </el-form-item>
-    </el-form>
-    <div slot="footer" class="useroverlay-footer">
-      <el-button type="plain" size="small" class="confirm">确定</el-button>
-      <el-button type="plain" size="small" @click="close">关闭</el-button>
+        <el-form-item class="el-form-items--patch" prop="restrain">
+          <p>密码重试约束</p>
+          <span>一小时内使用错误密码最多尝试登录</span>
+          <span class="next-input">
+            <input type="text" class="input-setting" v-model="passrestrict">
+          </span>
+          <span>次 （最大设置为32，0表示不启用密码重试约束）</span>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="useroverlay-footer">
+        <el-button type="plain" size="small" class="confirm">确定</el-button>
+        <el-button type="plain" size="small" @click="close">关闭</el-button>
+      </div>
     </div>
-  </div>
+  </el-scrollbar>
 </template>
 
 <script>

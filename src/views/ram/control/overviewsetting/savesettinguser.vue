@@ -1,32 +1,34 @@
 <template>
-  <div class="edit-setting">
-    <el-form :rules="rule1">
-      <el-form-item v-for="(radio,index) in radioList" :key="index">
-        <p>{{radio["label"]}}</p>
-        <el-radio-group v-model="valmodel[radio.prop]">
-          <el-radio :label="1" class="ck-block">允许</el-radio>
-          <el-radio :label="2" class="ck-block">不允许</el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item class="el-form-items--patch" prop="logindate">
-        <p>登录session过期时间</p>
-        <span class="next-input">
-          <input type="text" class="input-setting" v-model="logindate">
-        </span>
-        <span>小时 （有效值区间为6-24小时）</span>
-      </el-form-item>
+  <el-scrollbar style="height:100%;">
+    <div class="edit-setting">
+      <el-form :rules="rule1">
+        <el-form-item v-for="(radio,index) in radioList" :key="index">
+          <p>{{radio["label"]}}</p>
+          <el-radio-group v-model="valmodel[radio.prop]">
+            <el-radio :label="1" class="ck-block">允许</el-radio>
+            <el-radio :label="2" class="ck-block">不允许</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item class="el-form-items--patch" prop="logindate">
+          <p>登录session过期时间</p>
+          <span class="next-input">
+            <input type="text" class="input-setting" v-model="logindate">
+          </span>
+          <span>小时 （有效值区间为6-24小时）</span>
+        </el-form-item>
 
-      <el-form-item>
-        <p>登录掩码设置</p>
-        <textarea name id cols="30" rows="5" v-model="logincodeset"></textarea>
-        <div class="logindecript">{{logincodesetdesp}}</div>
-      </el-form-item>
-    </el-form>
-    <div slot="footer" class="useroverlay-footer">
-      <el-button type="plain" size="small" class="confirm">确定</el-button>
-      <el-button type="plain" size="small" @click="close">关闭</el-button>
+        <el-form-item>
+          <p>登录掩码设置</p>
+          <textarea name id cols="30" rows="5" v-model="logincodeset"></textarea>
+          <div class="logindecript">{{logincodesetdesp}}</div>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="useroverlay-footer">
+        <el-button type="plain" size="small" class="confirm">确定</el-button>
+        <el-button type="plain" size="small" @click="close">关闭</el-button>
+      </div>
     </div>
-  </div>
+  </el-scrollbar>
 </template>
 
 <script>

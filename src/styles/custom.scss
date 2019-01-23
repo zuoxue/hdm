@@ -3,3 +3,27 @@
   overflow:hidden auto;
   height:calc(100% - 165px);
 }
+
+.fade-enter,.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-active,.fade-leave-active {
+  transition:all 0.5s ease;
+}
+
+.overview-close {
+  font-size: 16px;
+  font-weight:400;
+  line-height: 20px;
+  position: absolute;
+  top:12px;
+  right:5px;
+  opacity: .6;
+  cursor: pointer;
+}
+
+.disabled {
+  cursor:not-allowed!important;
+  color: #c3c5c6!important;
+}

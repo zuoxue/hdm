@@ -48,8 +48,16 @@
                     :class="item.sel?'perm-active':''"
                     @click.native="selToggle(item,index)"
                   >
-                    <el-col :span="9" class="perm-aside--td">{{item.name}}</el-col>
-                    <el-col :span="15" class="perm-aside--td">{{item.remark}}</el-col>
+                    <el-col
+                      :span="9"
+                      class="perm-aside--td"
+                      :class="selectedPerm>=5&&!item.sel?'disabled':''"
+                    >{{item.name}}</el-col>
+                    <el-col
+                      :span="15"
+                      class="perm-aside--td"
+                      :class="selectedPerm>=5&&!item.sel?'disabled':''"
+                    >{{item.remark}}</el-col>
                   </el-row>
                 </template>
               </el-scrollbar>
@@ -118,6 +126,9 @@ export default {
         });
         // this.selectedIndex.splice(index, 1);
       } else {
+        if (this.selectedPerm >= 5 && item.sel == false) {
+          return;
+        }
         this.selectedPerm++;
         this.regdata[index].sel = true;
         this.regselList.push(item);

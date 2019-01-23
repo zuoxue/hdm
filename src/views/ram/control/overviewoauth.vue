@@ -130,6 +130,19 @@ export default {
       }
     };
   },
+  created() {
+    document.addEventListener(
+      "keyup",
+      ev => {
+        ev.preventDefault();
+        if (ev.keyCode == 27) {
+          this.isclose = true;
+        }
+        return;
+      },
+      true
+    );
+  },
   methods: {
     handleIconClick() {
       return;

@@ -70,6 +70,19 @@ export default {
       domainstatus: 0
     };
   },
+  created() {
+    document.addEventListener(
+      "keyup",
+      ev => {
+        ev.preventDefault();
+        if (ev.keyCode == 27) {
+          this.isclose = true;
+        }
+        return;
+      },
+      true
+    );
+  },
   methods: {},
   computed: {},
   components: {

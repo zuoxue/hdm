@@ -36,10 +36,9 @@ export default {
   },
   created() {
     this.$store.dispatch("GetMenu").then(data => {
-      console.log(newmenus);
       if (data.length === 0) return;
-      data.push(newmenus);
-      sessionStorage.setItem("menu", data);
+      // data.push(newmenus);
+      // sessionStorage.setItem("menu", data);
       this.$router.$avueRouter.formatRoutes(data, true);
     });
   },

@@ -35,3 +35,10 @@ h3 {
 .usergroup {
   margin-top: -30px;
 }
+
+// 设置授权管理页面的select下拉样式
+.el-select--setwrap{
+  .el-select-dropdown__wrap {
+    margin-bottom: 0px !important;
+  }
+}

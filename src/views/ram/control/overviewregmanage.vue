@@ -64,8 +64,8 @@
               <div>
                 <p>配置模式</p>
                 <el-radio-group v-model="assettype">
-                  <el-radio label="first"></el-radio>
-                  <el-radio label="second"></el-radio>
+                  <el-radio label="first">可视化配置</el-radio>
+                  <el-radio label="second">脚本配置</el-radio>
                 </el-radio-group>
               </div>
               <div>
@@ -331,6 +331,9 @@ export default {
         margin-bottom: 8px;
         & + .el-radio {
           margin-left: 0px;
+        }
+        /deep/ .el-radio__label {
+          color: #262626;
         }
       }
     }

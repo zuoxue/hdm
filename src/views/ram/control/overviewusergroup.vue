@@ -42,6 +42,13 @@
             :prop="col.val"
             :label="col.label"
           ></el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <el-button type="text" @click="addusergroup(scope.row)">添加组成员</el-button>
+              <el-button type="text" @click="addPerm(scope.row)">添加权限</el-button>
+              <el-button type="text">删除</el-button>
+            </template>
+          </el-table-column>
         </el-table>
       </section>
     </article>
@@ -83,11 +90,31 @@
         </div>
       </el-scrollbar>
     </useroverlay>
+
+    <!-- overlay -->
+    <useroverlay :title="overlayTitle" :isclose.sync="isaddperm" :width="width">
+      <el-scrollbar slot="body" class="popaside">
+        <div>
+          <add-perm :isclose.sync="isaddperm"></add-perm>
+        </div>
+      </el-scrollbar>
+    </useroverlay>
+
+    <!-- overlay -->
+    <useroverlay :title="overlayTitle" :isclose.sync="isaddusergroup" :width="width">
+      <el-scrollbar slot="body" class="popaside">
+        <div>
+          <addusergroup :isclose.sync="isaddusergroup"></addusergroup>
+        </div>
+      </el-scrollbar>
+    </useroverlay>
   </div>
 </template>
 
 <script>
 import useroverlay from "@/page/user/useroverlay";
+import addPerm from "./overviewaddperm/addPerm";
+import addusergroup from "./overviewaddperm/addusergroup";
 export default {
   name: "overviewusergroup",
   props: ["recement"],
@@ -128,13 +155,15 @@ export default {
         {
           label: "创建时间",
           val: "createtime"
-        },
-        {
-          label: "操作",
-          val: "handle"
         }
       ],
-      data: [],
+      data: [
+        {
+          name: "sss",
+          remark: "ssssd",
+          createtime: "2018-10-12"
+        }
+      ],
       width: "400px",
       overlayTitle: "新建用户组",
       isclose: true,
@@ -155,7 +184,9 @@ export default {
             trigger: ["blur", "change"]
           }
         ]
-      }
+      },
+      isaddperm: true,
+      isaddusergroup: true
     };
   },
   created() {
@@ -180,11 +211,23 @@ export default {
     },
     closeInfo() {
       this.topisshow = false;
+    },
+    addPerm(row) {
+      this.isaddperm = false;
+      this.overlayTitle = "添加权限";
+      this.width = "880px";
+    },
+    addusergroup(row) {
+      this.isaddusergroup = false;
+      this.overlayTitle = "添加组成员";
+      this.width = "880px";
     }
   },
 
   components: {
-    useroverlay
+    addPerm,
+    useroverlay,
+    addusergroup
   }
 };
 </script>

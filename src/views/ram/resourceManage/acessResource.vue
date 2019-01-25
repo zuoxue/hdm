@@ -5,7 +5,7 @@
         <p>已分配资源</p>
       </el-header>
       <el-main>
-        <el-form size="mini" label-width="100px" inline="true">
+        <el-form size="mini" label-width="100px" :inline="true">
           <el-form-item label="资源名称" class="resource-name">
             <el-input v-model="searchList.name" placeholder="资源名称"></el-input>
             <el-button>搜索</el-button>
@@ -22,7 +22,7 @@
           <el-table-column label="操作">
             <template slot-scope="scope">
               <el-button type="primary" size="mini" @click="showInfo(scope.row)">查看</el-button>
-              <!-- <el-button type="primary" size="mini" @click="editInfo(scope.row)">编辑</el-button> -->
+              <el-button type="primary" size="mini" @click="modifyRes(scope.row)">分配资源</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -59,7 +59,7 @@
           ></el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button type="primary" size="mini" @click="modifyRes(scope.row)">更改</el-button>
+              <el-button type="primary" size="mini" @click="deleteRes(index)">删除</el-button>
               <!-- <el-button type="primary" size="mini" @click="addRes(scope.row)">新增</el-button> -->
             </template>
           </el-table-column>
@@ -88,8 +88,8 @@
     >
       <el-transfer
         :format="{
-        noChecked: '${checked}/${total}',
-         hasChecked: '${checked}/${total}'
+        noChecked: '${total}',
+        hasChecked: '${checked}/${total}'
       }"
         filterable
         :data="allRes"
@@ -194,12 +194,14 @@ export default {
       this.checkRes = info.name;
       loading.close();
     },
-    back() {
+    back(ev) {
+      ev.stopPropagation();
       this.ischeck = !this.ischeck;
     },
     modifyRes(info) {
       this.modifyRe.ismodify = true;
-    }
+    },
+    deleteRes(index) {}
   }
 };
 </script>
@@ -216,6 +218,7 @@ export default {
     padding-top: 30px;
   }
   .resource-check--header {
+    display: inline-block;
     cursor: pointer;
   }
 }
@@ -230,5 +233,11 @@ export default {
 }
 /deep/ .el-dialog__footer {
   text-align: center;
+}
+.el-transfer {
+  padding: 0 80px;
+  /deep/ .el-transfer-panel {
+    border-color: #ccc;
+  }
 }
 </style>

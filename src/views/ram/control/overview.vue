@@ -117,7 +117,10 @@
         </el-scrollbar>
       </el-main>
     </el-container>
-    <useroverlay :title="overlayTitle" :isclose="isclose" :width="width"></useroverlay>
+    <useroverlay :title="overlayTitle" :isclose="isclose" :width="width">
+      <component :is=""></component>
+    </useroverlay>
+
   </div>
 </template>
 

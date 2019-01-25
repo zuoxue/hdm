@@ -120,36 +120,36 @@ export default {
       ],
       btns: [
         {
-          path: "/newgroup",
+          show: false,
           name: "新建用户组",
           index: 1
         },
         {
-          path: "/newuser",
+          show: false,
           name: "新建用户",
           index: 2
         },
         {
-          path: "/addcredit",
+          show: false,
           name: "添加授权",
           index: 3
         },
         {
-          path: "/newregit",
+          show: false,
           name: "新建用户自定义策略",
           index: 4
         },
         {
-          path: "/modifyrole",
+          show: false,
           name: "修改RAM角色",
           index: 5
         },
         {
-          path: "/modifyusersafe",
+          show: false,
           name: "修改用户RAM安全",
           index: 6
         }
-      ],
+      ], //快速入口列表
       url: "https://signin.aliyun.com/1424731304604773.onaliyun.com/login.htm",
       clippercontent: ""
     };

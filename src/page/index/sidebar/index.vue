@@ -1,5 +1,5 @@
 <template>
-  <div class="avue-sidebar">
+  <div class="avue-sidebar sethovermenu">
     <logo></logo>
     <el-scrollbar style="height:100%">
       <div v-if="validatenull(menu)" class="avue-sidebar--tip">没有发现菜单</div>
@@ -37,8 +37,8 @@ export default {
   created() {
     this.$store.dispatch("GetMenu").then(data => {
       if (data.length === 0) return;
-      // data.push(newmenus);
-      // sessionStorage.setItem("menu", data);
+      data.push(newmenus);
+      sessionStorage.setItem("menu", data);
       this.$router.$avueRouter.formatRoutes(data, true);
     });
   },

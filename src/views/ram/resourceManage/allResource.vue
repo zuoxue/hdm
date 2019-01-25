@@ -153,7 +153,9 @@ export default {
     },
     back() {
       this.ischeck = !this.ischeck;
-    }
+    },
+    modifyres(info) {},
+    deleteRes(info) {}
   }
 };
 </script>

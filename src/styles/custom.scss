@@ -42,3 +42,11 @@ h3 {
     margin-bottom: 0px !important;
   }
 }
+
+.setCollapseBg {
+  .el-menu {
+    .el-menu-item {
+      background: #fff;
+    }
+  }
+}

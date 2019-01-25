@@ -3,7 +3,8 @@
     <el-form :rules="rule1">
       <el-form-item>
         <p>被授权主体</p>
-        <el-input placeholder="请选择" size="small" v-model="roleval"></el-input>
+        <!-- <el-input placeholder="请选择" size="small" v-model="roleval"></el-input> -->
+        <dropsearch></dropsearch>
       </el-form-item>
       <el-form-item>
         <p>选择权限</p>
@@ -82,6 +83,7 @@
 </template>
 
 <script>
+import dropsearch from "@/page/user/dropsearch";
 export default {
   name: "addPerm",
   data() {
@@ -108,6 +110,9 @@ export default {
     }
   },
   props: ["isclose"],
+  components: {
+    dropsearch
+  },
   methods: {
     selToggle(item, index) {
       if (this.regselList.includes(item)) {

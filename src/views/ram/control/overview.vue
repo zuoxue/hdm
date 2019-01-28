@@ -118,7 +118,7 @@
       </el-main>
     </el-container>
     <useroverlay :title="overlayTitle" :isclose="isclose" :width="width">
-      <component :is=""></component>
+      <component :is=""></component> <!--显示不同的按钮跳转组件-->
     </useroverlay>
 
   </div>
@@ -213,7 +213,8 @@ export default {
       this.switchmenu(index, tag, name);
       this.defaultMenu = [t]
       localStorage.setItem('triggerComp',tag);
-    })
+    });
+
   },
   components: {
     useroverlay,

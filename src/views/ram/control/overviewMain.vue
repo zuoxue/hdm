@@ -214,6 +214,14 @@ export default {
       currentComponent:'addusergroup'
     };
   },
+  created (){
+    document.addEventListener("keyup",(ev)=>{
+      if(ev.keyCode == 27){
+        this.entryList[this.pos][this.currentComponent] = true;
+      }
+      return;
+    })
+  },
   methods: {
     onCopy() {
       this.clippercontent = "复制成功";

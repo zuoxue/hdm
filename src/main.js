@@ -40,6 +40,7 @@ Vue.use(VueAxios, axios)
 // 注册全局容器
 Vue.component('basicContainer', basicContainer)
 
+Vue.prototype.$bus = new Vue();
 // 加载相关url地址
 Object.keys(urls).forEach(key => {
   Vue.prototype[key] = urls[key]

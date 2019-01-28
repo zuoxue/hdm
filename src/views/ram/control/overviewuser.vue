@@ -224,6 +224,23 @@ export default {
       overlayTitle: "添加权限"
     };
   },
+  created (){
+    document.addEventListener("keyup",(ev)=>{
+      ev.preventDefault();
+      if(ev.keyCode == 27){
+        this.isaddperm = true;
+        this.isaddusergroup = true;
+      }
+      return;
+    })
+  },
+  mounted (){
+    const t = localStorage.getItem("triggerComp") || null;
+    if(t && t == "overviewuser") {
+      this.isadd = true;
+    }
+    localStorage.removeItem("triggerComp");
+  },
   methods: {
     handleIconClick() {
       return;

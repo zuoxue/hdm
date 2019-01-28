@@ -8,7 +8,7 @@
       >
         <el-scrollbar>
           <p class="el-side--p">RAM访问控制</p>
-          <el-menu class="el-menu-vertical-demo">
+          <el-menu class="el-menu-vertical-demo" default-active="1" :default-openeds="defaultMenu">
             <div v-for="item in submenus" :key="item.index">
               <el-submenu v-if="item.children.length>0" :index="item.index">
                 <template slot="title">
@@ -203,8 +203,17 @@ export default {
       isclose: true,
       width: "400px",
       recement: "概览",
-      tagmenu: "overviewMain"
+      tagmenu: "overviewMain",
+      defaultMenu:[1]
     };
+  },
+  mounted (){
+    this.$bus.$on("triggerMenu",(index, tag, name)=>{
+      var t = index.split("-")[0];
+      this.switchmenu(index, tag, name);
+      this.defaultMenu = [t]
+      localStorage.setItem('triggerComp',tag);
+    })
   },
   components: {
     useroverlay,
@@ -223,6 +232,9 @@ export default {
       this.tagmenu = tag;
       this.recement = name;
     }
+  },
+  beforeDestroyed (){
+    this.$bus.$off("triggerMenu");
   }
 };
 </script>
@@ -239,6 +251,11 @@ export default {
 .el-caontainer--wrapper {
   background: #fff;
   height: 100%;
+  .el-scrollbar {
+    /deep/ .el-scrollbar__wrap {
+      overflow-x:hidden;
+    }
+  }
   .active {
     color: #00c1de !important;
     background-color: rgba(0, 193, 222, 0.1);

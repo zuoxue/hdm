@@ -196,6 +196,8 @@ export default {
         ev.preventDefault();
         if (ev.keyCode == 27) {
           this.isclose = true;
+          this.isaddusergroup = true;
+          this.isaddperm = true;
         }
         return;
       },

@@ -109,7 +109,7 @@ import useroverlay from "@/page/user/useroverlay";
 import authorModule from "./overviewaddperm/authorModule";
 
 export default {
-  name: "overviewuser",
+  name: "overviewregmanage",
   props: ["recement"],
   data() {
     return {
@@ -228,6 +228,13 @@ export default {
       },
       true
     );
+  },
+  mounted (){
+    const t = localStorage.getItem("triggerComp") || null;
+    if(t && t == "overviewregmanage") {
+      this.isadd = true;
+    }
+    // localStorage.removeItem("triggerComp");
   },
   methods: {
     handleIconClick() {

@@ -25,8 +25,8 @@
         <p>
           <span class="star">*</span>访问令牌有效期
         </p>
-        <span class="next-input">
-          <input type="text" class="input-setting" v-model="visittoken">
+        <span>
+          <input type="text" v-model="visittoken">
         </span>
         <span>秒</span>
       </el-form-item>
@@ -34,8 +34,8 @@
         <p>
           <span class="star">*</span>刷新令牌有效期
         </p>
-        <span class="next-input">
-          <input type="text" class="input-setting" v-model="refreshtoken">
+        <span>
+          <input type="text" v-model="refreshtoken">
         </span>
         <span>秒</span>
       </el-form-item>
@@ -85,6 +85,7 @@ export default {
       appnamedisp: "",
       refreshtoken: "",
       visittoken: "",
+      calladdress: "",
       rule1: {
         len: [
           {
@@ -146,17 +147,12 @@ export default {
     line-height: 24px;
     border-radius: 0;
     width: 10%;
-    vertical-align: middle;
-    display: inline-table;
-    border-collapse: separate;
     font-size: 0;
-    border-spacing: 0;
-    -webkit-transition: all 0.3s ease-out;
-    transition: all 0.3s ease-out;
     border: 1px solid #e5e5e5;
     background-color: #fff;
     .input-setting {
       width: 100%;
+      height: 100%;
       border: none;
       outline: none;
       padding: 0;

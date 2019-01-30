@@ -70,13 +70,13 @@
               <el-input type="text" v-model="rules.usergroupname" autocomplete="off"></el-input>
               <p class="useroverlay-font--default">不超过64个字符，允许英文字母、数字，或"-"</p>
             </el-form-item>
-            <el-form-item prop="dispname">
+            <!-- <el-form-item prop="dispname">
               <p>
                 <span class="star">*</span>显示名称
               </p>
               <el-input type="text" v-model="rules.dispname" autocomplete="off"></el-input>
               <p class="useroverlay-font--default">最大长度24个字符或汉字</p>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item>
               <p>备注</p>
               <el-input type="textarea" v-model="rules.remark"></el-input>
@@ -84,7 +84,7 @@
             </el-form-item>
           </el-form>
           <div class="useroverlay-footer">
-            <el-button type="plain" size="small" class="confirm">确定</el-button>
+            <el-button type="plain" size="small" class="confirm" @click="createUsergroup">确定</el-button>
             <el-button type="plain" size="small" @click="isclose=true">关闭</el-button>
           </div>
         </div>
@@ -115,6 +115,9 @@
 import useroverlay from "@/page/user/useroverlay";
 import addPerm from "./overviewaddperm/addPerm";
 import addusergroup from "./overviewaddperm/addusergroup";
+import {mapGetters} from "vuex"
+import {createUsergroupChild} from "@/api/ram/user"
+
 export default {
   name: "overviewusergroup",
   props: ["recement"],
@@ -223,6 +226,33 @@ export default {
       this.isaddusergroup = false;
       this.overlayTitle = "添加组成员";
       this.width = "880px";
+    },
+    createUsergroup (){
+      let data = {
+        access_token:this.access_token,
+        ownerId: this.userId,
+        groupName:this.rules.usergroupname,
+        common:this.rules.remark
+      };
+      createUsergroupChild(data,(res)=>{
+        if(res.data == 1) {
+          this.$message({
+            type:'success',
+            message:'创建组成功！',
+            duration:1500
+          });
+        }
+        this.rules.usergroupname = '';
+        this.rules.remark = ''
+        if(res.data != 1) {
+          this.$message({
+            type:'error',
+            message:'创建组失败！',
+            duration:1500
+          });
+        }
+        return;
+      })
     }
   },
 
@@ -230,6 +260,9 @@ export default {
     addPerm,
     useroverlay,
     addusergroup
+  },
+  computed: {
+    ...mapGetters(["access_token", "userId"]),
   }
 };
 </script>

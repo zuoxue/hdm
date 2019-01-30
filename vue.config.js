@@ -73,11 +73,11 @@ module.exports = {
           '^/api/urs': '/urs'
         }
       },
-      '/api/userRam': {
+      '/ram': {
         target: url,
         ws: true,
         pathRewrite: {
-          '^/api/userRam': '/userRam'
+          '^/ram': '/ram'
         }
       },
     }

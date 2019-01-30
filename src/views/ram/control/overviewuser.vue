@@ -241,6 +241,7 @@ export default {
       this.isadd = true;
     }
     localStorage.removeItem("triggerComp");
+
   },
   methods: {
     handleIconClick() {
@@ -281,11 +282,17 @@ export default {
         access_token: this.access_token,
         ownerId: this.userId,
         username: this.subdata[0].loginname,
-        displayname: this.subdata[0].dispname
+        displayname: this.subdata[0].dispname,
+        flag:0
       };
 
-      const result = createUserChild(data);
-      console.log(result);
+       createUserChild(data,(res)=>{
+         if(res.data == 1){
+           this.subdata[0].loginname = '';
+           this.subdata[0].dispname='';
+         }
+       });
+
     }
   },
   components: {

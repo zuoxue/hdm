@@ -82,11 +82,11 @@
               </div>
             </el-col>
           </el-row>
-          <div>
+          <!-- <div>
             <el-button icon="el-icon-plus" type="text" @click="autoadd">添加用户</el-button>
-          </div>
+          </div>-->
         </section>
-        <section>
+        <!-- <section>
           <p>访问方式</p>
           <div>
             <div>
@@ -129,9 +129,9 @@
               </div>
             </div>
           </div>
-        </section>
+        </section>-->
         <section class="footer">
-          <el-button type="primary">确认</el-button>
+          <el-button type="primary" @click="createUser">确认</el-button>
           <el-button @click="back">取消</el-button>
         </section>
       </div>
@@ -160,7 +160,8 @@
 import useroverlay from "@/page/user/useroverlay";
 import addPerm from "./overviewaddperm/addPerm";
 import addusergroup from "./overviewaddperm/addusergroup";
-
+import { createUserChild } from "@/api/ram/user";
+import { mapGetters } from "vuex";
 export default {
   name: "overviewuser",
   props: ["recement"],
@@ -224,19 +225,19 @@ export default {
       overlayTitle: "添加权限"
     };
   },
-  created (){
-    document.addEventListener("keyup",(ev)=>{
+  created() {
+    document.addEventListener("keyup", ev => {
       ev.preventDefault();
-      if(ev.keyCode == 27){
+      if (ev.keyCode == 27) {
         this.isaddperm = true;
         this.isaddusergroup = true;
       }
       return;
-    })
+    });
   },
-  mounted (){
+  mounted() {
     const t = localStorage.getItem("triggerComp") || null;
-    if(t && t == "overviewuser") {
+    if (t && t == "overviewuser") {
       this.isadd = true;
     }
     localStorage.removeItem("triggerComp");
@@ -274,6 +275,17 @@ export default {
     addusergroup(row) {
       this.isaddusergroup = false;
       this.overlayTitle = "添加到用户组";
+    },
+    createUser() {
+      const data = {
+        access_token: this.access_token,
+        ownerId: this.userId,
+        username: this.subdata[0].loginname,
+        displayname: this.subdata[0].dispname
+      };
+
+      const result = createUserChild(data);
+      console.log(result);
     }
   },
   components: {
@@ -282,6 +294,7 @@ export default {
     addusergroup
   },
   computed: {
+    ...mapGetters(["access_token", "userId"]),
     newLenArray() {
       var arr = new Array(this.adduser);
       return arr;

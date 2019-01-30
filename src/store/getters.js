@@ -22,6 +22,7 @@ const getters = {
   menuAll: state => state.user.menuAll,
   logsList: state => state.logs.logsList,
   logsLen: state => state.logs.logsList.length || 0,
-  logsFlag: (state, getters) => getters.logsLen === 0
+  logsFlag: (state, getters) => getters.logsLen === 0,
+  userId: state => state.user.userInfo.userId
 }
 export default getters

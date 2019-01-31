@@ -2,22 +2,17 @@
   <div class="perm-setting">
     <el-form :rules="rule1">
       <el-form-item>
-        <p>被授权主体</p>
+        <p>用户</p>
         <!-- <el-input placeholder="请选择" size="small" v-model="roleval"></el-input> -->
         <dropsearch></dropsearch>
       </el-form-item>
       <el-form-item>
-        <p>选择权限</p>
+        <p>用户组</p>
         <div class="table-container">
           <el-row :gutter="15">
             <el-col :span="15">
               <el-row>
-                <el-col :span="6">
-                  <el-select v-model="selval" size="small">
-                    <el-option v-for="(val,index) in sels" :key="index" :label="val" :value="val"></el-option>
-                  </el-select>
-                </el-col>
-                <el-col :span="18">
+                <el-col :span="24">
                   <el-input v-model="registerval" size="small">
                     <div slot="suffix" class="suffix-search">
                       <i class="el-icon-search"></i>
@@ -39,7 +34,7 @@
             <el-col class="perm-aside" :span="15">
               <el-scrollbar style="height:100%;">
                 <el-row>
-                  <el-col :span="9" class="perm-aside--header">权限策略名称</el-col>
+                  <el-col :span="9" class="perm-aside--header">名称</el-col>
                   <el-col :span="15" class="perm-aside--header">备注</el-col>
                 </el-row>
                 <template v-if="regdata.length > 0">
@@ -61,6 +56,9 @@
                     >{{item.remark}}</el-col>
                   </el-row>
                 </template>
+                <template v-else>
+                  <div style="color:#8c8c8c;text-align:center;">没有数据</div>
+                </template>
               </el-scrollbar>
             </el-col>
             <el-col class="perm-aside" :span="8">
@@ -76,7 +74,7 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="useroverlay-footer">
-      <el-button type="plain" size="small" class="confirm">确定</el-button>
+      <el-button type="plain" size="small" class="confirm" @click="adduser">确定</el-button>
       <el-button type="plain" size="small" @click="close">关闭</el-button>
     </div>
   </div>
@@ -84,8 +82,9 @@
 
 <script>
 import dropsearch from "@/page/user/dropsearch";
+import { submitMethod } from "@/api/ram/user";
 export default {
-  name: "addPerm",
+  name: "addusergroup",
   data() {
     return {
       roleval: "",
@@ -93,23 +92,30 @@ export default {
       sels: ["系统权限策略", "自定义权限策略"],
       registerval: "",
       selectedPerm: 0,
-      regdata: [],
+      regdata: this.userData,
       regselList: [],
       selectedIndex: [], //选中的索引
       ruls1: {}
     };
   },
   created() {
-    for (var i = 0; i < 100; i++) {
-      this.regdata.push({
-        name: `AdministratorAccess${i}`,
-        remark: "管理所有阿里云资源的权限",
-        sel: false,
-        index: i
-      });
-    }
+    // for (var i = 0; i < 100; i++) {
+    //   this.regdata.push({
+    //     name: `AdministratorAccess${i}`,
+    //     remark: "管理所有阿里云资源的权限",
+    //     sel: false,
+    //     index: i
+    //   });
+    // }
   },
-  props: ["isclose"],
+  mounted() {
+    this.regdata = this.userData.map((item, index) => {
+      item.sel = false;
+      item.index = index;
+      return item;
+    });
+  },
+  props: ["isclose", "userData", "gid", "submitAddress"],
   components: {
     dropsearch
   },
@@ -159,6 +165,34 @@ export default {
 
       this.regselList.splice(index, 1);
       this.selectedIndex.splice(index, 1);
+    },
+    adduser() {
+      let reg = this.regselList;
+      if (reg.length <= 0) {
+        this.$message({
+          type: "error",
+          message: "条件不足，请补充完整！",
+          duration: 1500
+        });
+        return false;
+      }
+
+      let data = {
+        url: "/ram" + this.submitAddress,
+        method: "POST"
+      };
+
+      let query = [];
+      reg.forEach(item => {
+        query.push({
+          groupId: this.gid,
+          userId: item.userId
+        });
+      });
+      console.log(query, 111);
+      submitMethod(data, query, res => {
+        console.log(res);
+      });
     }
   }
 };
@@ -191,7 +225,7 @@ export default {
       overflow-y: auto;
       box-sizing: border-box;
       .el-col {
-        margin-bottom: 0px;
+        margin-bottom: 0px !important;
       }
       &:last-child {
         margin-left: 10px;
@@ -208,6 +242,7 @@ export default {
       .perm-aside--td {
         padding-left: 15px;
         font-size: 12px;
+        height: 40px;
         cursor: pointer;
         border-bottom: 1px solid #ccc;
         &:last-child {

@@ -37,7 +37,7 @@
         </div>
       </section>
       <section v-if="!isadd">
-        <el-table :data="data" style="width:100%;">
+        <el-table :data="tableData" style="width:100%;">
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column
             v-for="(col,index) in columns"
@@ -53,6 +53,16 @@
             </template>
           </el-table-column>
         </el-table>
+
+        <div class="alignright mt10" v-if="data.length>0">
+          <el-pagination
+            layout="total,prev,pager,next,jumper"
+            @current-change="handleCurrentChange"
+            :current-page.sync="currentPage"
+            :page-size="pageSize"
+            :total="totalNums"
+          ></el-pagination>
+        </div>
       </section>
       <div v-if="isadd">
         <section class="overviewuser-new">
@@ -160,8 +170,9 @@
 import useroverlay from "@/page/user/useroverlay";
 import addPerm from "./overviewaddperm/addPerm";
 import addusergroup from "./overviewaddperm/addusergroup";
-import { createUserChild } from "@/api/ram/user";
+import { createUserChild, getAllUserChild } from "@/api/ram/user";
 import { mapGetters } from "vuex";
+
 export default {
   name: "overviewuser",
   props: ["recement"],
@@ -197,13 +208,8 @@ export default {
           val: "createtime"
         }
       ],
-      data: [
-        {
-          name: "sss",
-          remark: "ssssd",
-          createtime: "2018-10-12"
-        }
-      ],
+      data: [],
+      tableData: [],
       overlayTitle: "新建用户",
       isclose: true,
       topisshow: true,
@@ -222,7 +228,10 @@ export default {
       isaddperm: true,
       isaddusergroup: true,
       width: "880px",
-      overlayTitle: "添加权限"
+      overlayTitle: "添加权限",
+      currentPage: 1,
+      pageSize: 10,
+      totalNums: 0
     };
   },
   created() {
@@ -237,13 +246,32 @@ export default {
   },
   mounted() {
     const t = localStorage.getItem("triggerComp") || null;
+
     if (t && t == "overviewuser") {
       this.isadd = true;
     }
     localStorage.removeItem("triggerComp");
-
+    this.getAllTableData();
   },
   methods: {
+    getAllTableData() {
+      const data = {
+        ownerId: this.userId
+      };
+      getAllUserChild(data, res => {
+        let d = res.data;
+        console.log(d, 898);
+        d.forEach(item => {
+          this.data.push({
+            name: item.username + "/" + item.displayname,
+            remark: item.common ? item.common : "",
+            createtime: item.createTime.split(" ")[0]
+          });
+        });
+        this.tableData = this.data.slice(0, this.pageSize);
+        this.totalNums = this.data.length;
+      });
+    },
     handleIconClick() {
       return;
     },
@@ -283,16 +311,32 @@ export default {
         ownerId: this.userId,
         username: this.subdata[0].loginname,
         displayname: this.subdata[0].dispname,
-        flag:0
+        flag: 0
       };
 
-       createUserChild(data,(res)=>{
-         if(res.data == 1){
-           this.subdata[0].loginname = '';
-           this.subdata[0].dispname='';
-         }
-       });
-
+      createUserChild(data, res => {
+        if (res.data == 1) {
+          this.$message({
+            type: "success",
+            message: "创建组成功！",
+            duration: 1500
+          });
+        }
+        this.subdata[0].loginname = "";
+        this.subdata[0].dispname = "";
+        if (res.data != 1) {
+          this.$message({
+            type: "error",
+            message: "创建组失败！",
+            duration: 1500
+          });
+        }
+      });
+    },
+    handleCurrentChange(page) {
+      let start = (page - 1) * this.pageSize;
+      let end = page * this.pageSize;
+      this.tableData = this.data.slice(start, end);
     }
   },
   components: {

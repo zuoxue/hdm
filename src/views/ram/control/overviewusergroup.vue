@@ -34,7 +34,7 @@
         </div>
       </section>
       <section>
-        <el-table :data="data" style="width:100%;">
+        <el-table :data="tableData" style="width:100%;">
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column
             v-for="(col,index) in columns"
@@ -50,6 +50,16 @@
             </template>
           </el-table-column>
         </el-table>
+
+        <div class="alignright mt10" v-if="data.length>0">
+          <el-pagination
+            layout="total,prev,pager,next,jumper"
+            @current-change="handleCurrentChange"
+            :current-page.sync="currentPage"
+            :page-size="pageSize"
+            :total="totalNums"
+          ></el-pagination>
+        </div>
       </section>
     </article>
 
@@ -76,7 +86,7 @@
               </p>
               <el-input type="text" v-model="rules.dispname" autocomplete="off"></el-input>
               <p class="useroverlay-font--default">最大长度24个字符或汉字</p>
-            </el-form-item> -->
+            </el-form-item>-->
             <el-form-item>
               <p>备注</p>
               <el-input type="textarea" v-model="rules.remark"></el-input>
@@ -104,7 +114,12 @@
     <useroverlay :title="overlayTitle" :isclose.sync="isaddusergroup" :width="width">
       <el-scrollbar slot="body" class="popaside">
         <div>
-          <addusergroup :isclose.sync="isaddusergroup"></addusergroup>
+          <addusergroup
+            :isclose.sync="isaddusergroup"
+            :userData="userdata"
+            :gid="groupId"
+            :submitAddress="submitAddress"
+          ></addusergroup>
         </div>
       </el-scrollbar>
     </useroverlay>
@@ -115,8 +130,12 @@
 import useroverlay from "@/page/user/useroverlay";
 import addPerm from "./overviewaddperm/addPerm";
 import addusergroup from "./overviewaddperm/addusergroup";
-import {mapGetters} from "vuex"
-import {createUsergroupChild} from "@/api/ram/user"
+import { mapGetters } from "vuex";
+import {
+  createUsergroupChild,
+  getAllUsergroupChild,
+  getAllUserChild
+} from "@/api/ram/user";
 
 export default {
   name: "overviewusergroup",
@@ -148,7 +167,7 @@ export default {
       ],
       columns: [
         {
-          label: "用户组名称/显示名称",
+          label: "用户组名称",
           val: "name"
         },
         {
@@ -160,13 +179,9 @@ export default {
           val: "createtime"
         }
       ],
-      data: [
-        {
-          name: "sss",
-          remark: "ssssd",
-          createtime: "2018-10-12"
-        }
-      ],
+      data: [],
+      tableData: [],
+      searchList: [],
       width: "400px",
       overlayTitle: "新建用户组",
       isclose: true,
@@ -189,7 +204,13 @@ export default {
         ]
       },
       isaddperm: true,
-      isaddusergroup: true
+      isaddusergroup: true,
+      currentPage: 1,
+      pageSize: 10,
+      totalNums: 0,
+      userdata: [],
+      groupId: "",
+      submitAddress: "/groupUser/saveGroupUserList"
     };
   },
   created() {
@@ -206,8 +227,32 @@ export default {
       },
       true
     );
+    this.getAllTableData();
   },
   methods: {
+    getAllTableData() {
+      const data = {
+        ownerId: this.userId
+      };
+      this.searchList = [];
+      this.data = [];
+      getAllUsergroupChild(data, res => {
+        let d = res.data;
+        console.log(d, 787);
+        d.forEach(item => {
+          this.data.push({
+            name: item.groupName,
+            remark: item.common ? item.common : "",
+            createtime: item.createTime.split(" ")[0],
+            userId: item.user_id,
+            groupId: item.groupId
+          });
+        });
+        this.searchList = this.data;
+        this.tableData = this.data.slice(0, this.pageSize);
+        this.totalNums = this.data.length;
+      });
+    },
     handleIconClick() {
       return;
     },
@@ -223,36 +268,72 @@ export default {
       this.width = "880px";
     },
     addusergroup(row) {
-      this.isaddusergroup = false;
       this.overlayTitle = "添加组成员";
       this.width = "880px";
-    },
-    createUsergroup (){
-      let data = {
-        access_token:this.access_token,
-        ownerId: this.userId,
-        groupName:this.rules.usergroupname,
-        common:this.rules.remark
+      const data = {
+        ownerId: this.userId
       };
-      createUsergroupChild(data,(res)=>{
-        if(res.data == 1) {
-          this.$message({
-            type:'success',
-            message:'创建组成功！',
-            duration:1500
+      this.groupId = row.groupId;
+      this.userdata = [];
+      getAllUserChild(data, res => {
+        let d = res.data;
+        console.log(d, 888);
+        let acessData = [];
+        d.forEach(item => {
+          acessData.push({
+            name: item.username + "/" + item.displayname,
+            remark: item.common ? item.common : "",
+            userId: item.userId
           });
-        }
-        this.rules.usergroupname = '';
-        this.rules.remark = ''
-        if(res.data != 1) {
+        });
+        this.userdata = acessData;
+        this.isaddusergroup = false;
+      });
+    },
+    createUsergroup() {
+      let data = {
+        access_token: this.access_token,
+        ownerId: this.userId,
+        groupName: this.rules.usergroupname,
+        common: this.rules.remark
+      };
+      createUsergroupChild(data, res => {
+        if (res.data == 1) {
           this.$message({
-            type:'error',
-            message:'创建组失败！',
-            duration:1500
+            type: "success",
+            message: "创建组成功！",
+            duration: 1500
+          });
+          this.getAllTableData();
+        }
+        this.rules.usergroupname = "";
+        this.rules.remark = "";
+        if (res.data != 1) {
+          this.$message({
+            type: "error",
+            message: "创建组失败！",
+            duration: 1500
           });
         }
         return;
-      })
+      });
+    },
+    handleCurrentChange(page) {
+      let start = (page - 1) * this.pageSize;
+      let end = page * this.pageSize;
+      this.tableData = this.searchList.slice(start, end);
+    },
+    handleIconClick() {
+      this.searchList = this.data;
+      let inp = this.input.toLowerCase().trim();
+      if (this.input) {
+        this.searchList = this.data.filter(item => {
+          let name = item["name"].toLowerCase().trim();
+          return name.indexOf(this.input) > -1;
+        });
+      }
+      this.tableData = this.searchList.slice(0, this.pageSize);
+      this.totalNums = this.searchList.length;
     }
   },
 
@@ -262,7 +343,7 @@ export default {
     addusergroup
   },
   computed: {
-    ...mapGetters(["access_token", "userId"]),
+    ...mapGetters(["access_token", "userId"])
   }
 };
 </script>

@@ -1,9 +1,13 @@
 <template>
   <div class="dropsearch">
     <div class="inp-wrapper" @click="inpfocus" :class="changeBorder?'borderBlue':''">
-      <span v-for="(em,index) in emailList" :key="index" class="search-sel--style">
-        {{em}}
+      <!-- <span v-for="(em,index) in emailList" :key="index" class="search-sel--style">
+        {{selData}}
         <i class="el-icon-close error-cus" @click="deleteemail($event,index)"></i>
+      </span>-->
+      <span class="search-sel--style">
+        {{selData}}
+        <i class="el-icon-close error-cus"></i>
       </span>
       <input type="text" class="text" ref="inp">
     </div>
@@ -64,6 +68,7 @@ export default {
       changeBorder: false
     };
   },
+  props: ["selData"],
   mounted() {
     document.addEventListener("click", () => {
       this.changeBorder = false;
@@ -72,25 +77,25 @@ export default {
   },
   methods: {
     inpfocus(event) {
-      event.stopPropagation();
-      this.changeBorder = true;
-      this.isshow = true;
-      this.$refs.inp.focus();
-      if (this.searchlist.length == 0) {
-        this.searchListNull = true;
-      }
+      // event.stopPropagation();
+      // this.changeBorder = true;
+      // this.isshow = true;
+      // this.$refs.inp.focus();
+      // if (this.searchlist.length == 0) {
+      //   this.searchListNull = true;
+      // }
     },
     seluser(event, index) {
-      event.stopPropagation();
-      this.emailList.push(this.searchlist[index].email);
-      this.searchlist.splice(index, 1);
-      if (this.searchlist.length == 0) {
-        this.isshow = false;
-      }
+      // event.stopPropagation();
+      // this.emailList.push(this.searchlist[index].email);
+      // this.searchlist.splice(index, 1);
+      // if (this.searchlist.length == 0) {
+      //   this.isshow = false;
+      // }
     },
     deleteemail(ev, index) {
-      ev.stopPropagation();
-      this.emailList.splice(index, 1);
+      // ev.stopPropagation();
+      // this.emailList.splice(index, 1);
     }
   }
 };

@@ -20,6 +20,26 @@ export async function getAllUserChild(query, callback) {
   callback(d);
 }
 
+//删除用户
+export async function deleteUsergroupChild(data, query, callback) {
+  var d = await request({
+    url: `/ram/group/${data.groupId}`,
+    method: 'delete',
+    data: query
+  });
+  callback(d);
+}
+
+// 获取账号下用户组的子用户
+export async function getAllUserChildone(query, callback) {
+  var d = await request({
+    url: `/ram/userRam/searchByGroupId/${query.groupId}`,
+    method: 'get',
+    data: query
+  });
+  callback(d);
+}
+
 // 创建用户组
 export async function createUsergroupChild(query, callback) {
   var d = await request({
@@ -30,6 +50,15 @@ export async function createUsergroupChild(query, callback) {
   callback(d);
 }
 
+//删除用户组
+export async function deleteUsergroupChild(data, query, callback) {
+  var d = await request({
+    url: `/ram/group/${data.groupId}`,
+    method: 'delete',
+    data: query
+  });
+  callback(d);
+}
 // 获取账号下所有子用户组
 export async function getAllUsergroupChild(query, callback) {
   var d = await request({

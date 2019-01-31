@@ -250,12 +250,15 @@ export default {
 .f-plus--null {
   text-align: center;
   font-size: 60px;
-  color: red;
   height: 120px;
   line-height: 2;
   border: 1px solid #000;
   width: 120px;
-  box-shadow: 5px 5px 5px 1px #ccc, -5px -5px 5px 1px #ccc;
+  // box-shadow: 5px 5px 5px 1px #ccc, -5px -5px 5px 1px #ccc;
+  border-radius: 50%;
+  background: rgb(10, 156, 255);
+  color: #fff;
+  font-weight: 400;
   margin-top: 50%;
   margin-left: 50%;
   transform: translate(-50%, -50%);

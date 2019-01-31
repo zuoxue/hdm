@@ -49,7 +49,7 @@
             <template slot-scope="scope">
               <el-button type="text" @click="addusergroup(scope.row)">添加到用户组</el-button>
               <el-button type="text" @click="addPerm(scope.row)">添加权限</el-button>
-              <el-button type="text">删除</el-button>
+              <el-button type="text" @click="deleteuser(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -196,7 +196,7 @@ export default {
       ],
       columns: [
         {
-          label: "用户组名称/显示名称",
+          label: "用户名称",
           val: "name"
         },
         {
@@ -210,7 +210,6 @@ export default {
       ],
       data: [],
       tableData: [],
-      overlayTitle: "新建用户",
       isclose: true,
       topisshow: true,
       isadd: false,
@@ -263,7 +262,7 @@ export default {
         console.log(d, 898);
         d.forEach(item => {
           this.data.push({
-            name: item.username + "/" + item.displayname,
+            name: item.username,
             remark: item.common ? item.common : "",
             createtime: item.createTime.split(" ")[0]
           });

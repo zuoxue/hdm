@@ -46,7 +46,7 @@
             <template slot-scope="scope">
               <el-button type="text" @click="addusergroup(scope.row)">添加组成员</el-button>
               <el-button type="text" @click="addPerm(scope.row)">添加权限</el-button>
-              <el-button type="text">删除</el-button>
+              <el-button type="text" @click="deleteusergroup(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -119,6 +119,7 @@
             :userData="userdata"
             :gid="groupId"
             :submitAddress="submitAddress"
+            :selData="selData"
           ></addusergroup>
         </div>
       </el-scrollbar>
@@ -134,7 +135,9 @@ import { mapGetters } from "vuex";
 import {
   createUsergroupChild,
   getAllUsergroupChild,
-  getAllUserChild
+  getAllUserChild,
+  getAllUserChildone,
+  deleteUsergroupChild
 } from "@/api/ram/user";
 
 export default {
@@ -210,7 +213,8 @@ export default {
       totalNums: 0,
       userdata: [],
       groupId: "",
-      submitAddress: "/groupUser/saveGroupUserList"
+      submitAddress: "/groupUser/saveGroupUserList",
+      selData: ""
     };
   },
   created() {
@@ -238,7 +242,6 @@ export default {
       this.data = [];
       getAllUsergroupChild(data, res => {
         let d = res.data;
-        console.log(d, 787);
         d.forEach(item => {
           this.data.push({
             name: item.groupName,
@@ -253,10 +256,8 @@ export default {
         this.totalNums = this.data.length;
       });
     },
-    handleIconClick() {
-      return;
-    },
     showoverlay() {
+      this.overlayTitle = "新建用户组";
       this.isclose = false;
     },
     closeInfo() {
@@ -266,6 +267,30 @@ export default {
       this.isaddperm = false;
       this.overlayTitle = "添加权限";
       this.width = "880px";
+    },
+    deleteusergroup(row) {
+      let data = {
+        groupId: row.groupId
+      };
+      let query = {
+        data: {}
+      };
+      deleteUsergroupChild(data, query, res => {
+        if (res.data.code == 0) {
+          this.$message({
+            type: "success",
+            message: "删除成功",
+            duration: 1500
+          });
+          this.getAllTableData();
+        } else {
+          this.$message({
+            type: "error",
+            message: "删除失败",
+            duration: 1500
+          });
+        }
+      });
     },
     addusergroup(row) {
       this.overlayTitle = "添加组成员";
@@ -277,17 +302,32 @@ export default {
       this.userdata = [];
       getAllUserChild(data, res => {
         let d = res.data;
-        console.log(d, 888);
         let acessData = [];
-        d.forEach(item => {
-          acessData.push({
-            name: item.username + "/" + item.displayname,
-            remark: item.common ? item.common : "",
-            userId: item.userId
-          });
-        });
-        this.userdata = acessData;
-        this.isaddusergroup = false;
+        getAllUserChildone(
+          {
+            groupId: this.groupId
+          },
+          cb => {
+            let exists = cb.data.map(item => {
+              return item.userId;
+            });
+            d = d.filter(item => {
+              return !exists.includes(item.userId);
+            });
+            d.forEach(item => {
+              acessData.push({
+                name: item.username + "/" + item.displayname,
+                remark: item.common ? item.common : "",
+                userId: item.userId
+              });
+            });
+            this.userdata = acessData;
+            this.selData = row.name;
+            this.isaddusergroup = false;
+          }
+        );
+
+        //
       });
     },
     createUsergroup() {

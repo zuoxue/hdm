@@ -4,7 +4,7 @@
       <el-form-item>
         <p>用户</p>
         <!-- <el-input placeholder="请选择" size="small" v-model="roleval"></el-input> -->
-        <dropsearch></dropsearch>
+        <dropsearch :selData="selData"></dropsearch>
       </el-form-item>
       <el-form-item>
         <p>用户组</p>
@@ -13,7 +13,7 @@
             <el-col :span="15">
               <el-row>
                 <el-col :span="24">
-                  <el-input v-model="registerval" size="small">
+                  <el-input v-model="registerval" size="small" @change="changeReg">
                     <div slot="suffix" class="suffix-search">
                       <i class="el-icon-search"></i>
                     </div>
@@ -39,7 +39,7 @@
                 </el-row>
                 <template v-if="regdata.length > 0">
                   <el-row
-                    v-for="(item,index) in regdata"
+                    v-for="(item,index) in showdata"
                     :key="index"
                     :class="item.sel?'perm-active':''"
                     @click.native="selToggle(item,index)"
@@ -92,7 +92,8 @@ export default {
       sels: ["系统权限策略", "自定义权限策略"],
       registerval: "",
       selectedPerm: 0,
-      regdata: this.userData,
+      regdata: [],
+      showdata: [],
       regselList: [],
       selectedIndex: [], //选中的索引
       ruls1: {}
@@ -114,8 +115,9 @@ export default {
       item.index = index;
       return item;
     });
+    this.showdata = this.regdata;
   },
-  props: ["isclose", "userData", "gid", "submitAddress"],
+  props: ["isclose", "userData", "gid", "submitAddress", "selData"],
   components: {
     dropsearch
   },
@@ -123,7 +125,8 @@ export default {
     selToggle(item, index) {
       if (this.regselList.includes(item)) {
         this.selectedPerm--;
-        this.regdata[index].sel = false;
+        // this.regdata[index].sel = false;
+        this.showdata[index].sel = false;
         var pos = item.index;
         this.regselList = this.regselList.filter(item => {
           if (item.index != pos) {
@@ -141,7 +144,7 @@ export default {
           return;
         }
         this.selectedPerm++;
-        this.regdata[index].sel = true;
+        this.showdata[index].sel = true;
         this.regselList.push(item);
         this.selectedIndex.push(index);
       }
@@ -166,6 +169,12 @@ export default {
       this.regselList.splice(index, 1);
       this.selectedIndex.splice(index, 1);
     },
+    changeReg(value) {
+      let d = this.regdata;
+      this.showdata = d.filter(item => {
+        return item.name.indexOf(value) > -1;
+      });
+    },
     adduser() {
       let reg = this.regselList;
       if (reg.length <= 0) {
@@ -189,9 +198,21 @@ export default {
           userId: item.userId
         });
       });
-      console.log(query, 111);
       submitMethod(data, query, res => {
-        console.log(res);
+        if (res.data == query.length) {
+          this.$message({
+            type: "success",
+            message: "添加成功！",
+            duration: 1500
+          });
+          this.$emit("update:isclose", true);
+        } else {
+          this.$message({
+            type: "success",
+            message: "添加失败！",
+            duration: 1500
+          });
+        }
       });
     }
   }

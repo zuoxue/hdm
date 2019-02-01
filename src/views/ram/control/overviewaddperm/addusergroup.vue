@@ -1,13 +1,13 @@
 <template>
   <div class="perm-setting">
-    <el-form :rules="rule1">
+    <el-form>
       <el-form-item>
-        <p>用户</p>
+        <p>{{infos.title}}</p>
         <!-- <el-input placeholder="请选择" size="small" v-model="roleval"></el-input> -->
         <dropsearch :selData="selData"></dropsearch>
       </el-form-item>
       <el-form-item>
-        <p>用户组</p>
+        <p>{{infos.header}}</p>
         <div class="table-container">
           <el-row :gutter="15">
             <el-col :span="15">
@@ -95,8 +95,7 @@ export default {
       regdata: [],
       showdata: [],
       regselList: [],
-      selectedIndex: [], //选中的索引
-      ruls1: {}
+      selectedIndex: [] //选中的索引
     };
   },
   created() {
@@ -117,7 +116,15 @@ export default {
     });
     this.showdata = this.regdata;
   },
-  props: ["isclose", "userData", "gid", "submitAddress", "selData"],
+  props: [
+    "isclose",
+    "userData",
+    "gid",
+    "submitAddress",
+    "selData",
+    "type",
+    "infos"
+  ],
   components: {
     dropsearch
   },
@@ -193,10 +200,19 @@ export default {
 
       let query = [];
       reg.forEach(item => {
-        query.push({
-          groupId: this.gid,
-          userId: item.userId
-        });
+        let kv = {};
+        if (this.type == "user") {
+          kv = {
+            groupId: item.userId,
+            userId: this.gid
+          };
+        } else {
+          kv = {
+            groupId: this.gid,
+            userId: item.userId
+          };
+        }
+        query.push(kv);
       });
       submitMethod(data, query, res => {
         if (res.data == query.length) {

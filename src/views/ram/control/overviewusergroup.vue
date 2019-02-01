@@ -28,7 +28,7 @@
           </el-select>
         </div>
         <div class="usergroup-section--s-input">
-          <el-input v-model="input">
+          <el-input v-model="input" @input.native="handleIconClick">
             <i class="el-icon-search" slot="suffix" @click="handleIconClick"></i>
           </el-input>
         </div>
@@ -120,6 +120,8 @@
             :gid="groupId"
             :submitAddress="submitAddress"
             :selData="selData"
+            type="group"
+            :infos="infos"
           ></addusergroup>
         </div>
       </el-scrollbar>
@@ -214,7 +216,11 @@ export default {
       userdata: [],
       groupId: "",
       submitAddress: "/groupUser/saveGroupUserList",
-      selData: ""
+      selData: "",
+      infos: {
+        title: "用户组",
+        header: "用户"
+      }
     };
   },
   created() {
@@ -316,7 +322,7 @@ export default {
             });
             d.forEach(item => {
               acessData.push({
-                name: item.username + "/" + item.displayname,
+                name: item.username,
                 remark: item.common ? item.common : "",
                 userId: item.userId
               });

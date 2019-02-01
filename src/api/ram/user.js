@@ -21,9 +21,9 @@ export async function getAllUserChild(query, callback) {
 }
 
 //删除用户
-export async function deleteUsergroupChild(data, query, callback) {
+export async function deleteUserChild(data, query, callback) {
   var d = await request({
-    url: `/ram/group/${data.groupId}`,
+    url: `/ram/userRam/deleteUser/${data.userId}`,
     method: 'delete',
     data: query
   });
@@ -63,6 +63,16 @@ export async function deleteUsergroupChild(data, query, callback) {
 export async function getAllUsergroupChild(query, callback) {
   var d = await request({
     url: `/ram/group/searchGroupByOwnerId/${query.ownerId}`,
+    method: 'get',
+    data: query
+  });
+  callback(d);
+}
+
+// 获取用户所在的用户组
+export async function getUsergroupByUser(query, callback) {
+  var d = await request({
+    url: `/ram/group/searchByUserId/${query.ownerId}`,
     method: 'get',
     data: query
   });

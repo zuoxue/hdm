@@ -159,7 +159,15 @@
     <useroverlay :title="overlayTitle" :isclose.sync="isaddusergroup" :width="width">
       <el-scrollbar slot="body" class="popaside">
         <div>
-          <addusergroup :isclose.sync="isaddusergroup"></addusergroup>
+          <addusergroup
+            :isclose.sync="isaddusergroup"
+            :userData="userdata"
+            :gid="seluserId"
+            :submitAddress="submitAddress"
+            :selData="selData"
+            type="user"
+            :infos="infos"
+          ></addusergroup>
         </div>
       </el-scrollbar>
     </useroverlay>
@@ -170,7 +178,13 @@
 import useroverlay from "@/page/user/useroverlay";
 import addPerm from "./overviewaddperm/addPerm";
 import addusergroup from "./overviewaddperm/addusergroup";
-import { createUserChild, getAllUserChild } from "@/api/ram/user";
+import {
+  createUserChild,
+  getAllUserChild,
+  deleteUserChild,
+  getAllUsergroupChild,
+  getUsergroupByUser
+} from "@/api/ram/user";
 import { mapGetters } from "vuex";
 
 export default {
@@ -230,7 +244,16 @@ export default {
       overlayTitle: "添加权限",
       currentPage: 1,
       pageSize: 10,
-      totalNums: 0
+      totalNums: 0,
+      usergroupdata: [],
+      seluserId: "",
+      selData: [],
+      userdata: [],
+      submitAddress: "/groupUser/saveGroupUserList",
+      infos: {
+        title: "用户",
+        header: "用户组"
+      }
     };
   },
   created() {
@@ -257,14 +280,15 @@ export default {
       const data = {
         ownerId: this.userId
       };
+      this.data = [];
       getAllUserChild(data, res => {
         let d = res.data;
-        console.log(d, 898);
         d.forEach(item => {
           this.data.push({
             name: item.username,
             remark: item.common ? item.common : "",
-            createtime: item.createTime.split(" ")[0]
+            createtime: item.createTime.split(" ")[0],
+            userId: item.userId
           });
         });
         this.tableData = this.data.slice(0, this.pageSize);
@@ -301,8 +325,42 @@ export default {
       this.overlayTitle = "添加权限";
     },
     addusergroup(row) {
-      this.isaddusergroup = false;
       this.overlayTitle = "添加到用户组";
+
+      const data = {
+        ownerId: this.userId
+      };
+      this.seluserId = row.userId;
+      this.userdata = [];
+      getAllUsergroupChild(data, res => {
+        let d = res.data;
+        let acessData = [];
+        getUsergroupByUser(
+          {
+            ownerId: row.userId
+          },
+          cb => {
+            let exists = cb.data.map(item => {
+              return item.groupId;
+            });
+            d = d.filter(item => {
+              return !exists.includes(item.groupId);
+            });
+            d.forEach(item => {
+              acessData.push({
+                name: item.groupName,
+                remark: item.common ? item.common : "",
+                userId: item.groupId
+              });
+            });
+            this.userdata = acessData;
+            this.selData = row.name;
+            this.isaddusergroup = false;
+          }
+        );
+
+        //
+      });
     },
     createUser() {
       const data = {
@@ -336,6 +394,17 @@ export default {
       let start = (page - 1) * this.pageSize;
       let end = page * this.pageSize;
       this.tableData = this.data.slice(start, end);
+    },
+    deleteuser(row) {
+      let d = {
+        userId: row.userId
+      };
+      let query = {
+        data: {}
+      };
+      deleteUserChild(d, query, res => {
+        this.getAllTableData();
+      });
     }
   },
   components: {

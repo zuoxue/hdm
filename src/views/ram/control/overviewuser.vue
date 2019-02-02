@@ -31,7 +31,7 @@
           </el-select>
         </div>
         <div class="usergroup-section--s-input">
-          <el-input v-model="input">
+          <el-input v-model="input" @input.native="handleIconClick">
             <i class="el-icon-search" slot="suffix" @click="handleIconClick"></i>
           </el-input>
         </div>
@@ -71,16 +71,16 @@
           </p>
           <el-row>
             <el-col :span="13">
-              <p>登录名称</p>
+              <p><span class="star">*</span>登录名称</p>
             </el-col>
             <el-col :span="10">
-              <p>显示名称</p>
+              <p><span class="star">*</span>显示名称</p>
             </el-col>
           </el-row>
           <el-row v-for="(item,index) in newLenArray" :key="index" class="mb10">
             <el-col :span="13">
               <el-input v-model="subdata[index].loginname" placeholder class="el-input--addwrapper">
-                <span slot="suffix">@123456213151121551.onali.com</span>
+                <!-- <span slot="suffix">@123456213151121551.onali.com</span> -->
               </el-input>
             </el-col>
             <el-col :span="10">
@@ -202,11 +202,11 @@ export default {
           label: "用户登陆名称",
           index: 1
         },
-        {
-          value: "AccessKeyID",
-          label: "AccessKeyID",
-          index: 2
-        }
+        // {
+        //   value: "AccessKeyID",
+        //   label: "AccessKeyID",
+        //   index: 2
+        // }
       ],
       columns: [
         {
@@ -214,8 +214,8 @@ export default {
           val: "name"
         },
         {
-          label: "备注",
-          val: "remark"
+          label: "显示名称",
+          val: "dispname"
         },
         {
           label: "创建时间",
@@ -286,7 +286,7 @@ export default {
         d.forEach(item => {
           this.data.push({
             name: item.username,
-            remark: item.common ? item.common : "",
+            dispname: item.displayname ? item.displayname : "",
             createtime: item.createTime.split(" ")[0],
             userId: item.userId
           });
@@ -296,6 +296,11 @@ export default {
       });
     },
     handleIconClick() {
+      let s = this.input;
+      this.tableData = this.data.filter(item=>{
+        return item.name.indexOf(s)>-1 || item.dispname.indexOf(s)>-1
+      });
+      this.totalNums = this.tableData.length;
       return;
     },
     showoverlay() {
@@ -303,6 +308,7 @@ export default {
     },
     // back last level
     back() {
+      this.getAllTableData();
       this.isadd = false;
     },
     // autodel
@@ -349,7 +355,7 @@ export default {
             d.forEach(item => {
               acessData.push({
                 name: item.groupName,
-                remark: item.common ? item.common : "",
+                dispname: item.displayname ? item.displayname : "",
                 userId: item.groupId
               });
             });
@@ -363,6 +369,15 @@ export default {
       });
     },
     createUser() {
+
+      if(!this.subdata[0].loginname || !this.subdata[0].dispname){
+          this.$message({
+            type: "error",
+            message: "创建用户失败！",
+            duration: 1500
+          });
+          return;
+        }
       const data = {
         access_token: this.access_token,
         ownerId: this.userId,
@@ -372,10 +387,11 @@ export default {
       };
 
       createUserChild(data, res => {
+
         if (res.data == 1) {
           this.$message({
             type: "success",
-            message: "创建组成功！",
+            message: "创建用户成功！",
             duration: 1500
           });
         }
@@ -384,7 +400,7 @@ export default {
         if (res.data != 1) {
           this.$message({
             type: "error",
-            message: "创建组失败！",
+            message: "创建用户失败！",
             duration: 1500
           });
         }
@@ -495,6 +511,10 @@ export default {
     }
     .footer {
       margin-top: 10px;
+    }
+    .star {
+      color: #f15533;
+      margin-right: 4px;
     }
   }
 }

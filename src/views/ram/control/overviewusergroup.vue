@@ -72,7 +72,7 @@
     >
       <el-scrollbar slot="body" class="popaside">
         <div>
-          <el-form :rules="rule1" ref="form1" status-icon style="margin:auto 30px;">
+          <el-form :model="rules" :rules="rule1" ref="form1" status-icon style="margin:auto 30px;">
             <el-form-item label prop="usergroupname">
               <p>
                 <span class="star">*</span>用户组名称
@@ -87,7 +87,7 @@
               <el-input type="text" v-model="rules.dispname" autocomplete="off"></el-input>
               <p class="useroverlay-font--default">最大长度24个字符或汉字</p>
             </el-form-item>-->
-            <el-form-item>
+            <el-form-item prop="remark">
               <p>备注</p>
               <el-input type="textarea" v-model="rules.remark"></el-input>
               <p class="useroverlay-font--default">最大长度128个字符</p>
@@ -147,14 +147,21 @@ export default {
   props: ["recement"],
   data() {
     var checkgroup = function(rule, value, callback) {
+      let reg = /[\da-zA-Z-]+/;
       if (value === "") {
         callback(new Error("不能为空"));
       }
+      if(value.length > 64){
+        callback(new Error("不能超过64个字符"));
+      }
+      if(!reg.test(value)){
+        callback(new Error("不符合要求"));
+      }
       callback();
     };
-    var checkdispname = function(rule, value, callback) {
-      if (value === "") {
-        callback(new Error("不能为空"));
+    var remarks = function(rule, value, callback) {
+      if (value != "" && value.length > 128) {
+        callback(new Error("超过最大字符数"));
       }
       callback();
     };
@@ -200,12 +207,8 @@ export default {
         usergroupname: [
           { validator: checkgroup, required: true, trigger: ["blur", "change"] }
         ],
-        dispname: [
-          {
-            validator: checkdispname,
-            required: true,
-            trigger: ["blur", "change"]
-          }
+        remark: [
+          { validator: remarks, trigger: ["blur","change"]}
         ]
       },
       isaddperm: true,
@@ -251,7 +254,7 @@ export default {
         d.forEach(item => {
           this.data.push({
             name: item.groupName,
-            remark: item.common ? item.common : "",
+            remark: item.comment ? item.comment : "",
             createtime: item.createTime.split(" ")[0],
             userId: item.user_id,
             groupId: item.groupId
@@ -323,7 +326,7 @@ export default {
             d.forEach(item => {
               acessData.push({
                 name: item.username,
-                remark: item.common ? item.common : "",
+                remark: item.comment ? item.comment : "",
                 userId: item.userId
               });
             });
@@ -337,11 +340,18 @@ export default {
       });
     },
     createUsergroup() {
+      if(!this.usergroupname){
+        this.$message({
+          type:"error",
+          message:"请完成组名"
+        })
+        return false;
+      }
       let data = {
         access_token: this.access_token,
         ownerId: this.userId,
         groupName: this.rules.usergroupname,
-        common: this.rules.remark
+        comment: this.rules.remark
       };
       createUsergroupChild(data, res => {
         if (res.data == 1) {

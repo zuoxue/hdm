@@ -117,10 +117,6 @@
         </el-scrollbar>
       </el-main>
     </el-container>
-    <!-- <useroverlay :title="overlayTitle" :isclose="isclose" :width="width">
-      <component :is=""></component> <!--显示不同的按钮跳转组件-->
-    <!-- </useroverlay>  -->
-
   </div>
 </template>
 

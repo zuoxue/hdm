@@ -155,12 +155,12 @@ export default {
               index: "2-2",
               name: "用户",
               tag: "overviewuser"
-            },
-            {
-              index: "2-3",
-              name: "设置",
-              tag: "overviewsetting"
             }
+            // {
+            //   index: "2-3",
+            //   name: "设置",
+            //   tag: "overviewsetting"
+            // }设置模块暂时不用
           ]
         },
         {
@@ -200,17 +200,16 @@ export default {
       width: "400px",
       recement: "概览",
       tagmenu: "overviewMain",
-      defaultMenu:[1]
+      defaultMenu: [1]
     };
   },
-  mounted (){
-    this.$bus.$on("triggerMenu",(index, tag, name)=>{
+  mounted() {
+    this.$bus.$on("triggerMenu", (index, tag, name) => {
       var t = index.split("-")[0];
       this.switchmenu(index, tag, name);
-      this.defaultMenu = [t]
-      localStorage.setItem('triggerComp',tag);
+      this.defaultMenu = [t];
+      localStorage.setItem("triggerComp", tag);
     });
-
   },
   components: {
     useroverlay,
@@ -230,7 +229,7 @@ export default {
       this.recement = name;
     }
   },
-  beforeDestroyed (){
+  beforeDestroyed() {
     this.$bus.$off("triggerMenu");
   }
 };
@@ -250,7 +249,7 @@ export default {
   height: 100%;
   .el-scrollbar {
     /deep/ .el-scrollbar__wrap {
-      overflow-x:hidden;
+      overflow-x: hidden;
     }
   }
   .active {

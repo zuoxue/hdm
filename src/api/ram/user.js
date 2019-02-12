@@ -1,5 +1,4 @@
 import request from "axios"
-
 // 创建子账号
 export async function createUserChild(query, callback) {
   var d = await request({
@@ -86,4 +85,13 @@ export async function submitMethod(data, query, callback) {
     data: query
   });
   callback(d);
+}
+
+export async function modifyPass(data, callback) {
+  var d = await request({
+    url: `/ram/userRam/updatePassword/${data.userId}/${data.password}`,
+    method: "POST",
+    data: {}
+  });
+  callback(d)
 }

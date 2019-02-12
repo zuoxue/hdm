@@ -57,7 +57,7 @@
       </el-col>
     </el-row>
 
-     <useroverlay :title="overlayTitle" :isclose.sync="isclose" :width="width" style="height:100vh;">
+    <useroverlay :title="overlayTitle" :isclose.sync="isclose" :width="width" style="height:100vh;">
       <div slot="body" class="popaside">
         <updatedomain :isclose.sync="isclose"></updatedomain>
         <!--域名更新 -->
@@ -65,7 +65,11 @@
     </useroverlay>
 
     <!-- overlay 新建用户组 -->
-    <useroverlay :title="overlayTitle" :isclose.sync="entryList[pos][currentComponent]" :width="width">
+    <useroverlay
+      :title="overlayTitle"
+      :isclose.sync="entryList[pos][currentComponent]"
+      :width="width"
+    >
       <el-scrollbar slot="body" class="popaside">
         <div>
           <components :is="currentComponent" :isclose.sync="entryList[pos][currentComponent]"></components>
@@ -79,9 +83,10 @@
 <script>
 import useroverlay from "@/page/user/useroverlay";
 import updatedomain from "./overviewsetting/updatedomain";
-import addusergroup from "./overviewaddperm/addusergroup";
+// import addusergroup from "./overviewaddperm/addusergroup";
 import addPerm from "./overviewaddperm/addPerm";
 import authNew from "./overviewauth/authNew";
+import newUsergroup from "./overviewusermanage/newUsergroup";
 
 export default {
   name: "",
@@ -146,81 +151,81 @@ export default {
           show: false,
           name: "新建用户组",
           index: 1,
-          width:'800px'
+          width: "800px"
         },
         {
           show: false,
           name: "新建用户",
           index: 2,
-          width:'800px'
+          width: "800px"
         },
         {
           show: false,
           name: "添加授权",
           index: 3,
-          width:'800px'
+          width: "800px"
         },
         {
           show: false,
           name: "新建用户自定义策略",
           index: 4,
-          width:'800px'
+          width: "800px"
         },
         {
           show: false,
           name: "修改RAM角色",
           index: 5,
-          width:'800px'
+          width: "800px"
         },
         {
           show: false,
           name: "新建应用",
           index: 6,
-          width:'800px'
+          width: "800px"
         }
       ], //快速入口列表
       url: "https://signin.aliyun.com/1424731304604773.onaliyun.com/login.htm",
       clippercontent: "",
-      isclose:true,
-      overlayTitle:'更新域名',
-      width:"400px",
-      pos:0,
-      entryList:[
+      isclose: true,
+      overlayTitle: "更新域名",
+      width: "400px",
+      pos: 0,
+      entryList: [
         {
-          'addusergroup':true,
-          "name":"addusergroup"
+          newUsergroup: true,
+          name: "newUsergroup"
         },
         {
-          'adduser':true,
-          'name':'adduser'
+          adduser: true,
+          name: "adduser"
         },
         {
-          'addPerm':true,
-          'name':'addPerm'
+          addPerm: true,
+          name: "addPerm"
         },
         {
-          'addPerm':true,
-          'name':'addPerm'
+          addPerm: true,
+          name: "addPerm"
         },
         {
-          'addPerm':true,
-          'name':'addPerm'
+          addPerm: true,
+          name: "addPerm"
         },
         {
-          'authNew':true,
-          'name':'authNew'
+          authNew: true,
+          name: "authNew"
         }
       ],
-      currentComponent:'addusergroup'
+      currentComponent: "newUsergroup"
     };
   },
-  created (){
-    document.addEventListener("keyup",(ev)=>{
-      if(ev.keyCode == 27){
+  created() {
+    document.addEventListener("keyup", ev => {
+      if (ev.keyCode == 27) {
         this.entryList[this.pos][this.currentComponent] = true;
       }
       return;
-    })
+    });
   },
   methods: {
     onCopy() {
@@ -229,35 +234,38 @@ export default {
     onError() {
       this.clippercontent = "复制失败";
     },
-    selentry(index,item) {
+    selentry(index, item) {
       // this.$emit("selentry",this.btns.comp)
-      var arr = [0,2,5];
-      if(arr.includes(index)){
+      var arr = [0, 2, 5];
+      if (arr.includes(index)) {
         const name = this.entryList[index]["name"];
         this.currentComponent = name;
         this.entryList[index][name] = false;
         this.pos = index;
-        this.overlayTitle = item.name
-        this.width = item.width
+        this.overlayTitle = item.name;
+        this.width = item.width;
         return;
       }
-      if(index == 1){
-        this.$bus.$emit("triggerMenu",'2-2','overviewuser','用户');//新建用户不是单独组件，需特殊处理
+      if (index == 1) {
+        this.$bus.$emit("triggerMenu", "2-2", "overviewuser", "用户"); //新建用户不是单独组件，需特殊处理
       }
-      if(index == 3) {
-        this.$bus.$emit("triggerMenu",'3-2','overviewregmanage','权限策略管理');//权限策略管理不是单独组件，需特殊处理
+      if (index == 3) {
+        this.$bus.$emit(
+          "triggerMenu",
+          "3-2",
+          "overviewregmanage",
+          "权限策略管理"
+        ); //权限策略管理不是单独组件，需特殊处理
       }
-
-
     },
     updatedomain() {
       this.isclose = false;
     }
   },
-  components:{
+  components: {
     useroverlay,
     updatedomain,
-    addusergroup,
+    newUsergroup,
     addPerm,
     authNew
   }

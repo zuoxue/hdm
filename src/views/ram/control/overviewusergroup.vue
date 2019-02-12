@@ -151,10 +151,10 @@ export default {
       if (value === "") {
         callback(new Error("不能为空"));
       }
-      if(value.length > 64){
+      if (value.length > 64) {
         callback(new Error("不能超过64个字符"));
       }
-      if(!reg.test(value)){
+      if (!reg.test(value)) {
         callback(new Error("不符合要求"));
       }
       callback();
@@ -207,9 +207,7 @@ export default {
         usergroupname: [
           { validator: checkgroup, required: true, trigger: ["blur", "change"] }
         ],
-        remark: [
-          { validator: remarks, trigger: ["blur","change"]}
-        ]
+        remark: [{ validator: remarks, trigger: ["blur", "change"] }]
       },
       isaddperm: true,
       isaddusergroup: true,
@@ -340,11 +338,11 @@ export default {
       });
     },
     createUsergroup() {
-      if(!this.usergroupname){
+      if (!this.rules.usergroupname) {
         this.$message({
-          type:"error",
-          message:"请完成组名"
-        })
+          type: "error",
+          message: "请完成组名"
+        });
         return false;
       }
       let data = {

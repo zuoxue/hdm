@@ -49,6 +49,7 @@
             <template slot-scope="scope">
               <el-button type="text" @click="addusergroup(scope.row)">添加到用户组</el-button>
               <el-button type="text" @click="addPerm(scope.row)">添加权限</el-button>
+              <el-button type="text" @click="modifyPassword(scope.row)">修改密码</el-button>
               <el-button type="text" @click="deleteuser(scope.row)">删除</el-button>
             </template>
           </el-table-column>
@@ -71,10 +72,14 @@
           </p>
           <el-row>
             <el-col :span="13">
-              <p><span class="star">*</span>登录名称</p>
+              <p>
+                <span class="star">*</span>登录名称
+              </p>
             </el-col>
             <el-col :span="10">
-              <p><span class="star">*</span>显示名称</p>
+              <p>
+                <span class="star">*</span>显示名称
+              </p>
             </el-col>
           </el-row>
           <el-row v-for="(item,index) in newLenArray" :key="index" class="mb10">
@@ -171,6 +176,13 @@
         </div>
       </el-scrollbar>
     </useroverlay>
+
+    <!-- 修改密码  -->
+    <useroverlay :title="overlayTitle" :isclose.sync="ismodifypass" :width="width">
+      <div slot="body">
+        <modifyPass :isclose.sync="ismodifypass" :userId="userIdunique"/>
+      </div>
+    </useroverlay>
   </div>
 </template>
 
@@ -178,6 +190,8 @@
 import useroverlay from "@/page/user/useroverlay";
 import addPerm from "./overviewaddperm/addPerm";
 import addusergroup from "./overviewaddperm/addusergroup";
+import modifyPass from "./overviewusermanage/modifyPass";
+
 import {
   createUserChild,
   getAllUserChild,
@@ -201,7 +215,7 @@ export default {
           value: "用户登陆名称",
           label: "用户登陆名称",
           index: 1
-        },
+        }
         // {
         //   value: "AccessKeyID",
         //   label: "AccessKeyID",
@@ -247,13 +261,15 @@ export default {
       totalNums: 0,
       usergroupdata: [],
       seluserId: "",
+      userIdunique: "",
       selData: [],
       userdata: [],
       submitAddress: "/groupUser/saveGroupUserList",
       infos: {
         title: "用户",
         header: "用户组"
-      }
+      },
+      ismodifypass: true
     };
   },
   created() {
@@ -297,8 +313,8 @@ export default {
     },
     handleIconClick() {
       let s = this.input;
-      this.tableData = this.data.filter(item=>{
-        return item.name.indexOf(s)>-1 || item.dispname.indexOf(s)>-1
+      this.tableData = this.data.filter(item => {
+        return item.name.indexOf(s) > -1 || item.dispname.indexOf(s) > -1;
       });
       this.totalNums = this.tableData.length;
       return;
@@ -369,15 +385,14 @@ export default {
       });
     },
     createUser() {
-
-      if(!this.subdata[0].loginname || !this.subdata[0].dispname){
-          this.$message({
-            type: "error",
-            message: "创建用户失败！",
-            duration: 1500
-          });
-          return;
-        }
+      if (!this.subdata[0].loginname || !this.subdata[0].dispname) {
+        this.$message({
+          type: "error",
+          message: "创建用户失败！",
+          duration: 1500
+        });
+        return;
+      }
       const data = {
         access_token: this.access_token,
         ownerId: this.userId,
@@ -387,7 +402,6 @@ export default {
       };
 
       createUserChild(data, res => {
-
         if (res.data == 1) {
           this.$message({
             type: "success",
@@ -421,12 +435,20 @@ export default {
       deleteUserChild(d, query, res => {
         this.getAllTableData();
       });
+    },
+    modifyPassword(row) {
+      this.overlayTitle = "修改密码";
+      this.width = "400px";
+      this.ismodifypass = false;
+      this.userIdunique = row.userId;
+      return;
     }
   },
   components: {
     addPerm,
     useroverlay,
-    addusergroup
+    addusergroup,
+    modifyPass
   },
   computed: {
     ...mapGetters(["access_token", "userId"]),

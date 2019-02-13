@@ -65,7 +65,7 @@
         </div>
       </el-tab-pane>
     </el-tabs>
-    <div class="f-plus--null" @click="addTab" v-else>
+    <div class="f-plus--null el-button--primary" @click="addTab" v-else>
       <div>
         <i class="el-icon-plus"></i>
       </div>
@@ -256,7 +256,7 @@ export default {
   width: 120px;
   // box-shadow: 5px 5px 5px 1px #ccc, -5px -5px 5px 1px #ccc;
   border-radius: 50%;
-  background: rgb(10, 156, 255);
+  // background: rgb(10, 156, 255);
   color: #fff;
   font-weight: 400;
   margin-top: 50%;

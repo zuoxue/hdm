@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="modifyPass-wrapper">
     <el-form :model="passList" :rules="rule1" label-width="80px">
       <el-form-item prop="newpass" label="新密码">
         <el-input placeholder="请输入密码" v-model="passList.newpass" size="small" type="password"></el-input>
@@ -111,4 +111,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.modifyPass-wrapper {
+  padding-left: 10px;
+  text-align: center;
+  margin-top: 30px;
+}
 </style>

@@ -87,6 +87,7 @@ export async function submitMethod(data, query, callback) {
   callback(d);
 }
 
+// 对子账户的密码修改
 export async function modifyPass(data, callback) {
   var d = await request({
     url: `/ram/userRam/updatePassword/${data.userId}/${data.password}`,

@@ -61,7 +61,7 @@
           </el-col>
         </el-row>
         <div class="f-footer">
-          <el-button type="success" size="small">send</el-button>
+          <el-button type="primary" size="small">send</el-button>
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -81,7 +81,7 @@
         </el-col>
       </el-row>
       <div slot="footer" style="text-align:center;">
-        <el-button type="success" size="small" @click="confirmAddress">确定</el-button>
+        <el-button type="primary" size="small" @click="confirmAddress">确定</el-button>
       </div>
     </el-dialog>
   </div>

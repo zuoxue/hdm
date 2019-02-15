@@ -35,6 +35,7 @@ axios.interceptors.request.use(config => {
     config.data = serialize(config.data)
     delete config.data.serialize
   }
+
   return config
 }, error => {
   return Promise.reject(error)

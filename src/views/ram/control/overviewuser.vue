@@ -438,7 +438,7 @@ export default {
     },
     modifyPassword(row) {
       this.overlayTitle = "修改密码";
-      this.width = "400px";
+      // this.width = "400px";
       this.ismodifypass = false;
       this.userIdunique = row.userId;
       return;

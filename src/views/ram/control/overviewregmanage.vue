@@ -21,8 +21,8 @@
           @click="showoverlay"
         >新建权限策略</el-button>
         <div class="usergroup-section--s-input">
-          <el-input v-model="input">
-            <i class="el-icon-search" slot="suffix" @click="handleIconClick" placeholder="输入策略名或备注"></i>
+          <el-input v-model="input" placeholder="输入策略名或备注" @input="handleIconClick">
+            <i class="el-icon-search" slot="suffix" @click="handleIconClick"></i>
           </el-input>
         </div>
         <div class="usergroup-section--s-select">
@@ -39,7 +39,7 @@
       </section>
 
       <section v-if="!isadd">
-        <el-table :data="data" style="width:100%;">
+        <el-table :data="selData" style="width:100%;">
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column
             v-for="(col,index) in columns"
@@ -47,7 +47,24 @@
             :prop="col.val"
             :label="col.label"
           ></el-table-column>
+          <el-table-column label="启用">
+            <template slot-scope="scope">
+              <el-switch
+                v-model="allstatus[scope.row.index]"
+                @change="changeStatus($event,scope.row.id)"
+              ></el-switch>
+            </template>
+          </el-table-column>
         </el-table>
+        <div class="pager" v-if="selPageAll>pagesizeSel">
+          <el-pagination
+            layout="prev, pager, next,total"
+            :total="selPageAll"
+            :page-size="pagesizeSel"
+            :current-page="currentPageSel"
+            @current-change="changeSelPage"
+          ></el-pagination>
+        </div>
       </section>
       <div v-if="isadd">
         <section class="overviewuser-new">
@@ -62,12 +79,16 @@
                 <el-input v-model="regremark"></el-input>
               </div>
               <div>
+                <p>策略版本</p>
+                <el-input v-model.number="version" placeholder="请填写版本号" ref="version"></el-input>
+              </div>
+              <!-- <div>
                 <p>配置模式</p>
                 <el-radio-group v-model="assettype">
                   <el-radio label="first">可视化配置</el-radio>
                   <el-radio label="second">脚本配置</el-radio>
                 </el-radio-group>
-              </div>
+              </div>-->
               <div>
                 <p>策略内容</p>
                 <el-button type="primary" size="small" @click="showAuth">添加授权语句</el-button>
@@ -83,12 +104,26 @@
                   :prop="item.prop"
                   :label="item.name"
                 ></el-table-column>
+                <el-table-column label="操作">
+                  <template slot-scope="scope" v-if="scope.row.handle">
+                    <el-button type="text" size="small" @click="getRowData(scope.row)">编辑</el-button>
+                  </template>
+                </el-table-column>
               </el-table>
             </el-col>
           </el-row>
         </section>
+        <section class="pager" v-if="totalsize>pagesize">
+          <el-pagination
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-size="pagesize"
+            layout="prev, pager, next, total"
+            :total="totalsize"
+          ></el-pagination>
+        </section>
         <section class="footer">
-          <el-button type="primary" size="small">确认</el-button>
+          <el-button type="primary" size="small" @click="createPolicy">确认</el-button>
           <el-button @click="back">取消</el-button>
         </section>
       </div>
@@ -97,7 +132,7 @@
     <useroverlay :title="overlayTitle" :isclose.sync="showside" :width="width">
       <el-scrollbar slot="body" class="popaside">
         <div>
-          <author-module :isclose.sync="showside"></author-module>
+          <author-module :isclose.sync="showside" :version="version" :editList="editList"></author-module>
         </div>
       </el-scrollbar>
     </useroverlay>
@@ -107,6 +142,14 @@
 <script>
 import useroverlay from "@/page/user/useroverlay";
 import authorModule from "./overviewaddperm/authorModule";
+import {
+  getVersion,
+  getAllAuth,
+  createRamPolicy,
+  getALlPolicys,
+  modifyPolicyStatus
+} from "@/api/ram/strategy";
+import { mapGetters } from "vuex";
 
 export default {
   name: "overviewregmanage",
@@ -141,20 +184,20 @@ export default {
         },
         {
           label: "备注",
-          val: "remark"
+          val: "comment"
         },
         {
           label: "策略类型",
-          val: "regtype"
-        },
-        {
-          label: "被引用次数",
-          val: "cite"
-        },
-        {
-          label: "操作",
-          val: "handle"
+          val: "type"
         }
+        // {
+        //   label: "被引用次数",
+        //   val: "cite"
+        // },
+        // {
+        //   label: "操作",
+        //   val: "handle"
+        // }
       ],
       authorheader: [
         {
@@ -168,28 +211,30 @@ export default {
           prop: "service"
         },
         {
-          name: "操作名称",
-          index: 2,
-          prop: "hname"
-        },
-        {
           name: "资源",
-          index: 3,
+          index: 2,
           prop: "resource"
         },
         {
-          name: "限制条件",
-          index: 4,
-          prop: "restrict"
-        },
-        {
-          name: "操作",
-          index: 5,
-          prop: "handle"
+          name: "版本",
+          index: 3,
+          prop: "version"
         }
+        // {
+        //   name: "操作",
+        //   index: 4,
+        //   prop: "handle"
+        // }
       ],
       authordata: [],
+      allData: [],
       data: [],
+      selData: [],
+      tempData: [],
+      selPageAll: 0,
+      currentPageSel: 1,
+      pagesizeSel: 2,
+
       overlayTitle: "添加授权语句",
       isclose: true,
       showside: true,
@@ -209,7 +254,14 @@ export default {
       regname: "",
       regremark: "",
       assettype: "",
-      width: "620px"
+      width: "620px",
+      version: "",
+      currentPage: 1,
+      pagesize: 7,
+      totalsize: 0,
+      isinsert: false,
+      editList: {},
+      allstatus: []
     };
   },
   components: {
@@ -229,19 +281,88 @@ export default {
       true
     );
   },
-  mounted (){
+  mounted() {
     const t = localStorage.getItem("triggerComp") || null;
-    if(t && t == "overviewregmanage") {
+    if (t && t == "overviewregmanage") {
       this.isadd = true;
     }
+    // var vm = this;
     // localStorage.removeItem("triggerComp");
+    this.getallpolicys();
   },
   methods: {
+    // 获取所有策略
+    getallpolicys() {
+      let query = {
+        owner_id: this.userId
+      };
+      this.allstatus = [];
+      getALlPolicys({}, query, res => {
+        let vm = this;
+        this.data = res.data.data.map(function(item, index) {
+          if (item.type == 0) {
+            item.type = "系统策略";
+          } else {
+            item.type = "自定义策略";
+          }
+          item["index"] = index;
+          vm.allstatus.push(item.status == 1 ? true : false); //修改switch状态
+          return item;
+        });
+        this.tempData = this.data;
+        this.selData = this.tempData.slice(0, this.pagesizeSel);
+        this.selPageAll = this.tempData.length;
+      });
+    },
+    //策略搜索
     handleIconClick() {
+      this.tempData = this.data.filter(item => {
+        if (
+          item.name.indexOf(this.input) != -1 ||
+          item.comment.indexOf(this.input) != -1
+        ) {
+          return item;
+        }
+      });
+      this.selData = this.tempData.slice(0, this.pagesizeSel);
+      this.selPageAll = this.tempData.length;
+      this.currentPageSel = 1;
       return;
     },
     showoverlay() {
+      this.getallauth();
       this.isadd = true;
+    },
+    //获取所有权限语句
+    getallauth() {
+      getAllAuth({}, res => {
+        let data = res.data;
+        let start = 0;
+        let end = start + this.pagesize;
+        this.allData = [];
+        if (data) {
+          let maxVersion = Math.max.apply(
+            null,
+            data.map(function(item) {
+              return item.version * 1;
+            })
+          );
+          data.forEach(item => {
+            this.allData.push({
+              policyId: item.policyId,
+              validty: item.effect == 0 ? "允许" : "拒绝",
+              service: JSON.parse(item.action).join("、"),
+              resource: JSON.parse(item.resourcePrinciple).join("、"),
+              version: item.version,
+              handle: item.version == maxVersion ? true : false
+            });
+          });
+
+          this.authordata = this.allData.slice(start, end);
+          this.totalsize = this.allData.length;
+          this.currentPage = 1;
+        }
+      });
     },
     // back last level
     back() {
@@ -262,14 +383,139 @@ export default {
     closeInfo() {
       this.topisshow = false;
     },
-    showAuth() {
+
+    // 新建策略语句，判断版本号未使用过
+    async showAuth() {
+      let v = this.version;
+      let vs = [];
+      let reg = /^\d+$/;
+      if (v == "" || !reg.test(v)) {
+        this.$message({
+          type: "error",
+          message: "请正确填写版本号！",
+          duration: 1500
+        });
+        this.$refs.version.focus();
+        return;
+      }
+      await getVersion({}, res => {
+        if (res.data && res.data.length > 0) {
+          var data = new Promise(resolve => {
+            vs = res.data;
+            resolve(res.data);
+          });
+        }
+      });
+      if (vs.indexOf(v) > -1) {
+        this.$message({
+          type: "error",
+          message: "版本号已存在",
+          duration: 1500
+        });
+        this.$refs.version.focus();
+        return;
+      }
+      this.editList = {
+        handle: false,
+        resource: "",
+        service: "",
+        validty: "",
+        version: ""
+      }; //去除编辑状态
       this.showside = false;
+    },
+
+    // 策略语句分页变化
+    handleCurrentChange(page) {
+      this.currentPage = page;
+      let start = (page - 1) * this.pagesize;
+      let end = start + this.pagesize;
+      this.authordata = this.allData.slice(start, end);
+    },
+
+    // 策略语句进入编辑页
+    getRowData(row) {
+      this.editList = row;
+      this.showside = false;
+    },
+
+    // 新建策略
+    createPolicy() {
+      let name = this.regname;
+      let comment = this.regremark;
+      let ownerId = this.userId;
+      let createBy = this.userInfo.username;
+
+      if (name == "" || comment == "") {
+        this.$message({
+          type: "error",
+          message: "请填写信息完整"
+        });
+        return false;
+      }
+      let data = {
+        name,
+        comment,
+        createBy,
+        ownerId
+      };
+      createRamPolicy(data, res => {
+        if (res.data.data) {
+          this.$message({
+            type: "success",
+            message: "新建策略成功"
+          });
+          this.isadd = false;
+          this.regname = "";
+          this.regremark = "";
+          this.getallpolicys();
+          return;
+        }
+        this.$message({
+          type: "error",
+          message: "新建策略失败"
+        });
+        return;
+      });
+      return;
+    },
+
+    //改变策略启用状态
+    changeStatus(ev, id) {
+      let data = {
+        id: JSON.stringify(id),
+        status: ev ? "1" : "0"
+      };
+      modifyPolicyStatus(data, res => {
+        if (res.data.data) {
+          this.$message({
+            type: ev == 1 ? "success" : "info",
+            message: ev == 1 ? "已启用" : "已禁用"
+          });
+        }
+      });
+    },
+
+    // 策略分页
+    changeSelPage(page) {
+      let start = (page - 1) * this.pagesizeSel;
+      let end = page * this.pagesizeSel;
+      this.currentPageSel = page;
+      this.selData = this.tempData.slice(start, end);
     }
   },
   computed: {
+    ...mapGetters(["userId", "userInfo"]),
     newLenArray() {
       var arr = new Array(this.adduser);
       return arr;
+    }
+  },
+  watch: {
+    showside(newvalue) {
+      if (newvalue) {
+        this.getallauth();
+      }
     }
   }
 };
@@ -300,6 +546,7 @@ export default {
     }
   }
   .usergroup-article {
+    margin-bottom: 10px;
     .usergroup-section--info {
       background: #fafafa;
       border: 1px solid #e5e5e5;
@@ -343,6 +590,11 @@ export default {
           color: #262626;
         }
       }
+    }
+    .pager {
+      text-align: right;
+      margin-right: 20px;
+      margin-top: 10px;
     }
     .footer {
       margin-top: 10px;

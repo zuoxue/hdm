@@ -4,11 +4,49 @@
       <div>
         <p>权限效力</p>
         <el-radio-group v-model="authorPeriod" class="auth-radios--block">
-          <el-radio label="first">允许</el-radio>
-          <el-radio label="second">拒绝</el-radio>
+          <el-radio label="0">允许</el-radio>
+          <el-radio label="1">拒绝</el-radio>
         </el-radio-group>
       </div>
-      <div class="mb10">
+      <div>
+        <p>
+          策略版本:
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;{{version || editList.version}}</span>
+        </p>
+      </div>
+      <div>
+        <p>
+          产品服务
+          <i class="el-icon-plus plus" @click="addService"></i>
+        </p>
+        <template>
+          <el-row v-for="service in allservice" :key="service.index">
+            <el-col :span="12">
+              <el-input v-model="service.value"></el-input>
+            </el-col>
+            <el-col :span="2" v-if="service.index>0">
+              <i class="iconfont1 icon-font-close deleteIcon" @click="delService(service.index)"></i>
+            </el-col>
+          </el-row>
+        </template>
+      </div>
+      <div>
+        <p>
+          资源
+          <i class="el-icon-plus plus" @click="addresource"></i>
+        </p>
+        <template>
+          <el-row v-for="resource in allresource" :key="resource.index">
+            <el-col :span="12">
+              <el-input v-model="resource.value"></el-input>
+            </el-col>
+            <el-col :span="2" v-if="resource.index>0">
+              <i class="iconfont1 icon-font-close deleteIcon" @click="delresource(resource.index)"></i>
+            </el-col>
+          </el-row>
+        </template>
+      </div>
+      <!-- <div class="mb10">
         <p>选择产品服务</p>
         <el-select
           v-model="selService"
@@ -66,32 +104,69 @@
             <span>&nbsp;&nbsp;添加限制条件</span>
           </a>
         </p>
-      </div>
+      </div>-->
     </el-form>
     <div slot="footer" class="useroverlay-footer">
-      <el-button type="plain" size="small" class="confirm">确定</el-button>
+      <el-button type="plain" size="small" class="confirm" @click="submitAuth">确定</el-button>
       <el-button type="plain" size="small" @click="close">关闭</el-button>
     </div>
   </div>
 </template>
 
 <script>
+import { addAuthParam, updateAuthParam } from "@/api/ram/strategy";
 export default {
   name: "authorModule",
   data() {
     return {
-      authorPeriod: "",
+      authorPeriod: this.isobjbull()
+        ? ""
+        : this.editList.validty == "允许"
+        ? "0"
+        : "1",
       selService: "",
       options: ["ECS", "SLB", "RDS", "VPC", "Redis"],
       handleName: "",
       source: "",
       res_conditions: [],
       res_keys: ["ace:currentTime", "ace:currentTime"],
-      res_words: ["StringEquals"]
+      res_words: ["StringEquals"],
+      allservice: this.isobjbull()
+        ? [
+            {
+              index: 0,
+              value: ""
+            }
+          ]
+        : this.switchData(this.editList.service),
+      allresource: this.isobjbull()
+        ? [
+            {
+              index: 0,
+              value: ""
+            }
+          ]
+        : this.switchData(this.editList.resource)
     };
   },
-  props: ["isclose"],
+  props: ["isclose", "version", "editList"],
   methods: {
+    isobjbull() {
+      return this.editList.version == "" ? true : false;
+    },
+    switchData(d) {
+      let obj = [];
+      let index = 0;
+      let ds = d.split("、");
+      console.log(ds, 111);
+      ds.forEach(function(item) {
+        obj.push({
+          index: index++,
+          value: item
+        });
+      });
+      return obj;
+    },
     close() {
       this.$emit("update:isclose", true);
     },
@@ -104,6 +179,99 @@ export default {
         resWord: "",
         resHand: ""
       });
+    },
+    addService() {
+      const index =
+        this.allservice.length == 0 ? 0 : this.allservice.length - 1;
+      const pos = this.allservice[index].index + 1;
+      this.allservice.push({
+        index: pos,
+        value: ""
+      });
+    },
+    delService(index) {
+      this.allservice.splice(index, 1);
+    },
+
+    addresource() {
+      const index =
+        this.allresource.length == 0 ? 0 : this.allresource.length - 1;
+      const pos = this.allresource[index].index + 1;
+      this.allresource.push({
+        index: pos,
+        value: ""
+      });
+    },
+    delresource(index) {
+      this.allresource.splice(index, 1);
+    },
+    submitAuth() {
+      var service = this.allservice
+        .map(function(item) {
+          if (item.value != "") {
+            return item.value;
+          }
+        })
+        .filter(function(item) {
+          return item != undefined;
+        });
+      var resource = this.allresource
+        .map(function(item) {
+          if (item.value != "") {
+            return item.value;
+          }
+        })
+        .filter(function(item) {
+          return item != undefined;
+        });
+      if (
+        service.length == 0 ||
+        resource.length == 0 ||
+        this.authorPeriod == ""
+      ) {
+        this.$message({
+          type: "error",
+          message: "请填写完整..."
+        });
+        return;
+      }
+      let data = {
+        version: this.version,
+        effect: this.authorPeriod,
+        action: JSON.stringify(service),
+        resourcePrinciple: JSON.stringify(resource)
+      };
+      console.log(this.isobjbull(), 555);
+      if (this.isobjbull()) {
+        addAuthParam(data, res => {
+          if (res.data) {
+            return;
+          }
+          this.$message({
+            type: "error",
+            message: "添加失败"
+          });
+        });
+      } else {
+        data["policyId"] = this.editList.policyId;
+        updateAuthParam(data, res => {
+          if (res.data.data) {
+            this.$message({
+              type: "success",
+              message: "修改成功"
+            });
+            this.$emit("update:isclose", true);
+            return;
+          }
+          if (!res.data.data) {
+            this.$message({
+              type: "error",
+              message: "修改失败"
+            });
+            return;
+          }
+        });
+      }
     }
   }
 };
@@ -151,16 +319,32 @@ export default {
   .el-select--service {
     width: 540px !important;
   }
+  .deleteIcon {
+    height: 38px;
+    line-height: 38px;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 400;
+    cursor: pointer;
+    padding-left: 5px;
+  }
+  .plus {
+    cursor: pointer;
+    font-weight: 600;
+    &:hover {
+      color: #37d1d3;
+    }
+  }
   .mb10 {
     margin-bottom: 16px;
-    .deleteIcon {
-      height: 38px;
-      line-height: 38px;
-      display: inline-block;
-      font-size: 14px;
-      font-weight: 400;
-      cursor: pointer;
-    }
+    // .deleteIcon {
+    //   height: 38px;
+    //   line-height: 38px;
+    //   display: inline-block;
+    //   font-size: 14px;
+    //   font-weight: 400;
+    //   cursor: pointer;
+    // }
   }
   .useroverlay-footer {
     position: absolute;

@@ -233,7 +233,7 @@ export default {
       tempData: [],
       selPageAll: 0,
       currentPageSel: 1,
-      pagesizeSel: 2,
+      pagesizeSel: 7,
 
       overlayTitle: "添加授权语句",
       isclose: true,
@@ -482,8 +482,21 @@ export default {
 
     //改变策略启用状态
     changeStatus(ev, id) {
+      // let data = {
+      //   id: JSON.stringify(id),
+      //   status: ev ? "1" : "0"
+      // };
+      // modifyPolicyStatus(data, res => {
+      //   if (res.data.data) {
+      //     this.$message({
+      //       type: ev == 1 ? "success" : "info",
+      //       message: ev == 1 ? "已启用" : "已禁用"
+      //     });
+      //   }
+      // });
+
       let data = {
-        id: JSON.stringify(id),
+        id: id,
         status: ev ? "1" : "0"
       };
       modifyPolicyStatus(data, res => {

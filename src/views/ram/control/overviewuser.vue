@@ -155,7 +155,12 @@
     <useroverlay :title="overlayTitle" :isclose.sync="isaddperm" :width="width">
       <el-scrollbar slot="body" class="popaside">
         <div>
-          <add-perm :isclose.sync="isaddperm"></add-perm>
+          <add-perm
+            :isclose.sync="isaddperm"
+            :selData="selName"
+            :userunid="userunid"
+            :selType="selType"
+          ></add-perm>
         </div>
       </el-scrollbar>
     </useroverlay>
@@ -269,7 +274,10 @@ export default {
         title: "用户",
         header: "用户组"
       },
-      ismodifypass: true
+      ismodifypass: true,
+      selName: "",
+      userunid: 0,
+      selType: 0
     };
   },
   created() {
@@ -345,6 +353,9 @@ export default {
     addPerm(row) {
       this.isaddperm = false;
       this.overlayTitle = "添加权限";
+      this.selName = row.name;
+      this.userunid = row.userId;
+      this.selType = 0;
     },
     addusergroup(row) {
       this.overlayTitle = "添加到用户组";

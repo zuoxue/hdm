@@ -1,10 +1,17 @@
 <template>
   <div class="perm-setting">
-    <el-form :rules="rule1">
+    <el-form>
       <el-form-item>
         <p>被授权主体</p>
         <!-- <el-input placeholder="请选择" size="small" v-model="roleval"></el-input> -->
-        <dropsearch></dropsearch>
+        <dropsearch v-if="!isdropmulty" :selData="selData"></dropsearch>
+        <drop-multy
+          v-else
+          :userList="userList"
+          :groupList="groupList"
+          :userval.sync="userval"
+          :groupval.sync="groupval"
+        ></drop-multy>
       </el-form-item>
       <el-form-item>
         <p>选择权限</p>
@@ -58,7 +65,7 @@
                       :span="15"
                       class="perm-aside--td"
                       :class="selectedPerm>=5&&!item.sel?'disabled':''"
-                    >{{item.remark}}</el-col>
+                    >{{item.comment}}</el-col>
                   </el-row>
                 </template>
               </el-scrollbar>
@@ -76,14 +83,19 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="useroverlay-footer">
-      <el-button type="plain" size="small" class="confirm">确定</el-button>
+      <el-button type="plain" size="small" class="confirm" @click="confirm">确定</el-button>
       <el-button type="plain" size="small" @click="close">关闭</el-button>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import dropsearch from "@/page/user/dropsearch";
+import dropMulty from "@/page/user/dropMulty";
+import { getAllUsergroupChild, getAllUserChild } from "@/api/ram/user";
+import { getALlPolicys, inserUserOrGroupPolicy } from "@/api/ram/strategy";
+
 export default {
   name: "addPerm",
   data() {
@@ -96,24 +108,89 @@ export default {
       regdata: [],
       regselList: [],
       selectedIndex: [], //选中的索引
-      ruls1: {}
+      rule1: {},
+      userList: [],
+      groupList: [],
+      userval: "",
+      groupval: "",
+      allpolicys: []
     };
   },
   created() {
-    for (var i = 0; i < 100; i++) {
-      this.regdata.push({
-        name: `AdministratorAccess${i}`,
-        remark: "管理所有阿里云资源的权限",
-        sel: false,
-        index: i
-      });
+    // for (var i = 0; i < 100; i++) {
+    //   this.regdata.push({
+    //     name: `AdministratorAccess${i}`,
+    //     remark: "管理所有阿里云资源的权限",
+    //     sel: false,
+    //     index: i
+    //   });
+    // }
+  },
+  props: {
+    isclose: {
+      type: Boolean
+    },
+    isdropmulty: {
+      type: Boolean,
+      default: false
+    },
+    selData: {
+      type: String,
+      default: ""
+    },
+    selType: {
+      type: Number,
+      default: 0
+    },
+    userunid: {
+      type: Number,
+      default: 0
     }
   },
-  props: ["isclose"],
+  computed: {
+    ...mapGetters(["userId"])
+  },
   components: {
-    dropsearch
+    dropsearch,
+    dropMulty
+  },
+  mounted() {
+    if (this.isdropmulty) {
+      this.initUserOrGroup();
+    }
+    this.getallpolicys();
   },
   methods: {
+    initUserOrGroup() {
+      let query = {
+        ownerId: this.userId * 1
+      };
+      getAllUsergroupChild(query, res => {
+        if (res.data.length > 0) {
+          this.groupList = res.data;
+        }
+      });
+      getAllUserChild(query, res => {
+        if (res.data.length > 0) {
+          this.userList = res.data;
+        }
+      });
+    },
+    getallpolicys() {
+      let query = {
+        owner_id: this.userId
+      };
+      getALlPolicys({}, query, res => {
+        if (res.data.code == 0) {
+          this.allpolicys = res.data.data;
+          this.regdata = res.data.data.map((item, index) => {
+            item.sel = false;
+            item.index = index;
+            return item;
+          });
+        }
+      });
+    },
     selToggle(item, index) {
       if (this.regselList.includes(item)) {
         this.selectedPerm--;
@@ -159,6 +236,84 @@ export default {
 
       this.regselList.splice(index, 1);
       this.selectedIndex.splice(index, 1);
+    },
+    // 提交权限
+    confirm() {
+      let data = {};
+      let url = "";
+      if (this.isdropmulty) {
+        data = {
+          uglist: [],
+          policyIds: []
+        };
+        url = "policy/inserUserOrGroupPolicy";
+        if (this.groupval == "" && this.userval == "") {
+          this.$message({
+            type: "error",
+            message: "请选中用户或用户组！"
+          });
+          return false;
+        }
+        if (this.groupval) {
+          data.uglist.push({
+            ifUserOrGroup: 1,
+            userOrGroupId: this.groupval
+          });
+        }
+        if (this.userval) {
+          data.uglist.push({
+            ifUserOrGroup: 0,
+            userOrGroupId: this.userval
+          });
+        }
+        data.policyIds = this.regselList.map(item => {
+          return item.id;
+        });
+      } else {
+        data = [];
+        if (this.selType == 0) {
+          url = "/policy/inserUser";
+          this.regselList.map(item => {
+            data.push({
+              policyId: item.id,
+              userId: this.userunid
+            });
+          });
+        } else {
+          url = "/policy/inserGroup";
+          this.regselList.map(item => {
+            data.push({
+              policyId: item.id,
+              groupId: this.userunid
+            });
+          });
+        }
+      }
+
+      if (this.regselList.length == 0) {
+        this.$message({
+          type: "error",
+          message: "请选择策略"
+        });
+        return false;
+      }
+
+      // 提交
+      inserUserOrGroupPolicy(url, data, res => {
+        if (res.data.code == 0) {
+          this.$message({
+            type: "success",
+            message: "成功添加权限"
+          });
+          this.$emit("update:isclose", true);
+        } else {
+          this.$message({
+            type: "error",
+            message: "添加权限失败"
+          });
+        }
+        return;
+      });
     }
   }
 };

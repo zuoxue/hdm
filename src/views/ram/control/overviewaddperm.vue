@@ -12,7 +12,7 @@
           @click="showoverlay"
         >新增授权</el-button>
         <div class="usergroup-section--s-select">
-          <el-select v-model="selection" placeholder="用户名">
+          <el-select v-model="selection" placeholder="被授权主体">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -22,13 +22,13 @@
           </el-select>
         </div>
         <div class="usergroup-section--s-input">
-          <el-input v-model="input">
-            <i class="el-icon-search" slot="suffix" @click="handleIconClick"></i>
+          <el-input v-model="input" @input="searchPolicys">
+            <i class="el-icon-search" slot="suffix" @click="searchPolicys"></i>
           </el-input>
         </div>
       </section>
       <section>
-        <el-table :data="data" style="width:100%;">
+        <el-table :data="selData" style="width:100%;">
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column
             v-for="(col,index) in columns"
@@ -36,7 +36,21 @@
             :prop="col.val"
             :label="col.label"
           ></el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <el-button type="primary" size="mini" @click="editPolicy(scope.row)">编辑</el-button>
+            </template>
+          </el-table-column>
         </el-table>
+      </section>
+      <section class="footer alignright">
+        <el-pagination
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-size="pagesize"
+          layout="prev, pager, next, total"
+          :total="totalsize"
+        ></el-pagination>
       </section>
     </article>
 
@@ -44,7 +58,13 @@
     <useroverlay :title="overlayTitle" :isclose.sync="isclose" :width="width">
       <el-scrollbar slot="body" class="popaside">
         <div>
-          <add-perm :isclose.sync="isclose"></add-perm>
+          <add-perm
+            :isclose.sync="isclose"
+            :isdropmulty="isdropmulty"
+            :selData="selName"
+            :selType="selType"
+            :userunid="userunid"
+          ></add-perm>
         </div>
       </el-scrollbar>
     </useroverlay>
@@ -54,6 +74,8 @@
 <script>
 import useroverlay from "@/page/user/useroverlay";
 import addPerm from "./overviewaddperm/addPerm";
+import { getPolicyGroupAndUser } from "@/api/ram/strategy";
+import { mapGetters } from "vuex";
 
 export default {
   name: "overviewaddperm",
@@ -74,33 +96,28 @@ export default {
     return {
       info:
         "通过用户组对职责相同的RAM用户进行分类并授权，可以更加高效地管理用户及其权限。对一个用户组进行授权后，用户组内的所有用户会自动继承该用户组的权限。如果一个用户被加入到多个用户组，那么该用户将会继承多个用户组的权限。",
-      selection: "",
+      selection: "1",
       input: "",
       options: [
         {
-          value: "用户名",
-          label: "用户名",
+          value: "1",
+          label: "被授权主体",
           index: 1
         },
         {
-          value: "用户组名",
-          label: "用户组名",
+          value: "2",
+          label: "策略名称",
           index: 2
-        },
-        {
-          value: "RAM角色名",
-          label: "RAM角色名",
-          index: 3
         }
       ],
       columns: [
         {
-          label: "被授权主体",
-          val: "body"
+          label: "用户类型",
+          val: "ifUserOrGroup"
         },
         {
-          label: "主题类型",
-          val: "themetype"
+          label: "被授权主体",
+          val: "userName"
         },
         {
           label: "权限策略名称",
@@ -108,18 +125,16 @@ export default {
         },
         {
           label: "权限策略类型",
-          val: "regtype"
+          val: "type"
         },
         {
           label: "备注",
-          val: "remark"
-        },
-        {
-          label: "操作",
-          val: "handle"
+          val: "comments"
         }
       ],
       data: [],
+      selData: [],
+      tempData: [],
       width: "880px",
       overlayTitle: "添加权限",
       isclose: true,
@@ -139,7 +154,14 @@ export default {
             trigger: ["blur", "change"]
           }
         ]
-      }
+      },
+      currentPage: 1,
+      pagesize: 7,
+      totalsize: 0,
+      isdropmulty: false,
+      selName: "",
+      selType: "",
+      userunid: ""
     };
   },
   created() {
@@ -155,18 +177,75 @@ export default {
       true
     );
   },
+  mounted() {
+    this.initPolicy();
+  },
   methods: {
-    handleIconClick() {
-      return;
+    // 初始化数据
+    initPolicy() {
+      let query = {
+        user_id: this.userId
+      };
+      getPolicyGroupAndUser({}, query, res => {
+        this.data = res.data.data.map(item => {
+          if (item.ifUserOrGroup) {
+            item.ifUserOrGroup = "用户组";
+          } else {
+            item.ifUserOrGroup = "子用户";
+          }
+          if (item.type) {
+            item.type = "系统策略";
+          } else {
+            item.type = "自定义策略";
+          }
+          return item;
+        });
+        this.tempData = this.data;
+        this.selData = this.tempData.slice(0, this.pagesize);
+        this.totalsize = this.tempData.length;
+      });
+    },
+    //搜索策略
+    searchPolicys() {
+      let search = this.selection == 1 ? "userName" : "name";
+      let inp = this.input.toLowerCase().trim();
+      this.tempData = this.data.filter(item => {
+        let s = item[search].toLowerCase().trim();
+        return s.indexOf(inp) >= 0;
+      });
+      this.selData = this.tempData.slice(0, this.pagesize);
+      this.totalsize = this.tempData.length;
     },
     showoverlay() {
+      this.isdropmulty = true;
       this.isclose = false;
+    },
+    handleCurrentChange(page) {
+      this.currentPage = page;
+      let start = (page - 1) * this.pagesize;
+      let end = start + this.pagesize;
+      this.selData = this.tempData.slice(start, end);
+    },
+    editPolicy(row) {
+      this.isdropmulty = false;
+      this.isclose = false;
+      this.selName = row.userName;
+      this.selType = row.ifUserOrGroup == "子用户" ? 0 : 1;
+      this.userunid = row.userId * 1;
     }
   },
 
   components: {
     useroverlay,
     addPerm
+  },
+  computed: {
+    ...mapGetters(["userId"])
+  },
+  watch: {
+    isclose() {
+      this.initPolicy();
+    }
   }
 };
 </script>

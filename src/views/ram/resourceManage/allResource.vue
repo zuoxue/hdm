@@ -5,14 +5,15 @@
         <p>资源搜索</p>
       </el-header>
       <el-main>
-        <el-form size="mini" label-width="100px" inline="true">
+        <el-form size="mini" label-width="100px" :inline="true">
           <el-form-item label="资源名称" class="resource-name">
-            <el-input v-model="searchList.name" placeholder="资源名称"></el-input>
-            <el-button>搜索</el-button>
+            <el-input v-model="searchName" placeholder="资源名称" @input="searchResouce"></el-input>
+            <el-button @click="searchResouce">搜索</el-button>
           </el-form-item>
         </el-form>
 
-        <el-table :data="resourceDict">
+        <el-table :data="resourceSel" :stripe="true" size="mini">
+          <el-table-column type="expand"></el-table-column>
           <el-table-column
             v-for="(header,index) in headers"
             :key="index"
@@ -22,95 +23,90 @@
           <el-table-column label="操作">
             <template slot-scope="scope">
               <el-button type="primary" size="mini" @click="showInfo(scope.row)">查看</el-button>
+              <el-button type="primary" size="mini" @click="allocateResource(scope.row)">分配用户</el-button>
+              <el-button
+                type="primary"
+                size="mini"
+                @click="putawayOrSold(scope.row)"
+              >{{scope.row.status==0?"下架":"上架"}}</el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-main>
       <el-footer>
         <el-pagination
-          :page-count="pageCount"
           :page-size="pageSize"
           :current-page="currentPage"
-          layout="prev,pager,next,jumper,total"
+          layout="prev,pager,next,total"
           :total="totalPages"
-          prev-text="上一页"
-          next-text="下一页"
+          @current-change="currentChange"
+          v-if="totalPages>pageSize"
         ></el-pagination>
       </el-footer>
     </el-container>
 
-    <el-container v-if="ischeck">
-      <el-header>
-        <div class="resource-check--header" @click="back">
-          <h3>
-            <i class="el-icon-arrow-left"></i>
-            {{checkRes}}
-          </h3>
-        </div>
-      </el-header>
-      <el-main>
-        <el-table :data="resourceRange" border>
-          <el-table-column
-            v-for="(header,index) in resHander"
-            :key="index"
-            :prop="header.prop"
-            :label="header.name"
-          ></el-table-column>
-          <el-table-column label="操作">
-            <template slot-scope="scope">
-              <el-button type="primary" size="mini" @click="modifyres(scope.row)">更改</el-button>
-              <el-button type="primary" size="mini" @click="deleteRes(scope.row)">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-main>
-      <el-footer>
-        <el-pagination
-          :page-count="res.count"
-          :page-size="res.size"
-          :current-page="res.currentPage"
-          layout="prev,pager,next,jumper,total"
-          :total="res.totalPages"
-          prev-text="上一页"
-          next-text="下一页"
-        ></el-pagination>
-      </el-footer>
-    </el-container>
+    <!-- 更改资源 -->
+    <el-dialog
+      :title="modifyRe.name"
+      :visible.sync="modifyRe.ismodify"
+      :append-to-body="true"
+      :show-close="true"
+      :close-on-click-modal="false"
+      width="700px"
+    >
+      <el-transfer
+        :format="{
+        noChecked: '${total}',
+        hasChecked: '${checked}/${total}'
+      }"
+        filterable
+        :data="allRes"
+        v-model="ressel"
+        filter-placeholder="请输入筛选字段"
+        :titles="['未授权人员','已授权人员']"
+      ></el-transfer>
+      <div slot="footer">
+        <el-button type="primary" size="mini" @click="confirm">确认</el-button>
+        <el-button @click="modifyRe.ismodify = false">取消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import {
+  getResourceByOwnerId,
+  updateResource,
+  getUserByNotResource,
+  getUserByResource,
+  insertResource
+} from "@/api/ram/resourceManage";
+import { mapGetters } from "vuex";
 export default {
   name: "allResource",
   data() {
     return {
-      searchList: {
-        name: ""
-      },
-      resourceDict: [
-        {
-          name: "esc",
-          access: 5
-        },
-        {
-          name: "ess",
-          access: 6
-        }
-      ],
+      searchName: "",
+      resourceDict: [],
+      resourceTemp: [],
+      resourceSel: [],
       headers: [
         {
           name: "资源",
-          prop: "name"
+          prop: "action"
         },
         {
-          name: "已分配人数",
-          prop: "access"
+          name: "服务",
+          prop: "service"
+        },
+        {
+          name: "备注",
+          prop: "comment"
         }
       ],
-      pageCount: 100,
-      pageSize: 10,
-      currentPage: 0,
-      totalPages: 10000,
+      pageSize: 5,
+      currentPage: 1,
+      totalPages: 0,
       ischeck: false,
       checkRes: "",
       resourceRange: [
@@ -133,29 +129,154 @@ export default {
           prop: "outdate"
         }
       ],
-      res: {
-        count: 100,
-        size: 10,
-        currentPage: 0,
-        totalPages: 10000
-      }
+      resPage: {
+        size: 5,
+        currentPage: 1,
+        totalPages: 0
+      },
+      modifyRe: {
+        name: "",
+        ismodify: false
+      },
+      ressel: [],
+      allRes: [],
+      allocateId: 0,
+      userResourceId: 0
     };
   },
+  mounted() {
+    this.initResource();
+  },
   methods: {
-    showInfo(info) {
-      const loading = this.$loading({
-        lock: true,
-        text: "loading"
+    initResource() {
+      let query = {
+        ownerId: this.userId
+      };
+      getResourceByOwnerId(query, {}, res => {
+        if (res.data.code == 0) {
+          this.resourceDict = res.data.data;
+          this.resourceTemp = this.resourceDict;
+          this.resourceSel = this.resourceTemp.slice(0, this.pageSize);
+          this.currentPage = 1;
+          this.totalPages = this.resourceTemp.length;
+        }
       });
-      this.ischeck = !this.ischeck;
-      this.checkRes = info.name;
-      loading.close();
+    },
+    currentChange(page) {
+      let start = (page - 1) * this.pageSize;
+      let end = page * this.pageSize;
+      this.resourceSel = this.resourceTemp.slice(start, end);
+      this.currentPage = page;
+    },
+    // 搜索资源
+    searchResouce() {
+      let sname = this.searchName.toLowerCase().trim();
+      if (sname == "") {
+        this.resourceTemp = this.resourceDict;
+        this.resourceSel = this.resourceTemp.slice(0, this.pageSize);
+        this.currentPage = 1;
+        this.totalPages = this.resourceTemp.length;
+        return;
+      }
+      this.resourceTemp = this.resourceDict.filter(item => {
+        let action = item.action.toLowerCase();
+        return action.indexOf(sname) > -1;
+      });
+      this.resourceSel = this.resourceTemp.slice(0, this.pageSize);
+      this.currentPage = 1;
+      this.totalPages = this.resourceTemp.length;
+    },
+    showInfo(info) {
+      // const loading = this.$loading({
+      //   lock: true,
+      //   text: "loading"
+      // });
+      // this.ischeck = !this.ischeck;
+      // this.checkRes = info.name;
+      // loading.close();
+      this.userResourceId = info.id;
+      this.$emit("getresource", info.id);
+    },
+    // 上下架
+    putawayOrSold(row) {
+      const data = {
+        id: row.id,
+        status: row.status == 0 ? "1" : "0",
+        parentId: row.parentId
+      };
+      updateResource(data, res => {
+        if (res.data.code == 0) {
+          this.initResource();
+        }
+      });
+    },
+    // 分配资源
+    allocateResource(row) {
+      let query = {
+        id: row.id,
+        userId: this.userId
+      };
+      this.allRes = [];
+      this.ressel = [];
+      getUserByResource(query, {}, res => {
+        if (res.data.code == 0) {
+          res.data.data.map(item => {
+            this.allRes.push({
+              key: item.userId,
+              label: item.username
+            });
+            this.ressel.push(item.userId);
+          });
+        }
+      });
+      getUserByNotResource(query, {}, res => {
+        if (res.data.code == 0) {
+          res.data.data.map(item => {
+            this.allRes.push({
+              key: item.userId,
+              label: item.username
+            });
+          });
+        }
+      });
+      this.modifyRe.name = row.action;
+      this.allocateId = row.id;
+      this.modifyRe.ismodify = true;
+    },
+    // 资源分配提交
+    confirm() {
+      let data = {
+        userIds: this.ressel,
+        id: this.allocateId
+      };
+      insertResource(data, res => {
+        if (res.data.code == 0) {
+          this.$message({
+            type: "success",
+            message: "资源授权成功"
+          });
+          this.modifyRe.ismodify = false;
+          // 如果是人员表显示，触发更新
+          if (this.userResourceId == this.allocateId && this.allocateId != 0) {
+            this.$emit("getresource", this.userResourceId);
+          }
+          return;
+        } else {
+          this.$message({
+            type: "error",
+            message: "资源授权失败"
+          });
+        }
+      });
     },
     back() {
       this.ischeck = !this.ischeck;
     },
     modifyres(info) {},
     deleteRes(info) {}
+  },
+  computed: {
+    ...mapGetters(["userId"])
   }
 };
 </script>
@@ -173,6 +294,24 @@ export default {
   }
   .resource-check--header {
     cursor: pointer;
+  }
+}
+/deep/ .el-dialog__header {
+  background: #5d5f4e;
+  .el-dialog__title {
+    color: #fff;
+  }
+}
+/deep/ .el-transfer-panel__body {
+  background: #f5f7fa;
+}
+/deep/ .el-dialog__footer {
+  text-align: center;
+}
+.el-transfer {
+  padding: 0 80px;
+  /deep/ .el-transfer-panel {
+    border-color: #ccc;
   }
 }
 </style>

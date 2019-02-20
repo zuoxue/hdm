@@ -12,7 +12,7 @@ const newmenus = {
       "label": "资源管理",
       "name": "资源管理",
       "parentId": 9000,
-      "path": "/ram/resourceMange",
+      "path": "/ram/resourceManage",
       "redirect": null,
       "sort": 1,
       "spread": false,

@@ -25,7 +25,7 @@
                   </el-select>
                 </el-col>
                 <el-col :span="18">
-                  <el-input v-model="registerval" size="small">
+                  <el-input v-model="registerval" size="small" @input="searchPolicy">
                     <div slot="suffix" class="suffix-search">
                       <i class="el-icon-search"></i>
                     </div>
@@ -101,8 +101,8 @@ export default {
   data() {
     return {
       roleval: "",
-      selval: "系统权限策略",
-      sels: ["系统权限策略", "自定义权限策略"],
+      selval: "权限策略名称",
+      sels: ["权限策略名称", "备注"],
       registerval: "",
       selectedPerm: 0,
       regdata: [],

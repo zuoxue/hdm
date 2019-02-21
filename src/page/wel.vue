@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <basic-container>
+  <div class="wel-wrapper">
+    <!-- <basic-container>
       <div class="banner-text">
         <span>
           <a href="https://avue.top/#/pay" target="_blank">
@@ -57,6 +57,30 @@
           </el-collapse>
         </span>
       </div>
+    </basic-container>-->
+    <basic-container>
+      <!-- <el-row>
+        <el-col :xl="6" :lg="5" :md="4" :sm="3" :xs="2" v-for="(d,index) in allData" :key="index">
+
+        </el-col>
+      </el-row>-->
+      <div class="wel-container">
+        <el-card
+          :body-style="bodyStyle"
+          class="el-card--autoinfo"
+          v-for="(d,index) in allData"
+          :key="index"
+        >
+          <img :src="d.img" :alt="d.name">
+          <p>{{d.name}}</p>
+          <p class="card-mode">{{d.mode}}</p>
+          <p>使用人数({{d.num}})</p>
+          <div class="card-type">{{d.type}}</div>
+          <div class="card-mt">
+            <p v-for="fun in d.methods" :key="fun">{{fun}}</p>
+          </div>
+        </el-card>
+      </div>
     </basic-container>
     <div>
       <p @click="debug=!debug">
@@ -81,78 +105,95 @@
 import { mapGetters } from "vuex";
 import useroverlay from "@/page/user/useroverlay";
 import autoDebug from "@/page/user/autoDebug";
+import { wels } from "@/const/mockmenu/wel";
 
 export default {
   name: "wel",
   data() {
     return {
-      activeNames: ["1", "2", "3", "4"],
-      DATA: [],
-      text: "",
-      actor: "",
-      count: 0,
-      isText: false,
+      // activeNames: ["1", "2", "3", "4"],
+      // DATA: [],
+      // text: "",
+      // actor: "",
+      // count: 0,
+      // isText: false,
 
       overlayTitle: "自动调试",
       width: "900px",
-      debug: true
+      debug: true,
+      bodyStyle: {
+        padding: "5px",
+        "text-align": "center",
+        "font-size": "14px",
+        margin: "5px"
+      }
     };
   },
   computed: {
-    ...mapGetters(["website"])
+    ...mapGetters(["website"]),
+    allData() {
+      let d = [];
+      for (var i = 0; i < 100; i++) {
+        d.push(wels[0]);
+      }
+      return d;
+    }
   },
   components: {
     useroverlay,
     autoDebug
   },
+  mounted() {
+    console.log(wels, 111);
+  },
   methods: {
-    getData() {
-      if (this.count < this.DATA.length - 1) {
-        this.count++;
-      } else {
-        this.count = 0;
-      }
-      this.isText = true;
-      this.actor = this.DATA[this.count];
-    },
-    setData() {
-      let num = 0;
-      let count = 0;
-      let active = false;
-      let timeoutstart = 5000;
-      let timeoutend = 1000;
-      let timespeed = 10;
-      setInterval(() => {
-        if (this.isText) {
-          if (count == this.actor.length) {
-            active = true;
-          } else {
-            active = false;
-          }
-          if (active) {
-            num--;
-            this.text = this.actor.substr(0, num);
-            if (num == 0) {
-              this.isText = false;
-              setTimeout(() => {
-                count = 0;
-                this.getData();
-              }, timeoutend);
-            }
-          } else {
-            num++;
-            this.text = this.actor.substr(0, num);
-            if (num == this.actor.length) {
-              this.isText = false;
-              setTimeout(() => {
-                this.isText = true;
-                count = this.actor.length;
-              }, timeoutstart);
-            }
-          }
-        }
-      }, timespeed);
-    }
+    // getData() {
+    //   if (this.count < this.DATA.length - 1) {
+    //     this.count++;
+    //   } else {
+    //     this.count = 0;
+    //   }
+    //   this.isText = true;
+    //   this.actor = this.DATA[this.count];
+    // },
+    // setData() {
+    //   let num = 0;
+    //   let count = 0;
+    //   let active = false;
+    //   let timeoutstart = 5000;
+    //   let timeoutend = 1000;
+    //   let timespeed = 10;
+    //   setInterval(() => {
+    //     if (this.isText) {
+    //       if (count == this.actor.length) {
+    //         active = true;
+    //       } else {
+    //         active = false;
+    //       }
+    //       if (active) {
+    //         num--;
+    //         this.text = this.actor.substr(0, num);
+    //         if (num == 0) {
+    //           this.isText = false;
+    //           setTimeout(() => {
+    //             count = 0;
+    //             this.getData();
+    //           }, timeoutend);
+    //         }
+    //       } else {
+    //         num++;
+    //         this.text = this.actor.substr(0, num);
+    //         if (num == this.actor.length) {
+    //           this.isText = false;
+    //           setTimeout(() => {
+    //             this.isText = true;
+    //             count = this.actor.length;
+    //           }, timeoutstart);
+    //         }
+    //       }
+    //     }
+    //   }, timespeed);
+    // }
   }
 };
 </script>
@@ -205,6 +246,60 @@ export default {
 @keyframes blink {
   to {
     opacity: 0;
+  }
+}
+
+.wel-wrapper {
+  .wel-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    flex-wrap: wrap;
+    p {
+      margin: 0px;
+      margin-bottom: 10px;
+      color: #606060;
+    }
+    .el-card--autoinfo {
+      width: 200px;
+      // height: 200px;
+      cursor: pointer;
+      border: 1px solid #e5e5e5 !important;
+      margin: 10px;
+      img {
+        width: 60px;
+        height: 60px;
+        background: 100%;
+      }
+      .card-mode {
+        color: #1dd7b2;
+        font-size: 18px;
+        margin-bottom: 20px;
+      }
+      .card-type {
+        background: #f5ba37;
+        color: #fff;
+        font-size: 16px;
+        margin-bottom: 10px;
+        display: inline-block;
+        padding: 2px 10px;
+      }
+      .card-mt {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        p {
+          padding: 2px 6px;
+          color: #02cfd4;
+          border: 1px solid;
+          margin-right: 8px;
+          font-style: 12px;
+        }
+      }
+      &:hover {
+        border-color: #02cfd4 !important;
+      }
+    }
   }
 }
 </style>

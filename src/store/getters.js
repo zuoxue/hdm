@@ -23,6 +23,8 @@ const getters = {
   logsList: state => state.logs.logsList,
   logsLen: state => state.logs.logsList.length || 0,
   logsFlag: (state, getters) => getters.logsLen === 0,
-  userId: state => state.user.userInfo.userId
+  userId: state => state.user.userInfo.userId,
+  hivelogs: state => state.user.hivelogs,
+  impalalogs: state => state.user.impalalogs
 }
 export default getters

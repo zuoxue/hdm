@@ -19,7 +19,7 @@
         </div>
       </el-col>
       <el-col :span="10">
-        <div class="next-card pd16">
+        <!-- <div class="next-card pd16">
           <div class="next-card--account">账号设置</div>
           <div class="badge">主账号</div>
           <div>
@@ -42,7 +42,7 @@
           <div>
             <el-button size="mini" @click="updatedomain">更新默认域名</el-button>
           </div>
-        </div>
+        </div>-->
         <div class="next-card clearcard pd16">
           <div class="next-card--account">快速入口</div>
           <div class="next-card--tail">
@@ -170,19 +170,19 @@ export default {
           name: "新建用户自定义策略",
           index: 4,
           width: "800px"
-        },
-        {
-          show: false,
-          name: "修改RAM角色",
-          index: 5,
-          width: "800px"
-        },
-        {
-          show: false,
-          name: "新建应用",
-          index: 6,
-          width: "800px"
         }
+        // {
+        //   show: false,
+        //   name: "修改RAM角色",
+        //   index: 5,
+        //   width: "800px"
+        // },
+        // {
+        //   show: false,
+        //   name: "新建应用",
+        //   index: 6,
+        //   width: "800px"
+        // }
       ], //快速入口列表
       url: "https://signin.aliyun.com/1424731304604773.onaliyun.com/login.htm",
       clippercontent: "",

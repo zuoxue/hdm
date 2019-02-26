@@ -1,24 +1,18 @@
 <template>
   <div class="f-debug">
-    <div v-if="!tabisnull">
+    <!-- <div v-if="!tabisnull">
       <span @click="addTab" class="f-tab">
         <i class="el-icon-plus f-tab-icon"></i>
       </span>
-    </div>
-    <el-tabs
-      v-model="activeTab"
-      closable
-      @tab-remove="removeTab"
-      tab-position="left"
-      v-if="!tabisnull"
-    >
+    </div>-->
+    <el-tabs v-model="activeTab" @tab-remove="removeTab" tab-position="left" v-if="!tabisnull">
       <el-tab-pane
         v-for="(item, index) in editableTabs"
         :key="index"
         :label="item.title"
         :name="item.name"
       >
-        <el-row style="margin-bottom: 30px;">
+        <el-row style="margin-bottom: 30px;margin-top:15px;">
           <el-col :span="1"></el-col>
           <el-col :span="4" class="f-tab-header">
             <p>methods:</p>
@@ -40,7 +34,7 @@
           v-for="(param,index1) in item.params"
           :key="index1"
           :gutter="10"
-          :class="index1!=item.params.length-1?'f-row':''"
+          :class="item.params.length!=1?'f-row':''"
         >
           <el-col :span="1"></el-col>
 
@@ -62,16 +56,21 @@
         </el-row>
         <div class="f-footer">
           <el-button type="primary" size="small">send</el-button>
+          <el-button type="primary" size="small" @click="back">back</el-button>
         </div>
       </el-tab-pane>
     </el-tabs>
+
     <div class="f-plus--null el-button--primary" @click="addTab" v-else>
       <div>
         <i class="el-icon-plus"></i>
       </div>
     </div>
-
-    <el-dialog title="新增测试地址" :visible.sync="outervisible" append-to-body>
+    <div class="right_result" v-if="!tabisnull">
+      <p style="white-space:nowrap;">API返回结果(API Response):</p>
+      <div class="return_result">{{returnResult}}</div>
+    </div>
+    <!-- <el-dialog title="新增测试地址" :visible.sync="outervisible" append-to-body>
       <el-row :gutter="10">
         <el-col :span="4" class="f-a-label">
           <span>新增地址：</span>
@@ -83,7 +82,7 @@
       <div slot="footer" style="text-align:center;">
         <el-button type="primary" size="small" @click="confirmAddress">确定</el-button>
       </div>
-    </el-dialog>
+    </el-dialog>-->
   </div>
 </template>
 <script>
@@ -94,7 +93,6 @@ export default {
       activeTab: "url1",
       editableTabs: [
         {
-          uri: "http://www.baidusdsds.com/dsdsdsssssssss",
           params: [
             {
               name: "",
@@ -103,13 +101,21 @@ export default {
           ],
           name: "url1",
           method: "GET",
-          title: "http://www.baidusdsds.com/dsdsdsssssssss"
+          title: this.uri
         }
       ],
       outervisible: false,
       newAddress: "",
-      tabisnull: false
+      tabisnull: false,
+      returnResult: ""
     };
+  },
+  props: ["uri"],
+  watch: {
+    uri() {
+      this.editableTabs[0].title = this.uri;
+      console.log(this.editableTabs);
+    }
   },
   methods: {
     addTab() {
@@ -146,37 +152,40 @@ export default {
     removeItem(index, index1) {
       this.editableTabs[index].params.splice(index1, 1);
     },
-    confirmAddress() {
-      var urlreg = /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/;
-      if (urlreg.test(this.newAddress)) {
-        var newtab = {
-          uri: this.newAddress,
-          params: [
-            {
-              name: "",
-              value: ""
-            }
-          ],
-          name: `tab${new Date()}`,
-          title: this.newAddress,
-          method: "GET"
-        };
-        this.editableTabs.push(newtab);
-      } else {
-        this.$message({
-          type: "error",
-          message: "创建失败"
-        });
-        return;
-      }
+    // confirmAddress() {
+    //   var urlreg = /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/;
+    //   if (urlreg.test(this.newAddress)) {
+    //     var newtab = {
+    //       uri: this.newAddress,
+    //       params: [
+    //         {
+    //           name: "",
+    //           value: ""
+    //         }
+    //       ],
+    //       name: `tab${new Date()}`,
+    //       title: this.newAddress,
+    //       method: "GET"
+    //     };
+    //     this.editableTabs.push(newtab);
+    //   } else {
+    //     this.$message({
+    //       type: "error",
+    //       message: "创建失败"
+    //     });
+    //     return;
+    //   }
 
-      if (this.tabisnull) {
-        this.tabisnull = false;
-        this.activeTab = this.editableTabs[0].name;
-      }
+    //   if (this.tabisnull) {
+    //     this.tabisnull = false;
+    //     this.activeTab = this.editableTabs[0].name;
+    //   }
 
-      this.outervisible = false;
-      this.newAddress = "";
+    //   this.outervisible = false;
+    //   this.newAddress = "";
+    // },
+    back() {
+      this.$emit("update:debug", false);
     }
   }
 };
@@ -185,6 +194,12 @@ export default {
 <style lang="scss" scoped>
 .f-debug {
   height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  .el-tabs {
+    min-width: 860px;
+  }
   .f-tab {
     position: relative;
     left: 190px;
@@ -222,6 +237,8 @@ export default {
   .f-footer {
     text-align: center;
     margin-top: 20px;
+    position: relative;
+    left: -60px;
   }
   .el-tabs {
     height: 100%;
@@ -239,6 +256,9 @@ export default {
       height: 100%;
       width: 230px;
       border-right: 1px solid #ccc;
+    }
+    /deep/ .el-tabs__content {
+      width: 600px;
     }
   }
 }
@@ -263,5 +283,12 @@ export default {
   margin-left: 50%;
   transform: translate(-50%, -50%);
   cursor: pointer;
+}
+.right_result {
+  width: 600px;
+  .return_result {
+    height: 300px;
+    border: 1px solid #ccc;
+  }
 }
 </style>

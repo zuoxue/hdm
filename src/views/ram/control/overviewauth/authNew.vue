@@ -80,7 +80,6 @@ export default {
       appname: "",
       radioLabel: ["WebApp", "NativeApp"],
       radioValue: "",
-      appname: "",
       apptype: "",
       appnamedisp: "",
       refreshtoken: "",

@@ -58,7 +58,7 @@
         </span>
       </div>
     </basic-container>-->
-    <basic-container>
+    <basic-container v-if="!debug">
       <!-- <el-row>
         <el-col :xl="6" :lg="5" :md="4" :sm="3" :xs="2" v-for="(d,index) in allData" :key="index">
 
@@ -70,6 +70,7 @@
           class="el-card--autoinfo"
           v-for="(d,index) in allData"
           :key="index"
+          @click.native="entryDebug(d)"
         >
           <img :src="d.img" :alt="d.name">
           <p>{{d.name}}</p>
@@ -82,13 +83,13 @@
         </el-card>
       </div>
     </basic-container>
-    <div>
+    <!-- <div>
       <p @click="debug=!debug">
         <a href="javascript:;">自动调试</a>
       </p>
-    </div>
-
-    <useroverlay
+    </div>-->
+    <auto-debug v-if="debug" :debug.sync="debug" :uri="uri"></auto-debug>
+    <!-- <useroverlay
       :title="overlayTitle"
       :isclose.sync="debug"
       :width="width"
@@ -97,7 +98,7 @@
       <el-scrollbar slot="body" class="popaside">
         <auto-debug :isclose.sync="debug"></auto-debug>
       </el-scrollbar>
-    </useroverlay>
+    </useroverlay>-->
   </div>
 </template>
 
@@ -117,10 +118,10 @@ export default {
       // actor: "",
       // count: 0,
       // isText: false,
-
+      uri: "",
       overlayTitle: "自动调试",
       width: "900px",
-      debug: true,
+      debug: false,
       bodyStyle: {
         padding: "5px",
         "text-align": "center",
@@ -194,6 +195,10 @@ export default {
     //     }
     //   }, timespeed);
     // }
+    entryDebug(info) {
+      this.debug = true;
+      this.uri = info.name;
+    }
   }
 };
 </script>
@@ -253,7 +258,7 @@ export default {
   .wel-container {
     display: flex;
     flex-direction: row;
-    justify-content: start;
+    justify-content: flex-start;
     flex-wrap: wrap;
     p {
       margin: 0px;

@@ -325,24 +325,68 @@ export function handleImg(fileName, id) {
   })
 }
 
-export const handleData = function (data, parentId = null) {
+export const handleData = function (data, parentId = null, path = '') {
   var initConst = 1;
   const d = data.map(val => {
     val.id = '' + initConst++;
     val.parent_id = parentId;
-    val.child_num = val.flag == 0 ? 1 : 0;
+    val.child_num = val.type == "DIRECTORY" ? 1 : 0;
+    val.path = path + "/" + val.pathSuffix;
+    val.dir = path == "" ? "/" : path;
+    val.permission = permission(val.permission)
     return val;
   });
   return d;
 }
 
-export const handleSubData = function (data, parentId) {
+export const handleSubData = function (data, parentId, path) {
   var initConst = 1;
   const d = data.map(val => {
     val.id = parentId + '-' + initConst++;
     val.parent_id = parentId;
+    val.child_num = val.type == "DIRECTORY" ? 1 : 0;
+    val.path = path + "/" + val.pathSuffix;
+    val.dir = path == "" ? "/" : path;
+    val.permission = permission(val.permission)
     return val;
   });
 
   return d;
+}
+
+// 获取文件大小
+export const getfilesize = function (bytes) {
+  if (bytes / 3 < 1000) {
+    return bytes + " bytes";
+  }
+  if (bytes / 1024 / 3 < 1000) {
+    return Math.ceil(bytes / 1024 / 3) + " Kb"
+  }
+  if (bytes / 1024 / 1024 / 3 < 1000) {
+    return Math.ceil(bytes / 1024 / 1024 / 3) + " Mb"
+  }
+  if (bytes / 1024 / 1024 / 1024 / 3 < 1000) {
+    return Math.ceil(bytes / 1024 / 1024 / 1024 / 3) + " Gb"
+  }
+  if (bytes / 1024 / 1024 / 1024 / 1024 / 3 < 1000) {
+    return Math.ceil(bytes / 1024 / 1024 / 1024 / 1024 / 3) + " Tb"
+  }
+}
+
+
+// 权限表示
+function permission(lims) {
+  let q = {
+    "7": "rwx",
+    "6": "rw-",
+    "5": "r-x",
+    "4": "r--",
+    "3": "-wx",
+    "2": "-w-",
+    "1": "--x"
+  };
+  let lim = lims.split("").map(item => {
+    return q[item];
+  });
+  return lim.join("");
 }

@@ -178,19 +178,19 @@ export default {
               tag: "overviewregmanage"
             }
           ]
-        },
-        {
-          index: "4",
-          name: "RAM角色管理",
-          children: [],
-          tag: "overviewrolemanage"
-        },
-        {
-          index: "5",
-          name: "OAuth应用管理",
-          children: [],
-          tag: "overviewoauth"
         }
+        // {
+        //   index: "4",
+        //   name: "RAM角色管理",
+        //   children: [],
+        //   tag: "overviewrolemanage"
+        // },
+        // {
+        //   index: "5",
+        //   name: "OAuth应用管理",
+        //   children: [],
+        //   tag: "overviewoauth"
+        // }
       ],
       active: "1",
       isshowaside: false,

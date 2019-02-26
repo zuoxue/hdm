@@ -1,4 +1,4 @@
-const newmenus = {
+const newmenus = [{
   "authority": null,
   "children": [
     {
@@ -33,6 +33,42 @@ const newmenus = {
   "sort": 0,
   "spread": false,
   "type": "0",
-};
+},
+{
+  "authority": null,
+  "children": [
+    {
+      "authority": null,
+      "children": [],
+      "code": null,
+      "component": "views/ram/hdata/hive",
+      "icon": "icon-yonghuguanli",
+      "id": 10100,
+      "keepAlive": "0",
+      "label": "hive",
+      "name": "hive",
+      "parentId": 10000,
+      "path": "/ram/Hive",
+      "redirect": null,
+      "sort": 1,
+      "spread": false,
+      "type": "0"
+    }
+  ],
+  "code": null,
+  "component": "Layout",
+  "icon": "icon-quanxianguanli",
+  "id": 10000,
+  "keepAlive": "0",
+  "label": "HData",
+  "meta": {},
+  "name": "HData",
+  "parentId": -1,
+  "path": "/hdata",
+  "redirect": null,
+  "sort": 0,
+  "spread": false,
+  "type": "0",
+}];
 
 export default newmenus;

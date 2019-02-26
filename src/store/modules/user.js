@@ -44,7 +44,9 @@ const user = {
     refresh_token: getStore({
       name: 'refresh_token'
     }) || '',
-    passDisabled: true
+    passDisabled: true,
+    hivelogs: localStorage.getItem("hiveLogs") || "",
+    impalalogs: localStorage.getItem("impalalogs") || []
   },
   actions: {
     // 根据用户名登录
@@ -173,6 +175,19 @@ const user = {
           resolve(menu)
         })
       })
+    },
+
+    SetHiveLogs({ commit }, item) {
+      return new Promise(resolve => {
+        resolve(commit("SET_HIVE_LOGS", item));
+      })
+    },
+
+    SetImpalaLogs({ commit }, item) {
+      console.log(item, 444)
+      return new Promise(resolve => {
+        resolve(commit("SET_IMPALA_LOGS"), item);
+      })
     }
   },
   mutations: {
@@ -226,6 +241,18 @@ const user = {
     },
     SET_PASS_DIS: (state, isdis) => {
       state.passDisabled = isdis;
+    },
+
+    // hive 查询记录
+    SET_HIVE_LOGS: (state, item) => {
+      state.hivelogs += state.hivelogs == "" ? item : ";" + item;
+      localStorage.setItem("hiveLogs", state.hivelogs)
+    },
+
+    // impala 查询记录
+    SET_IMPALA_LOGS: (state, item) => {
+      state.impalalogs.push(item);
+      localStorage.setItem("impalalogs", state.impalalogs)
     }
   }
 

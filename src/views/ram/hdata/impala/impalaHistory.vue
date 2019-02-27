@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="hivehistory-wrapper">
     <el-table :data="historyRecords" size="mini" :show-header="false" empty-text="无历史查询记录">
       <el-table-column
         v-for="header in headers"
@@ -11,7 +11,11 @@
       ></el-table-column>
       <el-table-column label="result">
         <template slot-scope="scope">
-          <a href="javscript:;" @click="selectQuesy(scope.row)">{{scope.row.result}}</a>
+          <a
+            href="javscript:;"
+            @click="selectQuesy(scope.row)"
+            class="sel_label"
+          >{{scope.row.result}}</a>
         </template>
       </el-table-column>
     </el-table>
@@ -23,11 +27,10 @@ import moment from "moment";
 import { mapGetters } from "vuex";
 
 export default {
-  name: "hiveHistory",
+  name: "impalaHistory",
   data() {
     return {
-      historyRecords: [
-      ],
+      historyRecords: [],
       headers: [
         {
           index: 1,
@@ -58,8 +61,11 @@ export default {
   },
   mounted() {
     moment.locale("zh-cn");
-    let data = this.hivelogs.split(";").reverse();
-    data.map(item=>{
+    let data = this.impalalogs.split(";").reverse();
+    data.map(item => {
+      if (item == "") {
+        return;
+      }
       let i = JSON.parse(item);
       let d = {
         time: moment(i[0]).fromNow(),
@@ -67,7 +73,7 @@ export default {
         result: i[2]
       };
       this.historyRecords.push(d);
-    })
+    });
   },
   computed: {
     ...mapGetters(["impalalogs", "hivelogs"])
@@ -75,5 +81,14 @@ export default {
 };
 </script>
 
-<style>
+<style scoped lang="scss">
+$color: #2aa198;
+.hivehistory-wrapper {
+  .sel_label {
+    color: $color;
+    &:hover {
+      color: lighten($color, 10%);
+    }
+  }
+}
 </style>

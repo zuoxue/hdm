@@ -46,7 +46,7 @@ const user = {
     }) || '',
     passDisabled: true,
     hivelogs: localStorage.getItem("hiveLogs") || "",
-    impalalogs: localStorage.getItem("impalalogs") || []
+    impalalogs: localStorage.getItem("impalalogs") || ""
   },
   actions: {
     // 根据用户名登录
@@ -184,9 +184,8 @@ const user = {
     },
 
     SetImpalaLogs({ commit }, item) {
-      console.log(item, 444)
       return new Promise(resolve => {
-        resolve(commit("SET_IMPALA_LOGS"), item);
+        resolve(commit("SET_IMPALA_LOGS", item));
       })
     }
   },
@@ -251,7 +250,8 @@ const user = {
 
     // impala 查询记录
     SET_IMPALA_LOGS: (state, item) => {
-      state.impalalogs.push(item);
+
+      state.impalalogs += state.impalalogs == "" ? item : ";" + item;
       localStorage.setItem("impalalogs", state.impalalogs)
     }
   }

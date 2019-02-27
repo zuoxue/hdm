@@ -25,6 +25,7 @@ import VueClipboard from 'vue-clipboard2'
 import vueJsonTreeView from 'vue-json-tree-view'
 
 import { validatenull } from '@/util/validate'
+
 Vue.prototype.validatenull = validatenull
 
 Vue.use(Avue, { menuType: 'text' })

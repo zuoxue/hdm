@@ -544,7 +544,8 @@ export default {
           hdfs
             .deleteHdfsAll({
               access_token: this.access_token,
-              ids: allfiles
+              paths: encodeURIComponent(JSON.stringify(allfiles)),
+              recursive: true
             })
             .then(res => {
               console.log(res, 777);

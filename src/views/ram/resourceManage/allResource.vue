@@ -1,8 +1,11 @@
 <template>
   <div class="resource">
     <el-container v-if="!ischeck">
-      <el-header>
+      <el-header style="display:flex;">
         <p>资源搜索</p>
+        <p style="margin-left:30px;">
+          <el-button type="plain" size="mini" @click="newResourceShow = true">新建资源</el-button>
+        </p>
       </el-header>
       <el-main>
         <el-form size="mini" label-width="100px" :inline="true">
@@ -29,6 +32,7 @@
                 size="mini"
                 @click="putawayOrSold(scope.row)"
               >{{scope.row.status==0?"下架":"上架"}}</el-button>
+              <el-button type="primary" size="mini" @click="deleteRes(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -70,6 +74,18 @@
         <el-button @click="modifyRe.ismodify = false">取消</el-button>
       </div>
     </el-dialog>
+
+    <!-- 新建资源 -->
+    <el-dialog
+      title="新建资源"
+      :visible.sync="newResourceShow"
+      :append-to-body="true"
+      :show-close="true"
+      :close-on-click-modal="false"
+      width="700px"
+    >
+      <create-resource :isshow.sync="newResourceShow"></create-resource>
+    </el-dialog>
   </div>
 </template>
 
@@ -79,9 +95,12 @@ import {
   updateResource,
   getUserByNotResource,
   getUserByResource,
-  insertResource
+  insertResource,
+  deleteResource
 } from "@/api/ram/resourceManage";
+import createResource from "./createResource";
 import { mapGetters } from "vuex";
+
 export default {
   name: "allResource",
   data() {
@@ -141,8 +160,12 @@ export default {
       ressel: [],
       allRes: [],
       allocateId: 0,
-      userResourceId: 0
+      userResourceId: 0,
+      newResourceShow: false
     };
+  },
+  components: {
+    createResource
   },
   mounted() {
     this.initResource();
@@ -273,7 +296,13 @@ export default {
       this.ischeck = !this.ischeck;
     },
     modifyres(info) {},
-    deleteRes(info) {}
+
+    // 删除资源
+    deleteRes(info) {
+      deleteResource({ id: info.id }, res => {
+        console.log(res, 888);
+      });
+    }
   },
   computed: {
     ...mapGetters(["userId"])

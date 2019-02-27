@@ -74,3 +74,24 @@ export async function setResourceStatus(data, cb) {
   });
   cb(d);
 }
+
+
+// 创建资源
+export async function addResource(data, cb) {
+  let d = await request({
+    url: "/ram/resource/addResource",
+    method: "post",
+    data: data
+  });
+  cb(d);
+}
+
+// 删除资源
+export async function deleteResource(data, cb) {
+  let d = await request({
+    url: `/ram/resource/${data.id}`,
+    method: "delete",
+    data: {}
+  });
+  cb(d);
+}

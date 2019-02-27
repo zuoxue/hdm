@@ -51,9 +51,9 @@ export function deleteHdfs(query) {
 //批量删除
 export function deleteHdfsAll(query) {
   return request({
-    url: '/api/urs/hdfs/deleteHdfsAll',
+    url: '/api/urs/hdfs/filebrowser/batchdelete',
     method: 'delete',
-    data: query
+    params: query
   })
 }
 

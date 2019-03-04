@@ -274,7 +274,7 @@ export default {
       currentPage1: 1,
       dialogAdd: false,
       filename: "",
-      uploadUrl: "/api/urs/hdfs/filebrowser/upload",
+      uploadUrl: "/urs/admin/hdfs/filebrowser/upload",
       menus: null,
       submenus: [],
       uploadData: {},
@@ -342,7 +342,7 @@ export default {
     },
     // 初始化数据
     postData() {
-      let url = `/api/urs/hdfs/filebrowser/liststatus?path=/&access_token=${
+      let url = `/urs/admin/hdfs/filebrowser/liststatus?path=/&access_token=${
         this.access_token
       }`;
       hdfs.getHdfsAllFirst(url).then(async res => {
@@ -376,7 +376,7 @@ export default {
       });
     },
     remote(row, callback) {
-      let url = `/api/urs/hdfs/filebrowser/liststatus?path=${
+      let url = `/urs/admin/hdfs/filebrowser/liststatus?path=${
         row.path
       }&access_token=${this.access_token}`;
       this.rootpath = row.path;

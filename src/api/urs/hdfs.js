@@ -12,7 +12,7 @@ export function getHdfsAllFirst(url) {
 // 获取下拉目录
 export function remote(query) {
   return request({
-    url: '/api/urs/hdfs/getHdfsAllByName',
+    url: '/urs/admin/hdfs/getHdfsAllByName',
     method: 'post',
     data: query
   })
@@ -21,7 +21,7 @@ export function remote(query) {
 // 创建目录/文件
 export function createDir(query) {
   return request({
-    url: '/api/urs/hdfs/filebrowser/mkdirs',
+    url: '/urs/admin/hdfs/filebrowser/mkdirs',
     method: 'put',
     data: query,
     transformRequest: [
@@ -40,7 +40,7 @@ export function createDir(query) {
 // 删除文件
 export function deleteHdfs(query) {
   return request({
-    url: "/api/urs/hdfs/filebrowser/delete",
+    url: "/urs/admin/hdfs/filebrowser/delete",
     method: 'delete',
     params: query,
 
@@ -51,7 +51,7 @@ export function deleteHdfs(query) {
 //批量删除
 export function deleteHdfsAll(query) {
   return request({
-    url: '/api/urs/hdfs/filebrowser/batchdelete',
+    url: '/urs/admin/hdfs/filebrowser/batchdelete',
     method: 'delete',
     params: query
   })
@@ -60,7 +60,7 @@ export function deleteHdfsAll(query) {
 //重命名
 export function renameHdfs(query) {
   return request({
-    url: '/api/urs/hdfs/filebrowser/rename',
+    url: '/urs/admin/hdfs/filebrowser/rename',
     method: 'put',
     params: query
   })
@@ -69,7 +69,7 @@ export function renameHdfs(query) {
 // 下载
 export function download(query) {
   return request({
-    url: '/api/urs/hdfs/filebrowser/download',
+    url: '/urs/admin/hdfs/filebrowser/download',
     method: "get",
     params: query,
     responseType: "blob",
@@ -80,7 +80,7 @@ export function download(query) {
 //路径概要
 export async function pathSummary(query, cb) {
   let d = await request({
-    url: '/api/urs/hdfs/filebrowser/contentsummary',
+    url: '/urs/admin/hdfs/filebrowser/contentsummary',
     method: 'get',
     params: query
   });
@@ -91,7 +91,7 @@ export async function pathSummary(query, cb) {
 // 预览
 export function previewFile(query) {
   return request({
-    url: "/api/urs/hdfs/filebrowser/preview",
+    url: "/urs/admin/hdfs/filebrowser/preview",
     method: 'get',
     params: query,
     responseType: "stream",
@@ -102,7 +102,7 @@ export function previewFile(query) {
 // 设置权限
 export function setPermission(query) {
   return request({
-    url: "/api/urs/hdfs/filebrowser/setpermission",
+    url: "/urs/admin/hdfs/filebrowser/setpermission",
     method: 'put',
     params: query,
   })
@@ -111,7 +111,7 @@ export function setPermission(query) {
 // 设置用户
 export function setUsersRel(query) {
   return request({
-    url: "/api/urs/hdfs/filebrowser/setowner",
+    url: "/urs/admin/hdfs/filebrowser/setowner",
     method: 'put',
     params: query,
   })

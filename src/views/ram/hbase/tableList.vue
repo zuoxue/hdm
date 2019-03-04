@@ -397,6 +397,7 @@ export default {
     // 退出新建弹框
     close() {
       this.isshowtable = false;
+      this.isshowtableEdit = false;
       this.families = [];
     },
 
@@ -460,7 +461,12 @@ export default {
         });
       } else {
         hbase.tableModify(data, res => {
-          console.log(data, res, 989);
+          if (res.data.data) {
+            this.message("success", "编辑表成功");
+            this.isshowtableEdit = false;
+            return;
+          }
+          this.message("error", "编辑表失败");
         });
       }
     },

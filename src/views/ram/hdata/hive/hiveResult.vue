@@ -8,7 +8,8 @@
         :prop="header.prop"
       ></el-table-column>
     </el-table>-->
-    <pre>{{queryResult}}</pre>
+    <!-- <pre>{{queryResult}}</pre> -->
+    <json-viewer :value="queryResult" :expand-depth="5" copyable boxed sort></json-viewer>
   </div>
 </template>
 

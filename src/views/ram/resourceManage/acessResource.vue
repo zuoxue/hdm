@@ -339,6 +339,7 @@ export default {
   .el-footer {
     text-align: right;
     padding-top: 30px;
+    margin-bottom: 30px;
   }
   .resource-check--header {
     display: inline-block;

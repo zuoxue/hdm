@@ -1,6 +1,7 @@
 <template>
   <div>
-    <pre>{{explainResult}}</pre>
+    <!-- <pre>{{explainResult}}</pre> -->
+    <json-viewer :value="explainResult" :expand-depth="5" copyable boxed sort></json-viewer>
   </div>
 </template>
 

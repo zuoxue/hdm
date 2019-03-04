@@ -131,6 +131,7 @@ export default {
         return;
       }
       let query = {
+        database: this.defaultDatabase,
         sql: this.query
       };
       // 调用hive查询接口
@@ -176,6 +177,7 @@ export default {
         return;
       }
       let query = {
+        database: this.defaultDatabase,
         sql: this.query
       };
       // 调用hive语句解析接口

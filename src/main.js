@@ -25,7 +25,7 @@ import VueClipboard from 'vue-clipboard2'
 import vueJsonTreeView from 'vue-json-tree-view'
 
 import { validatenull } from '@/util/validate'
-
+import JsonViewer from "vue-json-viewer"
 Vue.prototype.validatenull = validatenull
 
 Vue.use(Avue, { menuType: 'text' })
@@ -38,6 +38,7 @@ Vue.use(vueJsonTreeView)
 
 Vue.use(VueAxios, axios)
 
+Vue.use(JsonViewer)
 // 注册全局容器
 Vue.component('basicContainer', basicContainer)
 

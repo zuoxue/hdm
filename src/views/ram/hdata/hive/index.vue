@@ -2,6 +2,24 @@
   <article class="hive-wrapper">
     <section>
       <el-row>
+        <el-col :span="2" style="width:20px;"></el-col>
+        <el-col style="width:100px;height:32px;line-height:32px;" :span="6">
+          <span>选择数据库：</span>
+        </el-col>
+        <el-col style="width:400px" :span="16">
+          <el-select v-model="defaultDatabase" size="small">
+            <el-option
+              v-for="db in dbs"
+              :key="db.index"
+              :value="db.value"
+              :label="db.value"
+            >{{db.value}}</el-option>
+          </el-select>
+        </el-col>
+      </el-row>
+    </section>
+    <section>
+      <el-row>
         <el-col :span="2" class="hive-run">
           <el-button size="mini" type="primary" @click="run">执行</el-button>
           <el-button size="mini" type="primary" @click="explain">Explain</el-button>
@@ -81,7 +99,9 @@ export default {
       currentTab: "hiveHistory",
       hiveHistory: "hiveHistory",
       queryResult: [],
-      explainResult: []
+      explainResult: [],
+      defaultDatabase: "default",
+      dbs: []
     };
   },
   components: {
@@ -89,7 +109,18 @@ export default {
     hiveResult,
     hiveExplain
   },
-
+  mounted() {
+    hdata.listHiveDatabase({}, res => {
+      if (res.data.code == 0) {
+        this.dbs = res.data.data.map((item, index) => {
+          return {
+            index: index,
+            value: item.database_name
+          };
+        });
+      }
+    });
+  },
   methods: {
     ...mapActions(["SetHiveLogs"]),
 

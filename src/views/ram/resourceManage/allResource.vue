@@ -84,7 +84,7 @@
       :close-on-click-modal="false"
       width="700px"
     >
-      <create-resource :isshow.sync="newResourceShow"></create-resource>
+      <create-resource :isshow.sync="newResourceShow" @initEvent="initResource"></create-resource>
     </el-dialog>
   </div>
 </template>
@@ -300,7 +300,19 @@ export default {
     // 删除资源
     deleteRes(info) {
       deleteResource({ id: info.id }, res => {
-        console.log(res, 888);
+        if (res.data.code == 0) {
+          this.$message({
+            type: "success",
+            message: "删除成功"
+          });
+          this.initResource();
+          this.$emit("update:clickshow", false);
+          return;
+        }
+        this.$message({
+          type: "error",
+          message: "删除失败"
+        });
       });
     }
   },

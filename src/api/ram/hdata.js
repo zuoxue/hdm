@@ -3,7 +3,7 @@ import request from "axios"
 // hive查询
 export async function queryHive(query, cb) {
   let d = await request({
-    url: '/api/urs/hive/query',
+    url: '/urs/admin/hive/query',
     method: 'post',
     params: query
   });
@@ -13,7 +13,7 @@ export async function queryHive(query, cb) {
 // hive语句解析
 export async function explainHiveFunc(query, cb) {
   let d = await request({
-    url: '/api/urs/hive/explain',
+    url: '/urs/admin/hive/explain',
     method: 'post',
     params: query
   });
@@ -23,7 +23,7 @@ export async function explainHiveFunc(query, cb) {
 //hive 语句格式化
 export async function formatHiveFunc(query, cb) {
   let d = await request({
-    url: '/api/urs/hive/format',
+    url: '/urs/admin/hive/format',
     method: 'post',
     params: query
   });
@@ -35,7 +35,7 @@ export async function formatHiveFunc(query, cb) {
 // impala查询
 export async function queryImpala(query, cb) {
   let d = await request({
-    url: '/api/urs/impala/query',
+    url: '/urs/admin/impala/query',
     method: 'post',
     params: query
   });
@@ -45,7 +45,7 @@ export async function queryImpala(query, cb) {
 // impala语句解析
 export async function explainImpalaFunc(query, cb) {
   let d = await request({
-    url: '/api/urs/impala/explain',
+    url: '/urs/admin/impala/explain',
     method: 'post',
     params: query
   });
@@ -55,8 +55,29 @@ export async function explainImpalaFunc(query, cb) {
 //impala 语句格式化
 export async function formatImpalaFunc(query, cb) {
   let d = await request({
-    url: '/api/urs/impala/format',
+    url: '/urs/admin/impala/format',
     method: 'post',
+    params: query
+  });
+  cb(d)
+}
+
+
+// 列出hive数据库
+export async function listHiveDatabase(query, cb) {
+  let d = await request({
+    url: '/urs/admin/hive/database',
+    method: 'get',
+    params: query
+  });
+  cb(d)
+}
+
+// 列出impala数据库
+export async function listImpalaDatabase(query, cb) {
+  let d = await request({
+    url: '/urs/admin/impala/database',
+    method: 'get',
     params: query
   });
   cb(d)

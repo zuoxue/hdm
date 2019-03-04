@@ -66,11 +66,11 @@ module.exports = {
           '^/act': '/act'
         },
       },
-      '/api/urs': {
+      '/urs': {
         target: url,
         ws: true,
         pathRewrite: {
-          '^/api/urs': '/urs'
+          '^/urs': '/urs'
         }
       },
       '/ram': {

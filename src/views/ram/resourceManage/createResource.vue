@@ -1,13 +1,7 @@
 <template>
   <div class="resource-wrapper">
     <el-form :model="resource" ref="resource" :rules="rule1" label-width="150px">
-      <el-form-item
-        v-for="(header,index) in headers"
-        :key="index"
-        :label="header"
-        :prop="header"
-        required
-      >
+      <el-form-item v-for="(header,index) in headers" :key="index" :label="header" :prop="header">
         <el-input v-model="resource[header]" size="mini" :placeholder="'请填写'+header"></el-input>
       </el-form-item>
       <!-- 过期时间单独处理 -->
@@ -52,7 +46,7 @@ export default {
         ownerId: 1
       },
       headers: [
-        "parentId",
+        // "parentId",
         "action",
         "domain",
         "service",
@@ -77,14 +71,14 @@ export default {
         ],
         expirationTime: [
           { required: true, message: "不能为空", trigger: ["blur", "change"] }
-        ],
-        parent_id: [
-          {
-            required: true,
-            message: "不能为空",
-            trigger: ["blur", "change"]
-          }
         ]
+        // parent_id: [
+        //   {
+        //     required: true,
+        //     message: "不能为空",
+        //     trigger: ["blur", "change"]
+        //   }
+        // ]
       }
     };
   },
@@ -118,10 +112,23 @@ export default {
       let data = this.resource;
       data["ownerId"] = this.userId;
       data["access_token"] = this.access_token;
+      data["parentId"] = 0;
 
       console.log(data);
       addResource(data, res => {
-        console.log(res, 8989);
+        if (res.data.code == 0) {
+          this.$message({
+            type: "success",
+            message: "创建成功"
+          });
+          this.$emit("initEvent");
+          this.$emit("update:isshow", false);
+          return;
+        }
+        this.$message({
+          type: "error",
+          message: "创建失败"
+        });
       });
     }
   }

@@ -17,6 +17,23 @@ const newmenus = [{
       "sort": 1,
       "spread": false,
       "type": "0"
+    },
+    {
+      "authority": null,
+      "children": [],
+      "code": null,
+      "component": "views/ram/hbase/index",
+      "icon": "icon-yonghuguanli",
+      "id": 9200,
+      "keepAlive": "0",
+      "label": "HBase管理",
+      "name": "HBase管理",
+      "parentId": 9000,
+      "path": "/ram/Hbase",
+      "redirect": null,
+      "sort": 1,
+      "spread": false,
+      "type": "0"
     }
   ],
   "code": null,

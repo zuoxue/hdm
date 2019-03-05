@@ -10,7 +10,7 @@ export default {
     title: 'HDM - 健康资源管理平台',
     list: [
       '支持关系型数据厍(Oracle、MySQL等)',
-      '支持大数据平台(HDFS、HBase、Hive、Kudu、Impala、Solr等)',
+      '支持大数据平台(HDFS、HBase、Hive、Impala、Solr等)',
       '支持格式化文件(XML、JSON、CSV、TXT、Excel等)',
       '资源交换、资源共享',
       '分类导航、资源搜索和定位',

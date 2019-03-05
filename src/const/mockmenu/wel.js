@@ -1,10 +1,10 @@
 export const wels = [
   {
-    name: "中文分词",
+    name: "文件下载",
     mode: '免费',
-    num: 660,
+    num: 3,
     type: "API",
-    methods: ["文本挖掘", "常用工具"],
+    methods: ["HDFS云盘", "常用工具"],
     img: "https://www.idataapi.cn/uploads/2017/10/570183.png"
   }
 ]

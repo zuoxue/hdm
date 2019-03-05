@@ -134,7 +134,7 @@ export default {
     ...mapGetters(["website"]),
     allData() {
       let d = [];
-      for (var i = 0; i < 100; i++) {
+      for (var i = 0; i < 1; i++) {
         d.push(wels[0]);
       }
       return d;

@@ -95,7 +95,7 @@ export default {
               namespace: row
             },
             res => {
-              if (res.data.code == 0) {
+              if (res.data.code == 0 && res.data.data) {
                 this.$message({
                   type: "success",
                   message: "删除成功"

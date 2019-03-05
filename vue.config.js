@@ -1,5 +1,6 @@
-// const url = 'http://192.168.2.75:9999'
-const url = 'http://192.168.2.150:9999'
+// const url = 'http://192.168.2.75:9999' //server
+// const url = 'http://192.168.2.150:9999' //jsd
+const url = 'http://192.168.2.193:9999' //zhou
 module.exports = {
   lintOnSave: true,
   productionSourceMap: false,

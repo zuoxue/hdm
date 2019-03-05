@@ -3,7 +3,7 @@
     <el-container v-if="!ischeck">
       <el-header style="display:flex;">
         <p>资源搜索</p>
-        <p style="margin-left:30px;">
+        <p style="margin-left:30px;" v-if="userId==1">
           <el-button type="plain" size="mini" @click="newResourceShow = true">新建资源</el-button>
         </p>
       </el-header>
@@ -229,6 +229,10 @@ export default {
       };
       updateResource(data, res => {
         if (res.data.code == 0) {
+          this.$message({
+            type: "success",
+            message: row.status == 0 ? "下架成功" : "上架成功"
+          });
           this.initResource();
         }
       });

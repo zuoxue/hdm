@@ -90,7 +90,7 @@
                   prop="pathSuffix"
                   label="名称"
                   :remote="remote"
-                  :indent-size="10"
+                  :indent-size="20"
                 ></el-table-tree-column>
                 <el-table-column
                   :prop="header.prop"

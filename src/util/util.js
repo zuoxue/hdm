@@ -327,7 +327,8 @@ export function handleImg(fileName, id) {
 
 export const handleData = function (data, parentId = null, path = '') {
   var initConst = 1;
-  const d = data.map(val => {
+  let d = [[], []];
+  data.map(val => {
     val.id = '' + initConst++;
     val.parent_id = parentId;
     val.child_num = val.type == "DIRECTORY" ? 1 : 0;
@@ -335,14 +336,20 @@ export const handleData = function (data, parentId = null, path = '') {
     val.dir = path == "" ? "/" : path;
     val.permission = permission(val.permission);
     val.depth = 0;
+    if (val.child_num == 1) {
+      d[0].push(val);
+    } else {
+      d[1].push(val);
+    }
     return val;
   });
-  return d;
+  return d[0].concat(d[1]);
 }
 
 export const handleSubData = function (data, parentId, path, depth) {
   var initConst = 1;
-  const d = data.map(val => {
+  const d = [[], []];
+  data.map(val => {
     val.id = parentId + '-' + initConst++;
     val.parent_id = parentId;
     val.child_num = val.type == "DIRECTORY" ? 1 : 0;
@@ -350,10 +357,15 @@ export const handleSubData = function (data, parentId, path, depth) {
     val.dir = path == "" ? "/" : path;
     val.permission = permission(val.permission);
     val.depth = depth;
+    if (val.child_num == 1) {
+      d[0].push(val);
+    } else {
+      d[1].push(val);
+    }
     return val;
   });
 
-  return d;
+  return d[0].concat(d[1]);
 }
 
 // 获取文件大小

@@ -90,7 +90,7 @@
                   prop="pathSuffix"
                   label="名称"
                   :remote="remote"
-                  :indent-size="20"
+                  :indent-size="8"
                 ></el-table-tree-column>
                 <el-table-column
                   :prop="header.prop"
@@ -386,7 +386,8 @@ export default {
           const submenus = handleSubData(
             res.data.data.FileStatuses.FileStatus,
             row.id,
-            res.data.data.path
+            res.data.data.path,
+            row.depth + 1
           );
           await Promise.all(
             submenus.map(async res => {

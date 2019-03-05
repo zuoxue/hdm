@@ -333,13 +333,14 @@ export const handleData = function (data, parentId = null, path = '') {
     val.child_num = val.type == "DIRECTORY" ? 1 : 0;
     val.path = path + "/" + val.pathSuffix;
     val.dir = path == "" ? "/" : path;
-    val.permission = permission(val.permission)
+    val.permission = permission(val.permission);
+    val.depth = 0;
     return val;
   });
   return d;
 }
 
-export const handleSubData = function (data, parentId, path) {
+export const handleSubData = function (data, parentId, path, depth) {
   var initConst = 1;
   const d = data.map(val => {
     val.id = parentId + '-' + initConst++;
@@ -347,7 +348,8 @@ export const handleSubData = function (data, parentId, path) {
     val.child_num = val.type == "DIRECTORY" ? 1 : 0;
     val.path = path + "/" + val.pathSuffix;
     val.dir = path == "" ? "/" : path;
-    val.permission = permission(val.permission)
+    val.permission = permission(val.permission);
+    val.depth = depth;
     return val;
   });
 

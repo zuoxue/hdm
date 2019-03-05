@@ -37,10 +37,10 @@ export default {
   created() {
     this.$store.dispatch("GetMenu").then(data => {
       if (data.length === 0) return;
-      data.push(...newmenus);
-      let d = JSON.parse(sessionStorage.getItem("menu"));
-      d.content = data;
-      sessionStorage.setItem("menu", JSON.stringify(d));
+      // data.push(...newmenus);
+      // let d = JSON.parse(sessionStorage.getItem("menu"));
+      // d.content = data;
+      // sessionStorage.setItem("menu", JSON.stringify(d));
       this.$router.$avueRouter.formatRoutes(data, true);
     });
   },

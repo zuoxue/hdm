@@ -138,3 +138,46 @@ export async function inserUserOrGroupPolicy(url, data, callback) {
     console.log(e);
   }
 }
+
+// 获取策略下的授权语句
+export async function getSingleStrategy(data, callback) {
+  const d = await request({
+    url: `ram/policy/statement/getByPolicyId/${data.id}`,
+    method: 'get',
+    param: data
+  });
+  try {
+    callback(d)
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+// 删除策略语句
+export async function deletestrategy(data, callback) {
+  const d = await request({
+    url: `ram//policy/statement/${data.id}`,
+    method: 'delete',
+    param: data
+  });
+  try {
+    callback(d)
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+
+// 删除策略
+export async function deletePolicy(data, callback) {
+  const d = await request({
+    url: `ram/policy/deleteByPolicyId/${data.id}`,
+    method: 'delete',
+    param: data
+  });
+  try {
+    callback(d)
+  } catch (e) {
+    console.log(e);
+  }
+}

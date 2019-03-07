@@ -438,11 +438,24 @@ export default {
               }
             ];
 
+      let storeFamilyNames = [];
+
       // 筛选属性不为空的family
-      if (this.families.length > 1) {
-        this.families = this.families.filter(item => {
-          return item.num > 0;
+      if (families.length > 1) {
+        families = families.filter(item => {
+          if (item.nums > 0) {
+            storeFamilyNames.push(item.familyName);
+          }
+          return item.nums > 0;
         });
+      }
+
+      if (storeFamilyNames.length != new Set(storeFamilyNames).size) {
+        this.$message({
+          typs: "error",
+          message: "familyName不能有相同!"
+        });
+        return false;
       }
       let data = {
         columnFamilies: families,
@@ -602,6 +615,12 @@ export default {
     /deep/ .btn-next,
     /deep/ .number {
       background: none !important;
+    }
+  }
+  /deep/ .el-dialog {
+    .el-dialog__body {
+      max-height: 400px;
+      overflow-y: scroll;
     }
   }
 }

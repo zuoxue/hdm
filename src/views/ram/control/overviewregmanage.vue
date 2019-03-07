@@ -1,13 +1,10 @@
 <template>
   <div class="usergroup">
-    <header class="usergroup-header">
-      <h3>
-        <i class="el-icon-back back-cursor" v-if="isadd" @click="back"></i>
-        {{isadd?"新建自定义权限策略":recement}}
-      </h3>
+    <header class="usergroup-header" v-if="!isadd && !isshow">
+      <h3>{{recement}}</h3>
     </header>
-    <article class="usergroup-article">
-      <section class="usergroup-section--s" v-if="!isadd">
+    <article class="usergroup-article" v-if="!isadd && !isshow">
+      <section class="usergroup-section--s">
         <transition name="fade">
           <section class="usergroup-section--info" v-if="topisshow">
             {{info}}
@@ -38,7 +35,7 @@
         </div>
       </section>
 
-      <section v-if="!isadd">
+      <section>
         <el-table :data="selData" style="width:100%;">
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column
@@ -55,6 +52,12 @@
               ></el-switch>
             </template>
           </el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <el-button type="primary" size="mini" @click="showAuth($event,scope.row)">授权语句</el-button>
+              <el-button type="primary" size="mini" @click="deleteAuth(scope.row)">删除</el-button>
+            </template>
+          </el-table-column>
         </el-table>
         <div class="pager" v-if="selPageAll>pagesizeSel">
           <el-pagination
@@ -66,88 +69,26 @@
           ></el-pagination>
         </div>
       </section>
-      <div v-if="isadd">
-        <section class="overviewuser-new">
-          <el-row>
-            <el-col :span="12">
-              <div>
-                <p>策略名称</p>
-                <el-input v-model="regname"></el-input>
-              </div>
-              <div>
-                <p>备注</p>
-                <el-input v-model="regremark"></el-input>
-              </div>
-              <div>
-                <p>策略版本</p>
-                <el-input v-model.number="version" placeholder="请填写版本号" ref="version"></el-input>
-              </div>
-              <!-- <div>
-                <p>配置模式</p>
-                <el-radio-group v-model="assettype">
-                  <el-radio label="first">可视化配置</el-radio>
-                  <el-radio label="second">脚本配置</el-radio>
-                </el-radio-group>
-              </div>-->
-              <div>
-                <p>策略内容</p>
-                <el-button type="primary" size="small" @click="showAuth">添加授权语句</el-button>
-              </div>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="24">
-              <el-table :data="authordata">
-                <el-table-column
-                  v-for="item in authorheader"
-                  :key="item.index"
-                  :prop="item.prop"
-                  :label="item.name"
-                ></el-table-column>
-                <el-table-column label="操作">
-                  <template slot-scope="scope" v-if="scope.row.handle">
-                    <el-button type="text" size="small" @click="getRowData(scope.row)">编辑</el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-col>
-          </el-row>
-        </section>
-        <section class="pager" v-if="totalsize>pagesize">
-          <el-pagination
-            @current-change="handleCurrentChange"
-            :current-page="currentPage"
-            :page-size="pagesize"
-            layout="prev, pager, next, total"
-            :total="totalsize"
-          ></el-pagination>
-        </section>
-        <section class="footer">
-          <el-button type="primary" size="small" @click="createPolicy">确认</el-button>
-          <el-button @click="back">取消</el-button>
-        </section>
-      </div>
     </article>
-    <!-- overlay -->
-    <useroverlay :title="overlayTitle" :isclose.sync="showside" :width="width">
-      <el-scrollbar slot="body" class="popaside">
-        <div>
-          <author-module :isclose.sync="showside" :version="version" :editList="editList"></author-module>
-        </div>
-      </el-scrollbar>
-    </useroverlay>
+
+    <!-- 新建策略 -->
+    <createNewAuth v-if="isadd" :isadd.sync="isadd" @updateAuth="getallpolicys"></createNewAuth>
+    <authstate v-if="isshow" :isshow.sync="isshow" :row="rowdata"></authstate>
   </div>
 </template>
 
 <script>
-import useroverlay from "@/page/user/useroverlay";
-import authorModule from "./overviewaddperm/authorModule";
+import createNewAuth from "./overviewaddperm/createNewAuth";
+import authstate from "./overviewaddperm/authstate";
+
 import {
   getVersion,
   getAllAuth,
   createRamPolicy,
   getALlPolicys,
-  modifyPolicyStatus
+  modifyPolicyStatus,
+  getSingleStrategy,
+  deletePolicy
 } from "@/api/ram/strategy";
 import { mapGetters } from "vuex";
 
@@ -199,33 +140,7 @@ export default {
         //   val: "handle"
         // }
       ],
-      authorheader: [
-        {
-          name: "权限效力",
-          index: 0,
-          prop: "validty"
-        },
-        {
-          name: "产品/服务",
-          index: 1,
-          prop: "service"
-        },
-        {
-          name: "资源",
-          index: 2,
-          prop: "resource"
-        },
-        {
-          name: "版本",
-          index: 3,
-          prop: "version"
-        }
-        // {
-        //   name: "操作",
-        //   index: 4,
-        //   prop: "handle"
-        // }
-      ],
+
       authordata: [],
       allData: [],
       data: [],
@@ -235,9 +150,7 @@ export default {
       currentPageSel: 1,
       pagesizeSel: 7,
 
-      overlayTitle: "添加授权语句",
       isclose: true,
-      showside: true,
       isadd: false,
       adduser: 1,
       topisshow: true,
@@ -251,36 +164,21 @@ export default {
       resetpass: "",
       multifactors: "",
       checklist: [],
-      regname: "",
-      regremark: "",
+
       assettype: "",
-      width: "620px",
-      version: "",
-      currentPage: 1,
-      pagesize: 7,
-      totalsize: 0,
+
       isinsert: false,
-      editList: {},
-      allstatus: []
+      allstatus: [],
+      expandsList: [],
+      isshow: false,
+      rowdata: null
     };
   },
   components: {
-    authorModule,
-    useroverlay
+    createNewAuth,
+    authstate
   },
-  created() {
-    document.addEventListener(
-      "keyup",
-      ev => {
-        ev.preventDefault();
-        if (ev.keyCode == 27) {
-          this.showside = true;
-        }
-        return;
-      },
-      true
-    );
-  },
+
   mounted() {
     const t = localStorage.getItem("triggerComp") || null;
     if (t && t == "overviewregmanage") {
@@ -330,7 +228,7 @@ export default {
       return;
     },
     showoverlay() {
-      this.getallauth();
+      // this.getallauth();
       this.isadd = true;
     },
     //获取所有权限语句
@@ -365,9 +263,9 @@ export default {
       });
     },
     // back last level
-    back() {
-      this.isadd = false;
-    },
+    // back() {
+    //   this.isadd = false;
+    // },
     // autodel
     autodel(index) {
       this.subdata.splice(index, 1);
@@ -385,101 +283,60 @@ export default {
     },
 
     // 新建策略语句，判断版本号未使用过
-    async showAuth() {
-      let v = this.version;
-      let vs = [];
-      let reg = /^\d+$/;
-      if (v == "" || !reg.test(v)) {
-        this.$message({
-          type: "error",
-          message: "请正确填写版本号！",
-          duration: 1500
-        });
-        this.$refs.version.focus();
-        return;
-      }
-      await getVersion({}, res => {
-        if (res.data && res.data.length > 0) {
-          var data = new Promise(resolve => {
-            vs = res.data;
-            resolve(res.data);
-          });
-        }
-      });
-      if (vs.indexOf(v) > -1) {
-        this.$message({
-          type: "error",
-          message: "版本号已存在",
-          duration: 1500
-        });
-        this.$refs.version.focus();
-        return;
-      }
-      this.editList = {
-        handle: false,
-        resource: "",
-        service: "",
-        validty: "",
-        version: ""
-      }; //去除编辑状态
-      this.showside = false;
+    async showAuth(ev, row) {
+      this.isshow = true;
+      this.rowdata = row;
+      // let v = this.version;
+      // let vs = [];
+      // let reg = /^\d+$/;
+      // if (v == "" || !reg.test(v)) {
+      //   this.$message({
+      //     type: "error",
+      //     message: "请正确填写版本号！",
+      //     duration: 1500
+      //   });
+      //   this.$refs.version.focus();
+      //   return;
+      // }
+      // await getVersion({}, res => {
+      //   if (res.data && res.data.length > 0) {
+      //     var data = new Promise(resolve => {
+      //       vs = res.data;
+      //       resolve(res.data);
+      //     });
+      //   }
+      // });
+      // if (vs.indexOf(v) > -1) {
+      //   this.$message({
+      //     type: "error",
+      //     message: "版本号已存在",
+      //     duration: 1500
+      //   });
+      //   this.$refs.version.focus();
+      //   return;
+      // }
     },
 
-    // 策略语句分页变化
-    handleCurrentChange(page) {
-      this.currentPage = page;
-      let start = (page - 1) * this.pagesize;
-      let end = start + this.pagesize;
-      this.authordata = this.allData.slice(start, end);
-    },
-
-    // 策略语句进入编辑页
-    getRowData(row) {
-      this.editList = row;
-      this.showside = false;
-    },
-
-    // 新建策略
-    createPolicy() {
-      let name = this.regname;
-      let comment = this.regremark;
-      let ownerId = this.userId;
-      let createBy = this.userInfo.username;
-
-      if (name == "" || comment == "") {
-        this.$message({
-          type: "error",
-          message: "请填写信息完整"
-        });
-        return false;
-      }
+    // 删除策略
+    deleteAuth(row) {
       let data = {
-        name,
-        comment,
-        createBy,
-        ownerId
+        id: row.id
       };
-      createRamPolicy(data, res => {
+      deletePolicy(data, res => {
         if (res.data.data) {
           this.$message({
             type: "success",
-            message: "新建策略成功"
+            message: "删除成功"
           });
-          this.isadd = false;
-          this.regname = "";
-          this.regremark = "";
           this.getallpolicys();
-          return;
+        } else {
+          this.$message({
+            type: "error",
+            message: "删除失败"
+          });
         }
-        this.$message({
-          type: "error",
-          message: "新建策略失败"
-        });
-        return;
       });
-      return;
     },
-
     //改变策略启用状态
     changeStatus(ev, id) {
       // let data = {
@@ -523,13 +380,6 @@ export default {
       var arr = new Array(this.adduser);
       return arr;
     }
-  },
-  watch: {
-    showside(newvalue) {
-      if (newvalue) {
-        this.getallauth();
-      }
-    }
   }
 };
 </script>
@@ -547,15 +397,13 @@ export default {
       border-color: #ccc !important;
     }
   }
+
   .usergroup-header {
     height: 40px;
     line-height: 40px;
     margin-bottom: 16px;
     h3 {
       font-size: 28px;
-    }
-    .back-cursor {
-      cursor: pointer;
     }
   }
   .usergroup-article {
@@ -592,26 +440,14 @@ export default {
         }
       }
     }
-    .overviewuser-new {
-      .el-radio {
-        display: block;
-        margin-bottom: 8px;
-        & + .el-radio {
-          margin-left: 0px;
-        }
-        /deep/ .el-radio__label {
-          color: #262626;
-        }
-      }
-    }
-    .pager {
-      text-align: right;
-      margin-right: 20px;
-      margin-top: 10px;
-    }
-    .footer {
-      margin-top: 10px;
-    }
+  }
+  .pager {
+    text-align: right;
+    margin-right: 20px;
+    margin-top: 10px;
+  }
+  .footer {
+    margin-top: 10px;
   }
 }
 </style>

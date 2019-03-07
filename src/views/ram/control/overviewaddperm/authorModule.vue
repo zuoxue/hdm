@@ -11,8 +11,13 @@
       <div>
         <p>
           策略版本:
-          <span>&nbsp;&nbsp;&nbsp;&nbsp;{{version || editList.version}}</span>
+          <span v-if="editList.version">&nbsp;&nbsp;&nbsp;&nbsp;{{editList.version}}</span>
         </p>
+        <el-row>
+          <el-col :span="12">
+            <el-input v-model="policyVersion" placeholder="空值默认为1" v-if="!editList.version"></el-input>
+          </el-col>
+        </el-row>
       </div>
       <div>
         <p>
@@ -46,65 +51,6 @@
           </el-row>
         </template>
       </div>
-      <!-- <div class="mb10">
-        <p>选择产品服务</p>
-        <el-select
-          v-model="selService"
-          placeholder="请选择"
-          class="el-select--service"
-          popper-class="el-select--setwrap"
-        >
-          <el-option
-            v-for="(item,index) in options"
-            :key="index"
-            :value="item"
-            :label="item"
-          >{{item}}</el-option>
-        </el-select>
-      </div>
-      <div class="mb10">
-        <p>操作名称</p>
-        <el-radio-group v-model="handleName">
-          <el-radio label="first">所有操作</el-radio>
-          <el-radio label="second">特定操作</el-radio>
-        </el-radio-group>
-      </div>
-      <div class="mb10">
-        <p>资源</p>
-        <el-radio-group v-model="source">
-          <el-radio label="first">所有资源</el-radio>
-          <el-radio label="second">特定资源</el-radio>
-        </el-radio-group>
-      </div>
-      <div class="mb10">
-        <p>限制条件</p>
-        <template v-if="res_conditions.length>0">
-          <el-row v-for="(row,index) in res_conditions" :key="index" :gutter="10">
-            <el-col :span="8">
-              <el-select v-model="row.resVal" popper-class="el-select--setwrap" placeholder="条件关键字">
-                <el-option v-for="(k,index) in res_keys" :key="index" :label="k" :value="k"></el-option>
-              </el-select>
-            </el-col>
-            <el-col :span="8">
-              <el-select v-model="row.resWord" popper-class="el-select--setwrap" placeholder="限定词">
-                <el-option v-for="(k,index) in res_words" :key="index" :label="k" :value="k"></el-option>
-              </el-select>
-            </el-col>
-            <el-col :span="3">
-              <el-input v-model="row.resHand" placeholder="值"></el-input>
-            </el-col>
-            <el-col :span="1">
-              <div @click="deleteRes(index)" class="deleteIcon">X</div>
-            </el-col>
-          </el-row>
-        </template>
-        <p>
-          <a href="javascript:;" @click="addRes" class="default_a">
-            <i class="el-icon-plus"></i>
-            <span>&nbsp;&nbsp;添加限制条件</span>
-          </a>
-        </p>
-      </div>-->
     </el-form>
     <div slot="footer" class="useroverlay-footer">
       <el-button type="plain" size="small" class="confirm" @click="submitAuth">确定</el-button>
@@ -131,6 +77,7 @@ export default {
       res_conditions: [],
       res_keys: ["ace:currentTime", "ace:currentTime"],
       res_words: ["StringEquals"],
+      policyVersion: "",
       allservice: this.isobjbull()
         ? [
             {
@@ -149,7 +96,7 @@ export default {
         : this.switchData(this.editList.resource)
     };
   },
-  props: ["isclose", "version", "editList"],
+  props: ["isclose", "editList", "rowId", "policyid"],
   methods: {
     isobjbull() {
       return this.editList.version == "" ? true : false;
@@ -158,7 +105,7 @@ export default {
       let obj = [];
       let index = 0;
       let ds = d.split("、");
-      console.log(ds, 111);
+
       ds.forEach(function(item) {
         obj.push({
           index: index++,
@@ -235,16 +182,27 @@ export default {
         });
         return;
       }
+      let version = this.editList.version
+        ? this.editList.version
+        : this.policyVersion
+        ? this.policyVersion
+        : 1;
       let data = {
-        version: this.version,
+        version: version,
         effect: this.authorPeriod,
         action: JSON.stringify(service),
-        resourcePrinciple: JSON.stringify(resource)
+        resourcePrinciple: JSON.stringify(resource),
+        policyId: this.policyid,
+        id: this.rowId
       };
-      console.log(this.isobjbull(), 555);
+
       if (this.isobjbull()) {
         addAuthParam(data, res => {
           if (res.data) {
+            this.$message({
+              type: "success",
+              message: "添加成功"
+            });
             return;
           }
           this.$message({

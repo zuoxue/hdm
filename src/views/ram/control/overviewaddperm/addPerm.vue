@@ -113,7 +113,8 @@ export default {
       groupList: [],
       userval: "",
       groupval: "",
-      allpolicys: []
+      allpolicys: [],
+      searchPolicy: ""
     };
   },
   created() {

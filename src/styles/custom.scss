@@ -69,3 +69,8 @@ h3 {
 .cur-p {
   cursor: pointer;
 }
+
+// 清除下拉高度不足
+.el-select-dropdown__wrap {
+  margin-bottom: 0px!important;
+}

@@ -380,6 +380,16 @@ export default {
   .resource-check--header {
     cursor: pointer;
   }
+  .el-table {
+    /deep/ .el-button {
+      /deep/ .el-button {
+        margin-left: 0px !important;
+      }
+    }
+    /deep/ .el-button {
+      margin: 5px !important;
+    }
+  }
 }
 /deep/ .el-dialog__header {
   background: #5d5f4e;

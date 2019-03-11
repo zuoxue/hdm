@@ -80,6 +80,7 @@
                 :header-cell-style="cellStyle"
                 @selection-change="selectChange"
                 size="mini"
+                @row-click="getChildFile"
               >
                 <el-table-column type="selection" width="55"></el-table-column>
                 <el-table-tree-column
@@ -257,7 +258,7 @@ import {
 } from "@/util/util";
 import * as hdfs from "@/api/urs/hdfs";
 import prelook from "./prelook";
-import Qs from "qs"
+import Qs from "qs";
 
 export default {
   name: "resourceServicehdfs",
@@ -503,7 +504,7 @@ export default {
 
     //删除自身
     deleteFile(row) {
-      console.log(row, 4545,row.pathSuffix);
+      console.log(row, 4545, row.pathSuffix);
       this.$confirm("确认删除吗？", "删除", {
         showCancelButton: true
       })
@@ -511,7 +512,7 @@ export default {
           hdfs
             .deleteHdfs({
               access_token: this.access_token,
-              path:row.dir +"/"+row.pathSuffix,
+              path: row.dir + "/" + row.pathSuffix,
               recursive: true
             })
             .then(res => {
@@ -539,7 +540,7 @@ export default {
         return res.path;
       });
 
-      console.log(allfiles,999)
+      console.log(allfiles, 999);
       // encodeURIComponent(JSON.stringify(allfiles))
       this.$confirm("确认删除吗？", "删除", {
         showCancelButton: true
@@ -548,7 +549,7 @@ export default {
           hdfs
             .deleteHdfsAll({
               access_token: this.access_token,
-              paths:allfiles,
+              paths: allfiles,
               recursive: true
             })
             .then(res => {

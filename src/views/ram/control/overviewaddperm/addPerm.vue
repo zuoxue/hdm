@@ -177,6 +177,7 @@ export default {
         }
       });
     },
+    //获取所有策略
     getallpolicys() {
       let query = {
         owner_id: this.userId

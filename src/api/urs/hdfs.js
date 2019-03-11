@@ -1,4 +1,5 @@
 import request from 'axios'
+import Qs from "qs"
 
 // 获取一级目录
 export function getHdfsAllFirst(url) {
@@ -43,7 +44,6 @@ export function deleteHdfs(query) {
     url: "/urs/admin/hdfs/filebrowser/delete",
     method: 'delete',
     params: query,
-
   })
 }
 
@@ -53,7 +53,7 @@ export function deleteHdfsAll(query) {
   return request({
     url: '/urs/admin/hdfs/filebrowser/batchdelete',
     method: 'delete',
-    params: query
+    data: query
   })
 }
 

@@ -25,6 +25,7 @@
           ></el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
+              <el-button type="primary" size="mini" @click="showDetails(scope.row)">详情</el-button>
               <el-button type="primary" size="mini" @click="showInfo(scope.row)">查看</el-button>
               <el-button type="primary" size="mini" @click="allocateResource(scope.row)">分配用户</el-button>
               <el-button
@@ -48,6 +49,9 @@
         ></el-pagination>
       </el-footer>
     </el-container>
+
+    <!-- 资源详情 -->
+    <resourceDetail v-if="ischeck" :info="fileInfos" :ischeck.sync="ischeck"></resourceDetail>
 
     <!-- 更改资源 -->
     <el-dialog
@@ -96,9 +100,11 @@ import {
   getUserByNotResource,
   getUserByResource,
   insertResource,
-  deleteResource
+  deleteResource,
+  showResourceDetail
 } from "@/api/ram/resourceManage";
 import createResource from "./createResource";
+import resourceDetail from "./resourceDetail";
 import { mapGetters } from "vuex";
 
 export default {
@@ -161,11 +167,34 @@ export default {
       allRes: [],
       allocateId: 0,
       userResourceId: 0,
-      newResourceShow: false
+      newResourceShow: false,
+      fileInfos: {
+        action: "HBASE:cluster/metrics",
+        chain: "HBASE:cluster/metrics;URS:HBASE::1:/hbase",
+        comment: "hbase集群状态",
+        createBy: "",
+        createTime: "2019-01-23 00:30:20",
+        delFlag: "0",
+        domain: "URS",
+        expirationTime: "2021-01-02 08:31:36",
+        id: 35,
+        instanceName: "/hbase",
+        number: null,
+        ownerId: 1,
+        parentId: 0,
+        region: "",
+        resourceChain: "URS:HBASE::1:/hbase",
+        service: "HBASE",
+        size: null,
+        status: "0",
+        updateTime: "2019-03-08 10:57:00",
+        version: 1
+      }
     };
   },
   components: {
-    createResource
+    createResource,
+    resourceDetail
   },
   mounted() {
     this.initResource();
@@ -209,6 +238,17 @@ export default {
       this.currentPage = 1;
       this.totalPages = this.resourceTemp.length;
     },
+    // 详情
+    showDetails(row) {
+      let data = {
+        id: row.id
+      };
+      this.ischeck = true;
+      // showResourceDetail(data, res => {
+      //   console.log(res, 4655);
+      // });
+    },
+    // 查看已分配用户
     showInfo(info) {
       // const loading = this.$loading({
       //   lock: true,

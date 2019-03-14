@@ -1,13 +1,13 @@
 import request from '@/router/axios'
 
-export function GetMenu () {
+export function GetMenu() {
   return request({
     url: '/admin/menu',
     method: 'get'
   })
 }
 
-export function fetchMenuTree (query) {
+export function fetchMenuTree(query) {
   return request({
     url: '/admin/menu/tree',
     method: 'get',
@@ -15,7 +15,7 @@ export function fetchMenuTree (query) {
   })
 }
 
-export function addObj (obj) {
+export function addObj(obj) {
   return request({
     url: '/admin/menu',
     method: 'post',
@@ -23,24 +23,33 @@ export function addObj (obj) {
   })
 }
 
-export function getObj (id) {
+export function getObj(id) {
   return request({
     url: '/admin/menu/' + id,
     method: 'get'
   })
 }
 
-export function delObj (id) {
+export function delObj(id) {
   return request({
     url: '/admin/menu/' + id,
     method: 'delete'
   })
 }
 
-export function putObj (obj) {
+export function putObj(obj) {
   return request({
     url: '/admin/menu',
     method: 'put',
+    data: obj
+  })
+}
+
+//获取所有的菜单权限
+export function getMenuPermissions(obj) {
+  return request({
+    url: '/admin/user/getPermission',
+    method: 'get',
     data: obj
   })
 }

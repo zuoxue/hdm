@@ -1,6 +1,11 @@
 <template>
   <div class="resource-wrapper">
     <el-form :model="resource" ref="resource" :rules="rule1" label-width="150px">
+      <el-form-item label="action" prop="action">
+        <el-select v-model="resource['action']" placeholder="请选择action">
+          <el-option v-for="(item,index) in options" :key="index" :label="item" :value="item"></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item v-for="(header,index) in headers" :key="index" :label="header" :prop="header">
         <el-input v-model="resource[header]" size="mini" :placeholder="'请填写'+header"></el-input>
       </el-form-item>
@@ -47,12 +52,13 @@ export default {
       },
       headers: [
         // "parentId",
-        "action",
+        // "action",
         "domain",
         "service",
         "region",
         "instanceName"
       ],
+      options: [],
       rule1: {
         action: [
           { required: true, message: "不能为空", trigger: ["blur", "change"] }
@@ -82,7 +88,8 @@ export default {
       }
     };
   },
-  props: [],
+  props: ["options"],
+
   computed: {
     ...mapGetters(["userId", "access_token"])
   },

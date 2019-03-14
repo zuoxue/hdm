@@ -4,7 +4,11 @@
       <el-header>
         <el-tabs type="border-card">
           <el-tab-pane label="所有资源">
-            <all-resource @getresource="getResource" :clickshow.sync="clickshow"></all-resource>
+            <all-resource
+              @getresource="getResource"
+              @closeResource="closeResource"
+              :clickshow.sync="clickshow"
+            ></all-resource>
             <div class="divider"></div>
             <acess-resource v-if="clickshow" :resourceData="resourceData"></acess-resource>
           </el-tab-pane>
@@ -39,6 +43,9 @@ export default {
       this.resourceid = id;
       this.getuserbyresource();
       this.clickshow = true;
+    },
+    closeResource() {
+      this.clickshow = false;
     },
     getuserbyresource() {
       let query = {

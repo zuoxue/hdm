@@ -4,7 +4,7 @@
       <el-header style="display:flex;">
         <p>资源搜索</p>
         <p style="margin-left:30px;" v-if="userId==1">
-          <el-button type="plain" size="mini" @click="newResourceShow = true">新建资源</el-button>
+          <el-button type="plain" size="mini" @click="createNewResource">新建资源</el-button>
         </p>
       </el-header>
       <el-main>
@@ -88,7 +88,7 @@
       :close-on-click-modal="false"
       width="700px"
     >
-      <create-resource :isshow.sync="newResourceShow" @initEvent="initResource"></create-resource>
+      <create-resource :isshow.sync="newResourceShow" @initEvent="initResource" :options="options"></create-resource>
     </el-dialog>
   </div>
 </template>
@@ -101,7 +101,8 @@ import {
   getUserByResource,
   insertResource,
   deleteResource,
-  showResourceDetail
+  showResourceDetail,
+  getAllActions
 } from "@/api/ram/resourceManage";
 import createResource from "./createResource";
 import resourceDetail from "./resourceDetail";
@@ -115,6 +116,7 @@ export default {
       resourceDict: [],
       resourceTemp: [],
       resourceSel: [],
+      options: [],
       headers: [
         {
           name: "资源",
@@ -179,6 +181,21 @@ export default {
     this.initResource();
   },
   methods: {
+    // 初始化actions
+    initActions() {
+      getAllActions({}, res => {
+        if (res.data.code == 0) {
+          this.options = res.data.data;
+        }
+      });
+    },
+
+    // 新建资源
+    createNewResource() {
+      this.newResourceShow = true;
+      this.initActions();
+    },
+
     initResource() {
       let query = {
         ownerId: this.userId
@@ -224,11 +241,11 @@ export default {
       };
       this.ischeck = true;
       showResourceDetail(data, res => {
-        console.log(res.data.data.data, 4655);
         if (res.data.code == 0) {
           this.fileInfos = res.data.data[0];
         }
       });
+      this.$emit("closeResource");
     },
     // 查看已分配用户
     showInfo(info) {

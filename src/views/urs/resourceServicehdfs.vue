@@ -121,7 +121,7 @@
                   :key="index"
                   :label="header.name"
                 ></el-table-column>
-                <el-table-column label="操作">
+                <el-table-column label="操作" width="300px">
                   <template slot-scope="scope">
                     <div v-if="!scope.row.fix">
                       <el-button type="text" size="small" @click="renamefile($event,scope.row)">重命名</el-button>
@@ -183,7 +183,7 @@
     ></prelook>
 
     <!-- 新建文件弹框 -->
-    <el-dialog title="新建" :visible.sync="dialogAdd" width="30%" :before-close="handleClose">
+    <el-dialog title="新建" :visible.sync="dialogAdd" width="500px" :before-close="handleClose">
       <el-row justify="center" type="flex">
         <el-col :span="6" class="dialog_title--newfile">新建文件夹：</el-col>
         <el-col :span="10">
@@ -197,7 +197,7 @@
     </el-dialog>
 
     <!-- 重命名 -->
-    <el-dialog title="重命名" :visible.sync="dialogRename" width="30%" :before-close="handleClose">
+    <el-dialog title="重命名" :visible.sync="dialogRename" width="500px" :before-close="handleClose">
       <el-row justify="center" type="flex">
         <el-col :span="6" class="dialog_title--newfile">旧名称：</el-col>
         <el-col :span="10">
@@ -438,6 +438,8 @@ export default {
           this.activedPath[prefix].pathSuffix = ".";
           this.activedPath[prefix].fix = true;
         });
+
+        this.activedPath["/"].path = "/";
         // await Promise.all(
         //   this.allData.map(async res => {
         //     await hdfs.pathSummary({ path: res.path }, info => {
@@ -1053,6 +1055,15 @@ export default {
           content: "\f07c";
         }
       }
+    }
+    /deep/ .el-button {
+      & + .el-button {
+        margin-left: 0px !important;
+        width: 40px !important;
+      }
+    }
+    /deep/ .el-button {
+      margin: 5px !important;
     }
   }
   .addressStyle {

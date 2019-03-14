@@ -116,3 +116,13 @@ export async function showResourceDetail(data, cb) {
 //   });
 //   cb(d);
 // }
+
+// 详情
+export async function getAllActions(data, cb) {
+  let d = await request({
+    url: `/ram/manager/getAction`,
+    method: "get",
+    params: data
+  });
+  cb(d);
+}

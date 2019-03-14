@@ -97,7 +97,7 @@ export async function deleteResource(data, cb) {
 }
 
 
-// 详情
+// // 详情
 export async function showResourceDetail(data, cb) {
   let d = await request({
     url: `/ram/resource/getResourceByParentId/${data.id}`,
@@ -106,3 +106,13 @@ export async function showResourceDetail(data, cb) {
   });
   cb(d);
 }
+
+// 详情
+// export async function showResourceDetail(data, cb) {
+//   let d = await request({
+//     url: `/ram/resource/${data.id}`,
+//     method: "get",
+//     params: {}
+//   });
+//   cb(d);
+// }

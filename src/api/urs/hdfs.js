@@ -88,6 +88,18 @@ export async function pathSummary(query, cb) {
   cb(d);
 }
 
+
+//路径概要查找所有子文件
+export async function pathSummaryList(query, cb) {
+  let d = await request({
+    url: '/urs/admin/hdfs/filebrowser/contentsummaryList',
+    method: 'get',
+    params: query
+  });
+
+  cb(d);
+}
+
 // 预览
 export function previewFile(query) {
   return request({
@@ -113,6 +125,15 @@ export function setUsersRel(query) {
   return request({
     url: "/urs/admin/hdfs/filebrowser/setowner",
     method: 'put',
+    params: query,
+  })
+}
+
+//获取root目录信息
+export function getRootInfo(query) {
+  return request({
+    url: "/urs/admin/hdfs/filebrowser/status",
+    method: 'get',
     params: query,
   })
 }

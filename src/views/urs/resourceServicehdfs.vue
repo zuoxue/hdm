@@ -15,7 +15,7 @@
       </el-header>
       <el-main>
         <el-container>
-          <el-header style="line-height:60px;">
+          <el-header style="line-height:60px;position:relative;z-index:100;">
             <el-row>
               <el-col :span="8" class="mt8">
                 <div class="resource-header">
@@ -47,7 +47,7 @@
                       class="upload-demo"
                       :action="uploadUrl"
                       :show-file-list="false"
-                      :data="{'access_token':access_token,'path':selection.length==1?selection[0].path:''}"
+                      :data="{'access_token':access_token,'path':rootpath}"
                       :on-success="handleSuccess"
                       :on-error="handleError"
                       :before-upload="beforeUpload"
@@ -58,9 +58,9 @@
                   <el-col :span="6" class="el-font--color-b">
                     <el-button icon="el-icon-plus" @click="fileadd">新建</el-button>
                   </el-col>
-                  <el-col :span="6" class="el-font--color-b">
+                  <!-- <el-col :span="6" class="el-font--color-b">
                     <el-button icon="el-icon-delete" @click="deletePatchfile">删除</el-button>
-                  </el-col>
+                  </el-col>-->
                   <el-col :span="6" class="el-font--color-b">
                     <el-button @click="backHomePage">返回首页</el-button>
                   </el-col>
@@ -69,7 +69,22 @@
             </el-row>
           </el-header>
           <el-main class="el-resource--main_padding">
-            <div class="mh10">路径：{{rootpath}}</div>
+            <div class="mh10">
+              路径：
+              <span @click="redirectAddress('/')" class="cur-p addressStyle ml5">/</span>
+              <template v-if="rootpath != '/'">
+                <span
+                  v-for="(address,index) in rootpath.split('/').slice(1)"
+                  :key="index"
+                  class="cur-p"
+                  :class="index != rootpath.split('/').slice(1).length-1?'addressStyle':''"
+                  @click="redirectAddress('/'+rootpath.split('/').slice(1,index+2).join('/'))"
+                >
+                  <span class="ml5" v-if="index != 0">/</span>
+                  {{address}}
+                </span>
+              </template>
+            </div>
             <div v-if="renderTable">
               <el-table
                 :data="tableData"
@@ -78,12 +93,19 @@
                 :stripe="true"
                 :cell-style="cellStyle"
                 :header-cell-style="cellStyle"
+                row-class-name="rowClassName"
                 @selection-change="selectChange"
                 size="mini"
                 @row-click="getChildFile"
               >
-                <el-table-column type="selection" width="55"></el-table-column>
-                <el-table-tree-column
+                <!-- <el-table-column type="selection" width="55"></el-table-column> -->
+                <el-table-column label="名称">
+                  <template slot-scope="scope">
+                    <i :class="['fa',scope.row.type=='DIRECTORY'?'fa-folder':'fa-file']"></i>
+                    <span style="margin-left:5px;color:#0B7FAD;">{{scope.row.pathSuffix}}</span>
+                  </template>
+                </el-table-column>
+                <!-- <el-table-tree-column
                   fixed
                   :expand-all="!1"
                   file-icon="icon icon-file"
@@ -92,7 +114,7 @@
                   label="名称"
                   :remote="remote"
                   :indent-size="8"
-                ></el-table-tree-column>
+                ></el-table-tree-column>-->
                 <el-table-column
                   :prop="header.prop"
                   v-for="(header,index) in tableHeaders"
@@ -101,22 +123,24 @@
                 ></el-table-column>
                 <el-table-column label="操作">
                   <template slot-scope="scope">
-                    <el-button type="text" size="small" @click="renamefile(scope.row)">重命名</el-button>
-                    <el-button type="text" size="small" @click="deleteFile(scope.row)">删除</el-button>
-                    <el-button type="text" size="small" @click="spermisson(scope.row)">权限</el-button>
-                    <el-button type="text" size="small" @click="setuser(scope.row)">用户</el-button>
-                    <el-button
-                      type="text"
-                      size="small"
-                      @click="download(scope.row)"
-                      v-if="scope.row.type!='DIRECTORY'"
-                    >下载</el-button>
-                    <el-button
-                      type="text"
-                      size="mini"
-                      @click="preOutlook(scope.row)"
-                      v-if="scope.row.type!='DIRECTORY'"
-                    >预览</el-button>
+                    <div v-if="!scope.row.fix">
+                      <el-button type="text" size="small" @click="renamefile($event,scope.row)">重命名</el-button>
+                      <el-button type="text" size="small" @click="deleteFile($event,scope.row)">删除</el-button>
+                      <el-button type="text" size="small" @click="spermisson($event,scope.row)">权限</el-button>
+                      <el-button type="text" size="small" @click="setuser($event,scope.row)">用户</el-button>
+                      <el-button
+                        type="text"
+                        size="small"
+                        @click="download(scope.row)"
+                        v-if="scope.row.type!='DIRECTORY'"
+                      >下载</el-button>
+                      <el-button
+                        type="text"
+                        size="mini"
+                        @click="preOutlook(scope.row)"
+                        v-if="scope.row.type!='DIRECTORY'"
+                      >预览</el-button>
+                    </div>
                     <!-- <el-button type="text" size="small" v-if="scope.row.type=='DIRECTORY'" @click="manageQuota(scope.row)">配额管理</el-button> -->
                   </template>
                 </el-table-column>
@@ -259,6 +283,7 @@ import {
 import * as hdfs from "@/api/urs/hdfs";
 import prelook from "./prelook";
 import Qs from "qs";
+import { debug, debuglog } from "util";
 
 export default {
   name: "resourceServicehdfs",
@@ -325,7 +350,8 @@ export default {
       prelook: false,
       endData: "",
       prelooktitle: "",
-      prelookPath: ""
+      prelookPath: "",
+      activedPath: {}
     };
   },
   mounted() {
@@ -347,79 +373,276 @@ export default {
       let url = `/urs/admin/hdfs/filebrowser/liststatus?path=/&access_token=${
         this.access_token
       }`;
+
+      let urlroot = `/urs/admin/hdfs/filebrowser/liststatus?path=&access_token=${
+        this.access_token
+      }`;
       hdfs.getHdfsAllFirst(url).then(async res => {
-        this.allData = handleData(
+        let rootSummary = null;
+
+        let d = handleData(
           res.data.data.FileStatuses.FileStatus,
           null,
           res.data.data.path
         );
-        await Promise.all(
-          this.allData.map(async res => {
-            await hdfs.pathSummary({ path: res.path }, info => {
-              if (info.data.code == 0) {
-                let d = info.data.data.ContentSummary;
-                res.size = getfilesize(d.spaceConsumed);
-                res.directoryCount = d.directoryCount;
-                res.fileCount = d.fileCount;
-                res.spaceQuota = d.spaceQuota == -1 ? "-" : d.spaceQuota;
-                res.quota = d.quota == -1 ? "-" : d.quota;
-              } else {
-                this.$message({
-                  type: "error",
-                  message: info.data.msg
-                });
-              }
-            });
-          })
-        );
+
+        let ps = {};
+        await hdfs.pathSummaryList({ path: "/" }, info => {
+          if (info.data.code == 0) {
+            ps = info.data.data;
+          }
+        });
+
+        // 补充数据
+        this.allData = d.map(item => {
+          let prefix = "/" + item.pathSuffix;
+
+          item.size = getfilesize(ps[prefix].spaceConsumed);
+          item.directoryCount = ps[prefix].directoryCount;
+          item.fileCount = ps[prefix].fileCount;
+          item.spaceQuota =
+            ps[prefix].spaceQuota == -1 ? "-" : ps[prefix].spaceQuota;
+          item.quota = ps[prefix].quota == -1 ? "-" : ps[prefix].quota;
+          return item;
+        });
+
+        // this.activedPath["/"] = {
+        //   accessTime: "-",
+        //   blockSize: "-",
+        //   child_num: 0,
+        //   depth: 0,
+        //   dir: "/",
+        //   group: "-",
+        //   id: "",
+        //   length: "",
+        //   modificationTime: "",
+        //   owner: "-",
+        //   parent_id: "",
+        //   path: "/",
+        //   pathSuffix: ".",
+        //   permission: "rwxrwxrwx",
+        //   replication: "-",
+        //   type: "DIRECTORY",
+        //   fix: true
+        // };
+        await hdfs.getRootInfo({ path: "" }).then(res => {
+          this.activedPath["/"] = handleData([res.data.data], null, "/")[0];
+          let prefix = "/";
+          this.activedPath[prefix].size = getfilesize(ps[""].spaceConsumed);
+          this.activedPath[prefix].directoryCount = ps[""].directoryCount;
+          this.activedPath[prefix].fileCount = ps[""].fileCount;
+          this.activedPath[prefix].spaceQuota =
+            ps[""].spaceQuota == -1 ? "-" : ps[""].spaceQuota;
+          this.activedPath[prefix].quota =
+            ps[""].quota == -1 ? "-" : ps[""].quota;
+          this.activedPath[prefix].pathSuffix = ".";
+          this.activedPath[prefix].fix = true;
+        });
+        // await Promise.all(
+        //   this.allData.map(async res => {
+        //     await hdfs.pathSummary({ path: res.path }, info => {
+        //       if (info.data.code == 0) {
+        //         let d = info.data.data.ContentSummary;
+        //         res.size = getfilesize(d.spaceConsumed);
+        //         res.directoryCount = d.directoryCount;
+        //         res.fileCount = d.fileCount;
+        //         res.spaceQuota = d.spaceQuota == -1 ? "-" : d.spaceQuota;
+        //         res.quota = d.quota == -1 ? "-" : d.quota;
+        //       } else {
+        //         this.$message({
+        //           type: "error",
+        //           message: info.data.msg
+        //         });
+        //       }
+        //     });
+        //   })
+        // );
+
         this.tableData = this.allData.slice(0, this.pagenums);
         this.totalnum = this.allData.length;
         this.totallen = Math.floor(this.totalnum / this.pagenums);
+
+        // 处理根目录数据
+
+        this.tableData.splice(0, 0, this.activedPath["/"]);
       });
     },
-    remote(row, callback) {
+
+    redirectAddress(url) {
+      let row = this.activedPath[url];
+      if (url == "/") {
+        row.path = "/";
+      }
+
+      this.remote(row);
+    },
+    remote(row) {
+      let that = this;
       let url = `/urs/admin/hdfs/filebrowser/liststatus?path=${
         row.path
       }&access_token=${this.access_token}`;
-      this.rootpath = row.path;
+      let fixedArray = [];
       hdfs
         .getHdfsAllFirst(url)
         .then(async res => {
-          const submenus = handleSubData(
+          if (res.data.code != 0) {
+            return;
+          }
+          // if (res.data.data.FileStatuses.FileStatus.length == 0) {
+          //   return;
+          // }
+          //锁定屏
+          let loading = this.$loading({
+            lock: false,
+            text: "Loading",
+            spinner: "el-icon-loading",
+            background: "rgba(0, 0, 0, 0.7)"
+          });
+          const submenu = handleSubData(
             res.data.data.FileStatuses.FileStatus,
             row.id,
             res.data.data.path,
             row.depth + 1
           );
-          await Promise.all(
-            submenus.map(async res => {
-              await hdfs.pathSummary({ path: res.path }, info => {
-                if (info.data.code == 0) {
-                  let d = info.data.data.ContentSummary;
-                  res.size = getfilesize(d.spaceConsumed);
-                  res.directoryCount = d.directoryCount;
-                  res.fileCount = d.fileCount;
-                  res.spaceQuota = d.spaceQuota == -1 ? "-" : d.spaceQuota;
-                  res.quota = d.quota == -1 ? "-" : d.quota;
-                } else {
-                  this.$message({
-                    type: "error",
-                    message: info.data.msg
-                  });
-                }
+
+          let ps = {};
+          await hdfs.pathSummaryList({ path: row.path }, info => {
+            if (info.data.code == 0) {
+              ps = info.data.data;
+            }
+          });
+          // 补充数据
+          let submenus = submenu.map(item => {
+            let prefix = row.path + "/" + item.pathSuffix;
+            if (row.path == "/") {
+              prefix = "/" + item.pathSuffix;
+            }
+            item.size = getfilesize(ps[prefix].spaceConsumed);
+            item.directoryCount = ps[prefix].directoryCount;
+            item.fileCount = ps[prefix].fileCount;
+            item.spaceQuota =
+              ps[prefix].spaceQuota == -1 ? "-" : ps[prefix].spaceQuota;
+            item.quota = ps[prefix].quota == -1 ? "-" : ps[prefix].quota;
+            return item;
+          });
+          console.log(submenus.length, 899);
+
+          if (row.pathSuffix != "↵") {
+            this.activedPath[row.path] = JSON.parse(JSON.stringify(row));
+            if (submenus.length == 0) {
+              fixedArray.push({
+                accessTime: "-",
+                blockSize: "-",
+                child_num: 0,
+                depth: 0,
+                dir: "-",
+                directoryCount: "",
+                fileCount: "",
+                group: "-",
+                id: "",
+                length: "",
+                modificationTime: "",
+                owner: "-",
+                parent_id: "",
+                path: "",
+                pathSuffix: "↵",
+                permission: "-",
+                quota: "-",
+                replication: "-",
+                size: "-",
+                spaceQuota: "-",
+                type: "DIRECTORY",
+                fix: true
               });
-            })
-          );
-          if (submenus.length > 0) {
-            callback(submenus.filter(f => f["parent_id"] == row["id"]));
-          } else {
-            callback();
+            }
           }
+          console.log(this.activedPath[row.path], 777);
+          this.rootpath = row.path;
+          this.allData = submenus.filter(f => f["parent_id"] == row["id"]);
+          this.tableData = this.allData.slice(0, this.pagenums);
+          this.totalnum = this.allData.length;
+          this.totallen = Math.floor(this.totalnum / this.pagenums);
+          if (submenus.length > 0) {
+            // this.rootpath = row.path;
+            // this.allData = submenus.filter(f => f["parent_id"] == row["id"]);
+            // this.tableData = this.allData.slice(0, this.pagenums);
+            // this.totalnum = this.allData.length;
+            // this.totallen = Math.floor(this.totalnum / this.pagenums);
+
+            // if (row.pathSuffix != "↵") {
+            //   this.activedPath[row.path] = JSON.parse(JSON.stringify(row));
+            // }
+
+            if (this.rootpath == "/") {
+            } else {
+              fixedArray.push({
+                accessTime: "-",
+                blockSize: "-",
+                child_num: 0,
+                depth: 0,
+                dir: "-",
+                directoryCount: "",
+                fileCount: "",
+                group: "-",
+                id: "",
+                length: "",
+                modificationTime: "",
+                owner: "-",
+                parent_id: "",
+                path: "",
+                pathSuffix: "↵",
+                permission: "-",
+                quota: "-",
+                replication: "-",
+                size: "-",
+                spaceQuota: "-",
+                type: "DIRECTORY",
+                fix: true
+              });
+            }
+            // this.activedPath[row.path].pathSuffix = ".";
+            // this.activedPath[row.path].fix = true;
+            // fixedArray.push(this.activedPath[row.path]);
+            // this.tableData.splice(0, 0, ...fixedArray);
+            // loading.close();
+          } else {
+            // callback();
+            // this.activedPath[row.path].pathSuffix = ".";
+            // this.activedPath[row.path].fix = true;
+            // fixedArray.push(this.activedPath[row.path]);
+            // this.tableData.splice(0, 0, ...fixedArray);
+            // loading.close();
+          }
+
+          this.activedPath[row.path].pathSuffix = ".";
+          this.activedPath[row.path].fix = true;
+          fixedArray.push(this.activedPath[row.path]);
+          this.tableData.splice(0, 0, ...fixedArray);
+          loading.close();
         })
         .catch(err => {
           return;
         });
+
       // callback(this.submenus.filter(f => f["parent_id"] == row["id"]));
+    },
+    // 获取子文件||返回上一层
+    getChildFile(row) {
+      if (row.pathSuffix == "↵") {
+        if (this.rootpath != "/") {
+          let path = this.rootpath.split("/");
+          row.path =
+            path.slice(0, path.length - 1).join("/") == ""
+              ? "/"
+              : path.slice(0, path.length - 1).join("/");
+        }
+        this.remote(row);
+        return;
+      }
+      if (row.type == "DIRECTORY" && row.pathSuffix != ".") {
+        this.remote(row);
+        return;
+      }
     },
     //table选中记录
     selectChange(selection) {
@@ -430,9 +653,17 @@ export default {
       return "text-align:left";
     },
     handleCurrentChange(page) {
+      let extra = [];
+      if (this.rootpath == "/") {
+        extra.push(this.tableData[0]);
+      } else {
+        extra.push(...this.tableData.slice(0, 2));
+      }
       const start = (page - 1) * this.pagenums;
       const end = start + this.pagenums;
+
       this.tableData = this.allData.slice(start, end);
+      this.tableData.splice(0, 0, ...extra);
     },
 
     // 当前页改变时table显示数据
@@ -444,14 +675,14 @@ export default {
     },
     // 上传判断，必须有文件夹被选中
     beforeUpload(file) {
-      if (this.selection.length != 1) {
-        this._message("请确认选中了一个文件夹!", "info");
-        return false;
-      }
-      if (this.selection[0].type != "DIRECTORY") {
-        this._message("请确认选中了一个文件夹!", "info");
-        return false;
-      }
+      // if (this.selection.length != 1) {
+      //   this._message("请确认选中了一个文件夹!", "info");
+      //   return false;
+      // }
+      // if (this.selection[0].type != "DIRECTORY") {
+      //   this._message("请确认选中了一个文件夹!", "info");
+      //   return false;
+      // }
     },
 
     //上传成功提示
@@ -490,21 +721,23 @@ export default {
       hdfs
         .createDir({
           access_token: this.access_token,
-          path: `${this.selection[0] ? this.selection[0].path : "/"}/${
-            this.filename
-          }`,
+          // path: `${this.selection[0] ? this.selection[0].path : "/"}/${
+          //   this.filename
+          // }`,
+          path: this.rootpath + "/" + this.filename,
           permission: 755
         })
         .then(res => {
           this.dialogAdd = false;
           this._message("新建成功!", "success");
-          this.postData();
+          // this.postData();
+          this.remote(this.activedPath[this.rootpath]);
         });
     },
 
     //删除自身
-    deleteFile(row) {
-      console.log(row, 4545, row.pathSuffix);
+    deleteFile(ev, row) {
+      ev.stopPropagation();
       this.$confirm("确认删除吗？", "删除", {
         showCancelButton: true
       })
@@ -531,35 +764,33 @@ export default {
     },
 
     // 批量删除
-    deletePatchfile() {
-      if (this.selection.length == 0) {
-        this._message("请确认选中了一个文件或文件夹！", "info");
-        return;
-      }
-      const allfiles = this.selection.map(res => {
-        return res.path;
-      });
+    // deletePatchfile() {
+    //   if (this.selection.length == 0) {
+    //     this._message("请确认选中了一个文件或文件夹！", "info");
+    //     return;
+    //   }
+    //   const allfiles = this.selection.map(res => {
+    //     return res.path;
+    //   });
 
-      console.log(allfiles, 999);
-      // encodeURIComponent(JSON.stringify(allfiles))
-      this.$confirm("确认删除吗？", "删除", {
-        showCancelButton: true
-      })
-        .then(() => {
-          hdfs
-            .deleteHdfsAll({
-              access_token: this.access_token,
-              paths: allfiles,
-              recursive: true
-            })
-            .then(res => {
-              console.log(res, 777);
-              this._message("删除成功！", "success");
-              this.postData();
-            });
-        })
-        .catch(() => {});
-    },
+    //   // encodeURIComponent(JSON.stringify(allfiles))
+    //   this.$confirm("确认删除吗？", "删除", {
+    //     showCancelButton: true
+    //   })
+    //     .then(() => {
+    //       hdfs
+    //         .deleteHdfsAll({
+    //           access_token: this.access_token,
+    //           paths: allfiles,
+    //           recursive: true
+    //         })
+    //         .then(res => {
+    //           this._message("删除成功！", "success");
+    //           this.postData();
+    //         });
+    //     })
+    //     .catch(() => {});
+    // },
 
     // 返回首页
     backHomePage() {
@@ -567,7 +798,8 @@ export default {
     },
 
     // 重命名
-    renamefile(row) {
+    renamefile(ev, row) {
+      ev.stopPropagation();
       this.oldname = row.pathSuffix;
       this.dialogRename = true;
       this.renameurl = row.path;
@@ -604,7 +836,6 @@ export default {
         if (!data) {
           return;
         }
-        console.log(data, 111);
         let url = window.URL.createObjectURL(new Blob([data]));
         let link = document.createElement("a");
         link.style.display = "none";
@@ -614,6 +845,7 @@ export default {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
       });
     },
     dialogComfirmRename() {
@@ -628,7 +860,6 @@ export default {
           topath: this.urlpath + "/" + this.newname
         })
         .then(res => {
-          console.log(res.data);
           if (res.data == "fail") {
             this._message("修改失败！", "error");
             return;
@@ -640,7 +871,8 @@ export default {
     },
 
     //权限
-    spermisson(row) {
+    spermisson(ev, row) {
+      ev.stopPropagation();
       this.permissonPath = row.path;
       this.setpermission = true;
     },
@@ -680,7 +912,8 @@ export default {
     },
 
     //设置用户组和用户
-    setuser(row) {
+    setuser(ev, row) {
+      ev.stopPropagation();
       this.setusers = {
         owner: row.owner,
         group: row.group,
@@ -756,6 +989,8 @@ export default {
   }
   .el-resource--main_padding {
     padding: 0 20px !important;
+    position: relative;
+    z-index: 200;
     .cursorStyle {
       cursor: pointer;
     }
@@ -802,6 +1037,24 @@ export default {
         cursor: pointer;
       }
     }
+    /deep/ .rowClassName {
+      cursor: pointer;
+      .fa-folder {
+        width: 12px;
+        height: 12px;
+      }
+      &:hover {
+        .fa-folder:before {
+          content: "\f07c";
+        }
+      }
+    }
+  }
+  .addressStyle {
+    color: #0b7fad;
+  }
+  .ml5 {
+    margin-left: 5px;
   }
 }
 </style>

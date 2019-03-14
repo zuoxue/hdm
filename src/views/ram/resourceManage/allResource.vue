@@ -168,28 +168,7 @@ export default {
       allocateId: 0,
       userResourceId: 0,
       newResourceShow: false,
-      fileInfos: {
-        action: "HBASE:cluster/metrics",
-        chain: "HBASE:cluster/metrics;URS:HBASE::1:/hbase",
-        comment: "hbase集群状态",
-        createBy: "",
-        createTime: "2019-01-23 00:30:20",
-        delFlag: "0",
-        domain: "URS",
-        expirationTime: "2021-01-02 08:31:36",
-        id: 35,
-        instanceName: "/hbase",
-        number: null,
-        ownerId: 1,
-        parentId: 0,
-        region: "",
-        resourceChain: "URS:HBASE::1:/hbase",
-        service: "HBASE",
-        size: null,
-        status: "0",
-        updateTime: "2019-03-08 10:57:00",
-        version: 1
-      }
+      fileInfos: {}
     };
   },
   components: {
@@ -244,9 +223,12 @@ export default {
         id: row.id
       };
       this.ischeck = true;
-      // showResourceDetail(data, res => {
-      //   console.log(res, 4655);
-      // });
+      showResourceDetail(data, res => {
+        console.log(res.data.data.data, 4655);
+        if (res.data.code == 0) {
+          this.fileInfos = res.data.data[0];
+        }
+      });
     },
     // 查看已分配用户
     showInfo(info) {

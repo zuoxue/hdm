@@ -240,9 +240,16 @@ export default {
     button:not(:first-child) {
       margin-top: 7px;
     }
+    button {
+      margin-left: 10px;
+      width: 70px;
+    }
   }
   .hive-run {
     width: 100px;
+  }
+  .hive-query {
+    width: calc(100% - 120px);
   }
   .hive-history {
     padding: 20px;

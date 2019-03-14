@@ -688,7 +688,8 @@ export default {
     //上传成功提示
     handleSuccess(res, file, fileList) {
       this._message("上传成功！", "success");
-      this.postData();
+      // this.postData();
+      this.remote(this.activedPath[this.rootpath]);
     },
     handleError() {
       this._message("上传失败！", "error");
@@ -751,7 +752,8 @@ export default {
             .then(res => {
               if (res.data.code == 0) {
                 this._message("删除成功！", "success");
-                this.postData();
+                // this.postData();
+                this.remote(this.activedPath[this.rootpath]);
               } else {
                 this._message("删除失败！", "error");
               }
@@ -866,7 +868,8 @@ export default {
           }
           this._message("修改成功！", "success");
           this.dialogRename = false;
-          this.postData();
+          // this.postData();
+          this.remote(this.activedPath[this.rootpath]);
         });
     },
 
@@ -899,7 +902,8 @@ export default {
         .then(res => {
           if (res.data.code == 0) {
             this._message("权限设置成功", "success");
-            this.postData();
+            // this.postData();
+            this.remote(this.activedPath[this.rootpath]);
             this.setpermission = false;
             return;
           } else {
@@ -931,7 +935,8 @@ export default {
           .then(res => {
             if (res.data.code == 0) {
               this._message("用户设置成功", "success");
-              this.postData();
+              // this.postData();
+              this.remote(this.activedPath[this.rootpath]);
               this.setusers.isshow = false;
               return;
             } else {

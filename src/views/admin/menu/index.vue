@@ -43,7 +43,7 @@
               </el-form-item>
               <!-- <el-form-item label="权限标识" prop="permission">
                 <el-input v-model="form.permission" :disabled="formEdit" placeholder="请输入权限标识"></el-input>
-              </el-form-item> -->
+              </el-form-item>-->
               <el-form-item label="图标" prop="icon">
                 <el-input v-model="form.icon" :disabled="formEdit" placeholder="请输入图标"></el-input>
               </el-form-item>
@@ -69,9 +69,7 @@
                   :disabled="formEdit"
                   placeholder="请选择资源权限"
                 >
-                  <el-option label="请选择" value="">
-                    请选择
-                  </el-option>
+                  <el-option label="请选择" value>请选择</el-option>
                   <el-option
                     v-for="item in  permissionItems"
                     :key="item"
@@ -100,8 +98,8 @@
                   :disabled="formEdit"
                   active-color="#13ce66"
                   inactive-color="#ff4949"
-                  :active-value=""1""
-                  :inactive-value=""0""
+                  :active-value="1"
+                  :inactive-value="0"
                 ></el-switch>
               </el-form-item>
               <el-form-item v-if="formStatus == 'update'">
@@ -161,7 +159,7 @@ export default {
       },
       labelPosition: "right",
       permissionItems: [],
-      showPermission:false,
+      showPermission: false,
       form: {
         permission: undefined,
         name: undefined,
@@ -171,7 +169,7 @@ export default {
         sort: undefined,
         component: undefined,
         type: undefined,
-        path: undefined,
+        path: undefined
       },
       currentId: -1,
       menuManager_btn_add: false,
@@ -253,23 +251,25 @@ export default {
       this.currentId = data.id;
       this.showElement = true;
 
-      if(data.parentId == 9000){
+      if (data.parentId == 9000) {
         let data = {};
-        getMenuPermissions(data).then(res=>{
-          if(res.data.code == 0){
-            this.permissionItems = res.data.data;
-            return;
-          }
-          this.$message({
-            type:"error",
-            message:"没有权限"
+        getMenuPermissions(data)
+          .then(res => {
+            if (res.data.code == 0) {
+              this.permissionItems = res.data.data;
+              return;
+            }
+            this.$message({
+              type: "error",
+              message: "没有权限"
+            });
           })
-        }).catch(err=>{
-          this.$message({
-            type:"error",
-            message:"获取权限失败"
-          })
-        })
+          .catch(err => {
+            this.$message({
+              type: "error",
+              message: "获取权限失败"
+            });
+          });
       }
     },
     handlerEdit() {

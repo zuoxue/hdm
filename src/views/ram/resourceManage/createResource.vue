@@ -58,7 +58,6 @@ export default {
         "region",
         "instanceName"
       ],
-      options: [],
       rule1: {
         action: [
           { required: true, message: "不能为空", trigger: ["blur", "change"] }

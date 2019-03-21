@@ -37,10 +37,17 @@ export default {
   created() {
     this.$store.dispatch("GetMenu").then(data => {
       if (data.length === 0) return;
+      // 特定parentId 1000
       // data.push(...newmenus);
-      // let d = JSON.parse(sessionStorage.getItem("menu"));
-      // d.content = data;
-      // sessionStorage.setItem("menu", JSON.stringify(d));
+      var data = data.map(item => {
+        if (item.id == 1000) {
+          item.children.push(...newmenus);
+        }
+        return item;
+      });
+      let d = JSON.parse(sessionStorage.getItem("menu"));
+      d.content = data;
+      sessionStorage.setItem("menu", JSON.stringify(d));
       this.$router.$avueRouter.formatRoutes(data, true);
     });
   },

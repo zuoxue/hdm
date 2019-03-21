@@ -62,6 +62,23 @@
                   ></el-option>
                 </el-select>
               </el-form-item>
+              <el-form-item label="菜单类型" prop="menuType">
+                <el-select
+                  class="filter-item"
+                  v-model="menuType"
+                  :disabled="formEdit"
+                  placeholder="请选择菜单类型"
+                  @change="getMenuTypesLocal"
+                >
+                  <el-option label="请选择" value>请选择</el-option>
+                  <el-option
+                    v-for="(item,index) in  menuTypes"
+                    :key="index"
+                    :label="item.label"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
               <el-form-item label="权限" prop="permission">
                 <el-select
                   class="filter-item"
@@ -125,7 +142,8 @@ import {
   fetchMenuTree,
   getObj,
   putObj,
-  getMenuPermissions
+  getMenuPermissions,
+  getMenuTypes
 } from "@/api/admin/menu";
 import { mapGetters } from "vuex";
 
@@ -159,6 +177,8 @@ export default {
       },
       labelPosition: "right",
       permissionItems: [],
+      menuTypes: [],
+      menuType: undefined,
       showPermission: false,
       form: {
         permission: undefined,
@@ -195,7 +215,22 @@ export default {
   computed: {
     ...mapGetters(["elements", "permissions"])
   },
+  mounted() {
+    this.initData();
+  },
   methods: {
+    initData() {
+      getMenuTypes({}).then(res => {
+        if (res.data.code == 0) {
+          let d = res.data.data;
+
+          let keys = Object.keys(d);
+          keys.map(item => {
+            this.menuTypes.push({ value: item, label: d[item] });
+          });
+        }
+      });
+    },
     getList() {
       fetchMenuTree(this.listQuery).then(response => {
         this.treeData = response.data.data;
@@ -240,7 +275,32 @@ export default {
         }
       }
     },
+    getMenuTypesLocal() {
+      this.form.permission = "";
+      if (this.menuType == "") {
+        this.permissionItems = [];
+        return;
+      }
+      let data1 = { id: this.menuType };
 
+      getMenuPermissions(data1)
+        .then(res => {
+          if (res.data.code == 0) {
+            this.permissionItems = res.data.data;
+            return;
+          }
+          this.$message({
+            type: "error",
+            message: "没有权限"
+          });
+        })
+        .catch(err => {
+          this.$message({
+            type: "error",
+            message: "获取权限失败"
+          });
+        });
+    },
     getNodeData(data) {
       if (!this.formEdit) {
         this.formStatus = "update";
@@ -250,27 +310,8 @@ export default {
       });
       this.currentId = data.id;
       this.showElement = true;
-
-      if (data.parentId == 9000) {
-        let data = {};
-        getMenuPermissions(data)
-          .then(res => {
-            if (res.data.code == 0) {
-              this.permissionItems = res.data.data;
-              return;
-            }
-            this.$message({
-              type: "error",
-              message: "没有权限"
-            });
-          })
-          .catch(err => {
-            this.$message({
-              type: "error",
-              message: "获取权限失败"
-            });
-          });
-      }
+      this.menuType = undefined;
+      this.permissionItems = [];
     },
     handlerEdit() {
       if (this.form.menuId) {

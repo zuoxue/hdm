@@ -45,10 +45,19 @@ export function putObj(obj) {
   })
 }
 
-//获取所有的菜单权限
+//获取选中的菜单权限
 export function getMenuPermissions(obj) {
   return request({
-    url: '/admin/user/getPermission',
+    url: `/admin/user/getPermission/${obj.id}`,
+    method: 'get',
+    data: {}
+  })
+}
+
+//获取所有的菜单类型
+export function getMenuTypes(obj) {
+  return request({
+    url: '/admin/user/getTypeAndTypeName',
     method: 'get',
     data: obj
   })

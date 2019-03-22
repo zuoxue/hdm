@@ -88,9 +88,9 @@
                 >
                   <el-option label="请选择" value>请选择</el-option>
                   <el-option
-                    v-for="item in  permissionItems"
+                    v-for="(item,key) in  permissionItems"
                     :key="item"
-                    :label="item"
+                    :label="key"
                     :value="item"
                   ></el-option>
                 </el-select>

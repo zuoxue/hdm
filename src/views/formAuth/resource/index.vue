@@ -31,7 +31,7 @@
             v-for="header in headers"
             :key="header.index"
             :prop="header.prop"
-            :label="header.prop"
+            :label="header.label"
           ></el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
@@ -78,19 +78,23 @@ export default {
       headers: [
         {
           index: 0,
-          prop: "action"
+          prop: "action",
+          label: "资源操作"
         },
         {
           index: 1,
-          prop: "domain"
+          prop: "domain",
+          label: "资源域"
         },
         {
           index: 2,
-          prop: "service"
+          prop: "service",
+          label: "服务类别"
         },
         {
           index: 3,
-          prop: "region"
+          prop: "region",
+          label: "资源所在地域"
         }
       ],
       page: {

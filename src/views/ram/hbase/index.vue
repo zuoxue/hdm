@@ -26,7 +26,7 @@
     <!-- 新增表空间弹框 -->
     <el-dialog title="新增表空间" :visible.sync="isshowcluster" width="500px" :show-close="true">
       <div class="cluster-body">
-        <div class="cluster-body--np">namespace:</div>
+        <div class="cluster-body--np" style="width:80px;">命名空间:</div>
         <el-input v-model="namespace" size="small" ref="namespace"></el-input>
       </div>
       <div slot="footer">

@@ -31,7 +31,7 @@
             v-for="header in headers"
             :key="header.index"
             :prop="header.prop"
-            :label="header.prop"
+            :label="header.label"
           ></el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
@@ -75,23 +75,28 @@ export default {
       headers: [
         {
           index: 0,
-          prop: "name"
+          prop: "name",
+          label: "菜单名称"
         },
         {
           index: 1,
-          prop: "permission"
+          prop: "permission",
+          label: "权限标识"
         },
         {
           index: 2,
-          prop: "path"
+          prop: "path",
+          label: "前端url"
         },
         {
           index: 3,
-          prop: "type"
+          prop: "type",
+          label: "菜单类型"
         },
         {
           index: 4,
-          prop: "typeName"
+          prop: "typeName",
+          label: "菜单类型名称"
         }
       ],
       page: {

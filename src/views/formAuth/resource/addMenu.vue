@@ -3,18 +3,18 @@
     <el-form :model="ps" :rules="ruleMenu" ref="ps1" status-icon>
       <el-form-item
         v-for="header in headers"
-        :prop="header.valid?header.label:''"
+        :prop="header.valid?header.prop:''"
         :key="header.index"
         :label="header.label"
       >
         <el-input
           type="text"
-          v-model="ps[header.label]"
+          v-model="ps[header.prop]"
           class="inp-s"
           size="mini"
           v-if="!header.isSelect"
         ></el-input>
-        <el-select name id v-model="ps[header.label]" size="mini" v-else>
+        <el-select name id v-model="ps[header.prop]" size="mini" v-else>
           <el-option :value="''">{{'请选择'+header.label}}</el-option>
           <el-option v-for="(menu,ind) in menuTypes" :key="ind" :value="menu.label">{{menu.label}}</el-option>
         </el-select>
@@ -45,27 +45,31 @@ export default {
       headers: [
         {
           index: 0,
-          label: "action",
+          label: "资源操作",
+          prop: "action",
           isSelect: false,
           valid: true
         },
         {
           index: 1,
-          label: "domain",
+          label: "资源域",
+          prop: "domain",
           isSelect: false,
-          valid: false
+          valid: true
         },
         {
           index: 2,
-          label: "region",
+          label: "资源所在地域",
+          prop: "region",
           isSelect: false,
           valid: false
         },
         {
           index: 3,
-          label: "service",
+          label: "服务类别",
+          prop: "service",
           isSelect: false,
-          valid: false
+          valid: true
         }
       ],
       ps: {

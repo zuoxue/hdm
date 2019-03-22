@@ -3,18 +3,18 @@
     <el-form :model="ps" :rules="ruleMenu" ref="ps" status-icon>
       <el-form-item
         v-for="header in headers"
-        :prop="header.valid?header.label:''"
+        :prop="header.valid?header.prop:''"
         :key="header.index"
         :label="header.label"
       >
         <el-input
           type="text"
-          v-model="ps[header.label]"
+          v-model="ps[header.prop]"
           class="inp-s"
           v-if="!header.isSelect"
           size="mini"
         ></el-input>
-        <el-select name id v-model="ps[header.label]" size="mini" v-else>
+        <el-select name id v-model="ps[header.prop]" size="mini" v-else>
           <el-option :value="''">{{'请选择'+header.label}}</el-option>
           <el-option v-for="(menu,ind) in menuTypes" :key="ind" :value="menu.label">{{menu.label}}</el-option>
         </el-select>
@@ -39,19 +39,22 @@ export default {
       headers: [
         {
           index: 0,
-          label: "name",
+          label: "菜单名称",
+          prop: "name",
           isSelect: false,
-          valid: false
+          valid: true
         },
         {
           index: 1,
-          label: "permission",
+          label: "权限标识",
+          prop: "permission",
           isSelect: false,
           valid: true
         },
         {
           index: 2,
-          label: "path",
+          label: "前端url",
+          prop: "path",
           isSelect: false,
           valid: false
         },
@@ -61,7 +64,8 @@ export default {
         // },
         {
           index: 3,
-          label: "typeName",
+          label: "菜单类型名称",
+          prop: "typeName",
           isSelect: true,
           valid: true
         }
@@ -74,6 +78,9 @@ export default {
         type: ""
       },
       ruleMenu: {
+        name: [
+          { required: true, message: "不能为空", trigger: ["blur", "change"] }
+        ],
         permission: [
           {
             // validator: checkPermission,
@@ -180,7 +187,7 @@ export default {
     flex-direction: row;
     // margin-bottom: 10px;
     /deep/ .el-form-item__label {
-      width: 100px;
+      width: 120px;
     }
     // .inp-s {
     //   width: 200px;

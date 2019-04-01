@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import { kv } from "@/const/crud/data";
 export default {
   name: "resourceDetail",
   data() {
@@ -31,12 +32,19 @@ export default {
   computed: {
     customInfo() {
       let keys = Object.keys(this.info);
-      let infos = keys.map(item => {
-        return {
-          key: item,
-          value: this.info[item] == null ? "" : this.info[item]
-        };
-      });
+      let infos = keys
+        .map(item => {
+          if (kv[item]) {
+            return {
+              key: kv[item],
+              value: this.info[item] == null ? "" : this.info[item]
+            };
+          }
+          return;
+        })
+        .filter(item => {
+          return item;
+        });
       return infos;
     }
   },

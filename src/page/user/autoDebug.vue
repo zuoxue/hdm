@@ -55,7 +55,7 @@
           </el-col>
         </el-row>
         <div class="f-footer">
-          <el-button type="primary" size="small">send</el-button>
+          <el-button type="primary" size="small" @click="send">send</el-button>
           <el-button type="primary" size="small" @click="back">back</el-button>
         </div>
       </el-tab-pane>
@@ -68,7 +68,10 @@
     </div>
     <div class="right_result" v-if="!tabisnull">
       <p style="white-space:nowrap;">API返回结果(API Response):</p>
-      <div class="return_result">{{returnResult}}</div>
+
+      <div class="return_result">
+        <JsonViewer :value="returnResult" :expand-depth="5" copyable boxed sort></JsonViewer>
+      </div>
     </div>
     <!-- <el-dialog title="新增测试地址" :visible.sync="outervisible" append-to-body>
       <el-row :gutter="10">
@@ -86,6 +89,9 @@
   </div>
 </template>
 <script>
+import RPCClient from "@/util/jointString.js";
+import { callApi } from "@/api/serviceApi/serviceApi.js";
+
 export default {
   name: "autoDebug",
   data() {
@@ -95,8 +101,16 @@ export default {
         {
           params: [
             {
-              name: "",
-              value: ""
+              name: "InstanceName",
+              value: "/tmp/hdm"
+            },
+            {
+              name: "AccessKeyId",
+              value: "154eba73162b4fd7b53b872e7b4294c6"
+            },
+            {
+              name: "accessKeySecret",
+              value: "0zPaNYsJkaezzmwOiKMKVevd6obUAGqn"
             }
           ],
           name: "url1",
@@ -110,11 +124,10 @@ export default {
       returnResult: ""
     };
   },
-  props: ["uri"],
+  props: ["uri", "url", "path"],
   watch: {
     uri() {
       this.editableTabs[0].title = this.uri;
-      console.log(this.editableTabs);
     }
   },
   methods: {
@@ -186,6 +199,49 @@ export default {
     // },
     back() {
       this.$emit("update:debug", false);
+    },
+    send() {
+      let data = {};
+      let dl = {};
+      let uuid = require("uuid");
+      let qs = require("qs");
+      let config = {
+        endpoint: this.url + this.path,
+        accessKeySecret: this.editableTabs[0]["params"][2]["value"],
+        method: this.editableTabs[0].method
+      };
+      this.editableTabs[0].params.forEach(function(item, index) {
+        let p = Object.values(item);
+        if (p[0] != "" && p[1] != "" && p[0] != "accessKeySecret") {
+          dl[p[0]] = p[1];
+          if (config.method == "GET") {
+            data[p[0]] = p[1];
+          } else {
+            if (index < 2) {
+              data[p[0]] = p[1];
+            }
+          }
+        }
+      });
+
+      let v1 = uuid.v1();
+      data["SignatureNonce"] = v1;
+      dl["SignatureNonce"] = v1;
+
+      let client = new RPCClient(config);
+      let sigString = client.request(config.method, data, {
+        method: config.method
+      });
+      data["Signature"] = sigString.signature;
+      dl["Signature"] = sigString.signature;
+      let tail = config.method == "GET" ? "" : "?" + qs.stringify(data);
+
+      let queryUrl = this.path + tail;
+      callApi(queryUrl, config.method, dl, res => {
+        if (res.data.code == 0) {
+          this.returnResult = res.data;
+        }
+      });
     }
   }
 };
@@ -289,6 +345,7 @@ export default {
   .return_result {
     height: 300px;
     border: 1px solid #ccc;
+    overflow-y: scroll;
   }
 }
 </style>

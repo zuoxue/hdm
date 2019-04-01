@@ -126,9 +126,9 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.menu-wrapper {
-  background: #fff;
-}
+// .menu-wrapper {
+//   background: #fff;
+// }
 </style>
 
 

@@ -172,7 +172,7 @@ export default {
         }
       });
       getAllUserChild(query, res => {
-        if (res.data.length > 0) {
+        if (res.data.code == 0) {
           this.userList = res.data;
         }
       });

@@ -308,14 +308,14 @@ export default {
       this.groupId = row.groupId;
       this.userdata = [];
       getAllUserChild(data, res => {
-        let d = res.data;
+        let d = res.data.data;
         let acessData = [];
         getAllUserChildone(
           {
             groupId: this.groupId
           },
           cb => {
-            let exists = cb.data.map(item => {
+            let exists = cb.data.data.map(item => {
               return item.userId;
             });
             d = d.filter(item => {

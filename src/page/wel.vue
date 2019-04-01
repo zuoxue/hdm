@@ -88,7 +88,7 @@
         <a href="javascript:;">自动调试</a>
       </p>
     </div>-->
-    <auto-debug v-if="debug" :debug.sync="debug" :uri="uri"></auto-debug>
+    <auto-debug v-if="debug" :debug.sync="debug" :uri="uri" :url="url" :path="path"></auto-debug>
     <!-- <useroverlay
       :title="overlayTitle"
       :isclose.sync="debug"
@@ -119,6 +119,8 @@ export default {
       // count: 0,
       // isText: false,
       uri: "",
+      url: "",
+      path: "",
       overlayTitle: "自动调试",
       width: "900px",
       debug: false,
@@ -198,6 +200,8 @@ export default {
     entryDebug(info) {
       this.debug = true;
       this.uri = info.name;
+      this.url = info.url;
+      this.path = info.path;
     }
   }
 };

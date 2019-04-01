@@ -89,7 +89,7 @@ export default {
       };
 
       modifyPass(data, res => {
-        if (res.data) {
+        if (res.data.data) {
           this.$message({
             type: "success",
             message: "密码修改成功！"

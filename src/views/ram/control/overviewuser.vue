@@ -306,7 +306,7 @@ export default {
       };
       this.data = [];
       getAllUserChild(data, res => {
-        let d = res.data;
+        let d = res.data.data;
         d.forEach(item => {
           this.data.push({
             name: item.username,
@@ -413,22 +413,21 @@ export default {
       };
 
       createUserChild(data, res => {
-        if (res.data == 1) {
+        if (res.data.code == 0) {
           this.$message({
             type: "success",
             message: "创建用户成功！",
             duration: 1500
           });
+          this.subdata[0].loginname = "";
+          this.subdata[0].dispname = "";
+          return;
         }
-        this.subdata[0].loginname = "";
-        this.subdata[0].dispname = "";
-        if (res.data != 1) {
-          this.$message({
-            type: "error",
-            message: "创建用户失败！",
-            duration: 1500
-          });
-        }
+        this.$message({
+          type: "error",
+          message: "创建用户失败！",
+          duration: 1500
+        });
       });
     },
     handleCurrentChange(page) {
@@ -444,7 +443,9 @@ export default {
         data: {}
       };
       deleteUserChild(d, query, res => {
-        this.getAllTableData();
+        if (res.data.data) {
+          this.getAllTableData();
+        }
       });
     },
     modifyPassword(row) {

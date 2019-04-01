@@ -203,6 +203,7 @@ export default {
         this.tempData = this.data;
         this.selData = this.tempData.slice(0, this.pagesize);
         this.totalsize = this.tempData.length;
+        this.currentPage = 1;
       });
     },
     //搜索策略

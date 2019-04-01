@@ -215,7 +215,7 @@ export default {
         query.push(kv);
       });
       submitMethod(data, query, res => {
-        if (res.data == query.length) {
+        if (res.data.data == 1) {
           this.$message({
             type: "success",
             message: "添加成功！",

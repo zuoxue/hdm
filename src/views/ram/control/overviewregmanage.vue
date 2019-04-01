@@ -449,5 +449,12 @@ export default {
   .footer {
     margin-top: 10px;
   }
+  .el-table {
+    /deep/ .el-button {
+      margin-left: 5px;
+      margin-top: 5px;
+      width: 82px;
+    }
+  }
 }
 </style>

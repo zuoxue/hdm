@@ -1,8 +1,7 @@
-import { getStore, removeStore, setStore } from '@/util/store'
-import website from '@/const/website'
+import { getStore, removeStore, setStore } from '@/util/store';
+import website from '@/const/website';
 
 const common = {
-
   state: {
     isCollapse: true,
     isFullScren: false,
@@ -21,125 +20,125 @@ const common = {
     theme: getStore({ name: 'theme' }) || '#409EFF',
     themeName: getStore({ name: 'themeName' }) || 'theme-white',
     lockPasswd: getStore({ name: 'lockPasswd' }) || '',
-    website: website
+    website: website,
   },
   actions: {},
   mutations: {
     SET_SHADE: (state, active) => {
-      state.isShade = active
+      state.isShade = active;
     },
-    SET_COLLAPSE: (state) => {
-      state.isCollapse = !state.isCollapse
+    SET_COLLAPSE: state => {
+      state.isCollapse = !state.isCollapse;
     },
-    SET_FULLSCREN: (state) => {
-      state.isFullScren = !state.isFullScren
+    SET_FULLSCREN: state => {
+      state.isFullScren = !state.isFullScren;
     },
     SET_SHOWCOLLAPSE: (state, active) => {
-      state.showCollapse = active
+      state.showCollapse = active;
       setStore({
         name: 'showCollapse',
-        content: state.showCollapse
-      })
+        content: state.showCollapse,
+      });
     },
     SET_SHOWTAG: (state, active) => {
-      state.showTag = active
+      state.showTag = active;
       setStore({
         name: 'showTag',
-        content: state.showTag
-      })
+        content: state.showTag,
+      });
     },
     SET_SHOWMENU: (state, active) => {
-      state.showMenu = active
+      state.showMenu = active;
       setStore({
         name: 'showMenu',
-        content: state.showMenu
-      })
+        content: state.showMenu,
+      });
     },
     SET_SHOWLOCK: (state, active) => {
-      state.showLock = active
+      state.showLock = active;
       setStore({
         name: 'showLock',
-        content: state.showLock
-      })
+        content: state.showLock,
+      });
     },
     SET_SHOWSEARCH: (state, active) => {
-      state.showSearch = active
+      state.showSearch = active;
       setStore({
         name: 'showSearch',
-        content: state.showSearch
-      })
+        content: state.showSearch,
+      });
     },
     SET_SHOWFULLSCREN: (state, active) => {
-      state.showFullScren = active
+      state.showFullScren = active;
       setStore({
         name: 'showFullScren',
-        content: state.showFullScren
-      })
+        content: state.showFullScren,
+      });
     },
     SET_SHOWDEBUG: (state, active) => {
-      state.showDebug = active
+      state.showDebug = active;
       setStore({
         name: 'showDebug',
-        content: state.showDebug
-      })
+        content: state.showDebug,
+      });
     },
     SET_SHOWTHEME: (state, active) => {
-      state.showTheme = active
+      state.showTheme = active;
       setStore({
         name: 'showTheme',
-        content: state.showTheme
-      })
+        content: state.showTheme,
+      });
     },
     SET_SHOWCOLOR: (state, active) => {
-      state.showColor = active
+      state.showColor = active;
       setStore({
         name: 'showColor',
-        content: state.showColor
-      })
+        content: state.showColor,
+      });
     },
-    SET_LOCK: (state) => {
-      state.isLock = true
+    SET_LOCK: state => {
+      state.isLock = true;
       setStore({
         name: 'isLock',
         content: state.isLock,
-        type: 'session'
-      })
+        type: 'session',
+      });
     },
     SET_SCREEN: (state, screen) => {
-      state.screen = screen
+      state.screen = screen;
     },
     SET_THEME: (state, color) => {
-      state.theme = color
+      state.theme = color;
       setStore({
         name: 'theme',
-        content: state.theme
-      })
+        content: state.theme,
+      });
     },
     SET_THEME_NAME: (state, themeName) => {
-      state.themeName = themeName
+      state.themeName = themeName;
       setStore({
         name: 'themeName',
-        content: state.themeName
-      })
+        content: state.themeName,
+      });
     },
     SET_LOCK_PASSWD: (state, lockPasswd) => {
-      state.lockPasswd = lockPasswd
+      state.lockPasswd = lockPasswd;
       setStore({
         name: 'lockPasswd',
         content: state.lockPasswd,
-        type: 'session'
-      })
+        type: 'session',
+      });
     },
-    CLEAR_LOCK: (state) => {
-      state.isLock = false
-      state.lockPasswd = ''
+    CLEAR_LOCK: state => {
+      state.isLock = false;
+      state.lockPasswd = '';
       removeStore({
-        name: 'lockPasswd'
-      })
+        name: 'lockPasswd',
+      });
       removeStore({
-        name: 'isLock'
-      })
-    }
-  }
-}
-export default common
+        name: 'isLock',
+      });
+    },
+  },
+};
+export default common;

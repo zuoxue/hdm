@@ -24,6 +24,20 @@
           >删除</el-button>
         </template>
         <template slot="search">
+          <el-form-item label="安全级别">
+            <el-select v-model="safelevel" size="small">
+              <el-option
+                v-for="(level,index) in levelList"
+                :key="index"
+                :label="level.label"
+                :value="level.name"
+              ></el-option>
+            </el-select>
+            <!-- <el-input v-model="safelevel" placeholder="安全级别" size="small"/> -->
+          </el-form-item>
+          <el-form-item label="审计说明">
+            <el-input v-model="describe" placeholder="审计说明" size="small"/>
+          </el-form-item>
           <el-form-item label="审计动作">
             <el-input v-model="search" placeholder="审计动作" size="small"/>
           </el-form-item>
@@ -50,7 +64,23 @@ export default {
       },
       tableLoading: false,
       tableOption: tableOption,
-      search: ""
+      search: "",
+      safelevel: "",
+      describe: "",
+      levelList: [
+        {
+          name: "A",
+          label: "强"
+        },
+        {
+          name: "B",
+          label: "中"
+        },
+        {
+          name: "C",
+          label: "弱"
+        }
+      ]
     };
   },
   created() {},
@@ -66,6 +96,8 @@ export default {
       let query = {
         page: this.page.currentPage,
         pageSize: this.page.pageSize,
+        level: this.safelevel,
+        message: this.describe,
         action: this.search
       };
       fetchList(query).then(response => {

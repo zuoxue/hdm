@@ -6,7 +6,7 @@ const getters = {
   themeName: state => state.common.themeName,
   isShade: state => state.common.isShade,
   isCollapse: state => state.common.isCollapse,
-  keyCollapse: (state, getters) => getters.screen > 1 ? getters.isCollapse : false,
+  keyCollapse: (state, getters) => (getters.screen > 1 ? getters.isCollapse : false),
   screen: state => state.common.screen,
   isLock: state => state.common.isLock,
   isFullScren: state => state.common.isFullScren,
@@ -24,7 +24,8 @@ const getters = {
   logsLen: state => state.logs.logsList.length || 0,
   logsFlag: (state, getters) => getters.logsLen === 0,
   userId: state => state.user.userInfo.userId,
+  ownerId: state => state.user.userInfo.ownerId,
   hivelogs: state => state.user.hivelogs,
-  impalalogs: state => state.user.impalalogs
-}
-export default getters
+  impalalogs: state => state.user.impalalogs,
+};
+export default getters;

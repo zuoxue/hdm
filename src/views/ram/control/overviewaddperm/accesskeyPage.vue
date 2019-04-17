@@ -15,10 +15,13 @@
             size="small"
             style="width:300px;text-align:left"
           >
-            <template slot="append" @click="searchData">
-              <i class="el-icon-search"></i>
-            </template>
+            <!-- <template slot="append">
+              <div @click="searchData">
+                <i class="el-icon-search"></i>
+              </div>
+            </template>-->
           </el-input>
+          <el-button type="primary" size="small" @click="searchData" style="margin-left:18px;">搜索</el-button>
         </el-form-item>
       </el-form>
       <el-table :data="tableData" style="width:100%;">
@@ -41,7 +44,7 @@
               v-if="type=='district'"
               v-model="authList[scope.$index]"
               active-color="#13ce66"
-              @change="changeAuth(scope.$index)"
+              @change="changeAuth(scope.row,scope.$index)"
             ></el-switch>
           </template>
         </el-table-column>
@@ -62,7 +65,12 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { getAllAccesskey, updateAccesskey } from "@/api/ram/user";
+import {
+  getAllAccesskey,
+  updateAccesskey,
+  getAllDistrictAccesskey,
+  createAccesskeyHandler
+} from "@/api/ram/user";
 export default {
   name: "accesskeyPage",
   props: ["type", "childUserId"],
@@ -72,15 +80,15 @@ export default {
       columns: [
         {
           label: "口令id",
-          val: "accessKeyId"
+          val: "access_key_id"
         },
         {
           label: "创建时间",
-          val: "createTime"
+          val: "create_time"
         },
         {
           label: "结束时间",
-          val: "endTime"
+          val: "end_time"
         },
         {
           label: "口令描述",
@@ -108,14 +116,28 @@ export default {
         size: nums,
         accessKeyId: id
       };
-      getAllAccesskey(data, res => {
+      let usemethod = null;
+      if (this.type == "manage") {
+        usemethod = getAllAccesskey;
+      } else {
+        data.userId = this.childUserId;
+        usemethod = getAllDistrictAccesskey;
+      }
+      usemethod(data, res => {
         if (res.data.code == 0) {
-          this.tableData = res.data.data.records;
-          this.currentPage = res.data.data.current;
-          this.pagesize = res.data.data.size;
+          this.tableData = res.data.data.list;
+          this.currentPage = res.data.data.pageNum;
+          this.pagesize = res.data.data.pageSize;
           this.totalsize = res.data.data.total;
-          this.authList = res.data.data.records.map(item => {
-            return item.status == 0 ? true : false;
+
+          this.authList = res.data.data.list.map(item => {
+            let result = true;
+            if (this.type == "manage") {
+              result = item.status == 0 ? true : false;
+            } else {
+              result = item.distribution == 0 ? false : true;
+            }
+            return result;
           });
         } else {
           this.$message({
@@ -129,21 +151,41 @@ export default {
       this.$emit("update:accesskeyshow", false);
     },
     changeAuth(row, index) {
-      let data = {
-        accessKeyId: row.accessKeyId,
-        status: this.authList[index] ? "0" : "1"
-      };
-      updateAccesskey(data, res => {
-        if (res.data.data) {
+      console.log(row);
+      let data = {};
+      let usemethod = null;
+      if (this.type == "manage") {
+        data = {
+          accessKeyId: row.access_key_id,
+          status: this.authList[index] ? "0" : "1"
+        };
+        usemethod = updateAccesskey;
+      } else {
+        data = {
+          userId: this.childUserId,
+          accessKeySecret: row.access_key_secret,
+          endData: row.end_time,
+          status: this.authList[index] ? "1" : "0"
+        };
+        if (data.status == "0") {
+        }
+        usemethod = createAccesskeyHandler;
+      }
+      usemethod(data, res => {
+        if (res.data.msg == "success") {
           if (data.status == "0") {
+            let message = this.type == "manage" ? "已启用" : "已取消授权";
+            let type = this.type == "manage" ? "success" : "error";
             this.$message({
-              type: "success",
-              message: "已启用"
+              type: type,
+              message: message
             });
           } else {
+            let message = this.type == "manage" ? "已禁用" : "已授权";
+            let type = this.type == "manage" ? "error" : "success";
             this.$message({
-              type: "error",
-              message: "已禁用"
+              type: type,
+              message: message
             });
           }
           return;

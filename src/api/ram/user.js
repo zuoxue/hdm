@@ -138,3 +138,13 @@ export async function updateAccesskey(data, callback) {
   });
   callback(d);
 }
+
+// 获取分布accesskey
+export async function getAllDistrictAccesskey(data, callback) {
+  var d = await request({
+    url: `/ram/ak/queryRamKeyDistribution`,
+    method: 'GET',
+    params: data,
+  });
+  callback(d);
+}

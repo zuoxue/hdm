@@ -40,6 +40,9 @@
         <el-col>{{hiveError}}</el-col>
       </el-row>
     </section>
+    <section class="hive-handel" v-if="defaultDatabase !=''">
+      <hive-handle :showTable="defaultDatabase"></hive-handle>
+    </section>
     <section class="hive-result"></section>
     <section class="hive-history">
       <el-tabs v-model="hiveHistory" type="border-card" @tab-click="selTab">
@@ -66,6 +69,7 @@
 import hiveHistory from "./hiveHistory";
 import hiveResult from "./hiveResult";
 import hiveExplain from "./hiveExplain";
+import hiveHandle from "./hiveHandle";
 import { mapActions } from "vuex";
 import * as hdata from "@/api/ram/hdata";
 
@@ -100,14 +104,15 @@ export default {
       hiveHistory: "hiveHistory",
       queryResult: [],
       explainResult: [],
-      defaultDatabase: "default",
+      defaultDatabase: "",
       dbs: []
     };
   },
   components: {
     hiveHistory,
     hiveResult,
-    hiveExplain
+    hiveExplain,
+    hiveHandle
   },
   mounted() {
     hdata.listHiveDatabase({}, res => {
@@ -229,6 +234,14 @@ export default {
     selTab(item) {
       this.currentTab = item.name;
     }
+    // 设置显示表数据
+    // setShouHandle() {
+    //   if (this.defaultDatabase != "") {
+    //     this.showTable = this.defaultDatabase;
+    //     return;
+    //   }
+    //   this.showTable = false;
+    // }
   }
 };
 </script>
@@ -244,6 +257,9 @@ export default {
       margin-left: 10px;
       width: 70px;
     }
+  }
+  .hive-handel {
+    padding: 20px;
   }
   .hive-run {
     width: 100px;

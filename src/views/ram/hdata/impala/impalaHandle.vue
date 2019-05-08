@@ -19,9 +19,9 @@
           <el-col :span="16" style="width:300px;">
             <el-input v-model="tableName" size="mini" placeholder="请输入表名"></el-input>
           </el-col>
-          <el-col :span="6" style="width:100px;">
+          <!-- <el-col :span="6" style="width:100px;">
             <el-button @click="generatorTable" type="primary" size="mini">生成表</el-button>
-          </el-col>
+          </el-col>-->
         </el-row>
         <el-table :data="paramsTable" size="mini" @selection-change="selectionChange">
           <el-table-column type="selection" label="序号"></el-table-column>
@@ -39,13 +39,12 @@
 
 <script>
 import {
-  showHiveTable,
-  showHiveTableData,
-  showHiveTableProperty,
-  generatorTable
+  showImpalaTable,
+  showImpalaTableData,
+  showImpalaTableProperty
 } from "@/api/ram/hdata";
 export default {
-  name: "hiveHandle",
+  name: "impalaHandle",
   data() {
     return {
       hiveShow: "table",
@@ -59,11 +58,11 @@ export default {
       properties: [
         {
           name: "属性名",
-          prop: "col_name"
+          prop: "name"
         },
         {
           name: "属性类型",
-          prop: "data_type"
+          prop: "type"
         }
       ]
     };
@@ -79,11 +78,11 @@ export default {
   },
   methods: {
     getAllTable() {
-      showHiveTable({ table: this.showTable }, res => {
+      showImpalaTable({ table: this.showTable }, res => {
         if (res.data.msg == "success") {
           let d = res.data.data;
           this.options = d.map(item => {
-            return item.tab_name;
+            return item.name;
           });
         }
       });
@@ -101,7 +100,7 @@ export default {
     },
 
     getTableProperty() {
-      showHiveTableProperty(
+      showImpalaTableProperty(
         { database: this.showTable, table: this.select },
         res => {
           if (res.data.msg == "success") {
@@ -138,24 +137,24 @@ export default {
         return;
       }
 
-      generatorTable(query, res => {
-        if (res.data.msg == "success") {
-          this.selections = [];
-          this.tabName = "";
-          this.$message({
-            type: "success",
-            message: "创建成功"
-          });
-          return;
-        }
-      });
+      // generatorImpalaTable(query, res => {
+      //   if (res.data.msg == "success") {
+      //     this.selections = [];
+      //     this.tabName = "";
+      //     this.$message({
+      //       type: "success",
+      //       message: "创建成功"
+      //     });
+      //     return;
+      //   }
+      // });
     },
     getTable() {
       if (this.select == " ") {
         this.tableData = [];
         return;
       }
-      showHiveTableData(
+      showImpalaTableData(
         { database: this.showTable, table: this.select },
         res => {
           if (res.data.msg == "success") {

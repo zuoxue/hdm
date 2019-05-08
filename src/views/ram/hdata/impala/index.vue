@@ -40,6 +40,9 @@
         <el-col>{{hiveError}}</el-col>
       </el-row>
     </section>
+    <section class="hive-handel" v-if="defaultDatabase !=''">
+      <impala-handle :showTable="defaultDatabase"></impala-handle>
+    </section>
     <section class="hive-result"></section>
     <section class="hive-history">
       <el-tabs v-model="hiveHistory" type="border-card" @tab-click="selTab">
@@ -66,6 +69,7 @@
 import impalaHistory from "./impalaHistory";
 import impalaResult from "./impalaResult";
 import impalaExplain from "./impalaExplain";
+import impalaHandle from "./impalaHandle";
 import { mapActions } from "vuex";
 import * as hdata from "@/api/ram/hdata";
 
@@ -100,14 +104,15 @@ export default {
       hiveHistory: "impalaHistory",
       queryResult: [],
       explainResult: [],
-      defaultDatabase: "default",
+      defaultDatabase: "",
       dbs: []
     };
   },
   components: {
     impalaHistory,
     impalaResult,
-    impalaExplain
+    impalaExplain,
+    impalaHandle
   },
   mounted() {
     hdata.listImpalaDatabase({}, res => {
@@ -243,6 +248,9 @@ export default {
       margin-left: 10px;
       width: 70px;
     }
+  }
+  .hive-handel {
+    padding: 20px;
   }
   .hive-run {
     width: 100px;

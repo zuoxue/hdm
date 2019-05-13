@@ -1,7 +1,7 @@
 // const url = 'http://192.168.2.75:9999' //server
-const url = 'http://192.168.2.150:9999'; //jsd
+// const url = 'http://192.168.2.150:9999'; //jsd
 // const url = 'http://192.168.2.193:9999' //zhous
-// const url = 'http://192.168.2.149:9999'; //zyf
+const url = 'http://192.168.2.149:9999'; //zyf
 
 module.exports = {
   lintOnSave: true,

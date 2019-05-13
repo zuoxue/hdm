@@ -106,6 +106,7 @@ export default {
       registerval: "",
       selectedPerm: 0,
       regdata: [],
+      regdataAll: [],
       regselList: [],
       selectedIndex: [], //选中的索引
       rule1: {},
@@ -113,8 +114,7 @@ export default {
       groupList: [],
       userval: "",
       groupval: "",
-      allpolicys: [],
-      searchPolicy: ""
+      allpolicys: []
     };
   },
   created() {
@@ -182,14 +182,35 @@ export default {
       let query = {
         owner_id: this.userId
       };
+      let registerVal = this.registerval.toLowerCase().trim();
       getALlPolicys({}, query, res => {
         if (res.data.code == 0) {
           this.allpolicys = res.data.data;
-          this.regdata = res.data.data.map((item, index) => {
+          this.regdataAll = res.data.data.map((item, index) => {
             item.sel = false;
             item.index = index;
             return item;
           });
+
+          if (this.selval == "权限策略名称") {
+            this.regdata = this.regdataAll.filter(item => {
+              return (
+                item.name
+                  .toLowerCase()
+                  .trim()
+                  .indexOf(registerVal) > -1
+              );
+            });
+          } else {
+            this.regdata = this.regdataAll.filter(item => {
+              return (
+                item.comment
+                  .toLowerCase()
+                  .trim()
+                  .indexOf(registerVal) > -1
+              );
+            });
+          }
         }
       });
     },
@@ -299,23 +320,45 @@ export default {
         });
         return false;
       }
-
+      console.log(url, this.selType);
       // 提交
-      inserUserOrGroupPolicy(url, data, res => {
-        if (res.data.code == 0) {
-          this.$message({
-            type: "success",
-            message: "成功添加权限"
-          });
-          this.$emit("update:isclose", true);
-        } else {
-          this.$message({
-            type: "error",
-            message: "添加权限失败"
-          });
-        }
-        return;
-      });
+      // inserUserOrGroupPolicy(url, data, res => {
+      //   if (res.data.code == 0) {
+      //     this.$message({
+      //       type: "success",
+      //       message: "成功添加权限"
+      //     });
+      //     this.$emit("update:isclose", true);
+      //   } else {
+      //     this.$message({
+      //       type: "error",
+      //       message: "添加权限失败"
+      //     });
+      //   }
+      //   return;
+      // });
+    },
+    searchPolicy() {
+      let registerVal = this.registerval.toLowerCase().trim();
+      if (this.selval == "权限策略名称") {
+        this.regdata = this.regdataAll.filter(item => {
+          return (
+            item.name
+              .toLowerCase()
+              .trim()
+              .indexOf(registerVal) > -1
+          );
+        });
+      } else {
+        this.regdata = this.regdataAll.filter(item => {
+          return (
+            item.comment
+              .toLowerCase()
+              .trim()
+              .indexOf(registerVal) > -1
+          );
+        });
+      }
     }
   }
 };

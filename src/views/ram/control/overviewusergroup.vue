@@ -105,7 +105,7 @@
     <useroverlay :title="overlayTitle" :isclose.sync="isaddperm" :width="width">
       <el-scrollbar slot="body" class="popaside">
         <div>
-          <add-perm :isclose.sync="isaddperm"></add-perm>
+          <add-perm :isclose.sync="isaddperm" :selType="1"></add-perm>
         </div>
       </el-scrollbar>
     </useroverlay>

@@ -320,7 +320,6 @@ export default {
         });
         return false;
       }
-      console.log(url, this.selType);
       inserUserOrGroupPolicy(url, data, res => {
         if (res.data.code == 0) {
           this.$message({

@@ -88,7 +88,12 @@
       :close-on-click-modal="false"
       width="700px"
     >
-      <create-resource :isshow.sync="newResourceShow" @initEvent="initResource" :options="options"></create-resource>
+      <create-resource
+        :isshow.sync="newResourceShow"
+        @initEvent="initResource"
+        :options="options"
+        v-if="newResourceShow"
+      ></create-resource>
     </el-dialog>
   </div>
 </template>

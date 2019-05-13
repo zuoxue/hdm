@@ -199,7 +199,7 @@
     <!-- 重命名 -->
     <el-dialog title="重命名" :visible.sync="dialogRename" width="500px" :before-close="handleClose">
       <el-row justify="center" type="flex">
-        <el-col :span="6" class="dialog_title--newfile">旧名称：</el-col>
+        <el-col :span="6" class="dialog_title--newfile" disabled>旧名称：</el-col>
         <el-col :span="10">
           <el-input v-model="oldname"></el-input>
         </el-col>
@@ -807,6 +807,7 @@ export default {
       this.oldname = row.pathSuffix;
       this.dialogRename = true;
       this.renameurl = row.path;
+      this.newname = " ";
       // const urlpath = this.renameurl.split("/");
       // this.urlpath = urlpath.slice(0, urlpath.length - 1).join("/");
       this.urlpath = row.dir;

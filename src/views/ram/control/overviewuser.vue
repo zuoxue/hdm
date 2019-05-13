@@ -675,6 +675,7 @@ export default {
     }
     .footer {
       margin-top: 10px;
+      margin-bottom: 20px;
     }
     .star {
       color: #f15533;

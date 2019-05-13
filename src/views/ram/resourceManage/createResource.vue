@@ -27,7 +27,7 @@
       <el-form-item>
         <div class="footer">
           <el-button type="primary" size="mini" @click="confirm">确认</el-button>
-          <el-button @click="close">取消</el-button>
+          <el-button size="mini" @click="close">取消</el-button>
         </div>
       </el-form-item>
     </el-form>
@@ -99,7 +99,21 @@ export default {
     };
   },
   props: ["options"],
-
+  mounted() {
+    this.resource = {
+      action: "",
+      domain: "",
+      service: "",
+      region: "",
+      instanceName: "",
+      comment: "",
+      size: 0,
+      number: 0,
+      expirationTime: "",
+      parentId: 1,
+      ownerId: 1
+    };
+  },
   computed: {
     ...mapGetters(["userId", "access_token"])
   },

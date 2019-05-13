@@ -321,22 +321,21 @@ export default {
         return false;
       }
       console.log(url, this.selType);
-      // 提交
-      // inserUserOrGroupPolicy(url, data, res => {
-      //   if (res.data.code == 0) {
-      //     this.$message({
-      //       type: "success",
-      //       message: "成功添加权限"
-      //     });
-      //     this.$emit("update:isclose", true);
-      //   } else {
-      //     this.$message({
-      //       type: "error",
-      //       message: "添加权限失败"
-      //     });
-      //   }
-      //   return;
-      // });
+      inserUserOrGroupPolicy(url, data, res => {
+        if (res.data.code == 0) {
+          this.$message({
+            type: "success",
+            message: "成功添加权限"
+          });
+          this.$emit("update:isclose", true);
+        } else {
+          this.$message({
+            type: "error",
+            message: "添加权限失败"
+          });
+        }
+        return;
+      });
     },
     searchPolicy() {
       let registerVal = this.registerval.toLowerCase().trim();

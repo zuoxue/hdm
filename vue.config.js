@@ -1,86 +1,103 @@
 // const url = 'http://192.168.2.75:9999' //server
-// const url = 'http://192.168.2.150:9999' //jsd
-const url = 'http://192.168.2.193:9999' //zhous
+const url = 'http://192.168.2.150:9999'; //jsd
+// const url = 'http://192.168.2.193:9999' //zhous
+// const url = 'http://192.168.2.149:9999'; //zyf
+
 module.exports = {
   lintOnSave: true,
   productionSourceMap: false,
   chainWebpack: config => {
     // 忽略的打包文件
     config.externals({
-      'vue': 'Vue',
+      vue: 'Vue',
       'vue-router': 'VueRouter',
-      'vuex': 'Vuex',
-      'axios': 'axios',
-      'element-ui': 'ELEMENT'
-    })
+      vuex: 'Vuex',
+      axios: 'axios',
+      'element-ui': 'ELEMENT',
+    });
   },
   transpileDependencies: ['avue-plugin-transfer', 'avue-plugin-ueditor'],
   // 配置转发代理
   devServer: {
+    hot: true,
     proxy: {
       '/auth': {
         target: url,
         ws: true,
         pathRewrite: {
-          '^/auth': '/auth'
-        }
+          '^/auth': '/auth',
+        },
       },
       '/admin': {
         target: url,
         ws: true,
         pathRewrite: {
-          '^/admin': '/admin'
-        }
+          '^/admin': '/admin',
+        },
       },
       '/code': {
         target: url,
         ws: true,
         pathRewrite: {
-          '^/code': '/code'
-        }
+          '^/code': '/code',
+        },
       },
       '/gen': {
         target: url,
         ws: true,
         pathRewrite: {
-          '^/gen': '/gen'
-        }
+          '^/gen': '/gen',
+        },
       },
       '/daemon': {
         target: url,
         ws: true,
         pathRewrite: {
-          '^/daemon': '/daemon'
-        }
+          '^/daemon': '/daemon',
+        },
       },
       '/tx': {
         target: url,
         ws: true,
         pathRewrite: {
-          '^/tx': '/tx'
-        }
+          '^/tx': '/tx',
+        },
       },
       '/act': {
         target: url,
         ws: true,
         pathRewrite: {
-          '^/act': '/act'
+          '^/act': '/act',
         },
       },
       '/urs': {
         target: url,
         ws: true,
         pathRewrite: {
-          '^/urs': '/urs'
-        }
+          '^/urs': '/urs',
+        },
+      },
+      '/impala': {
+        target: url,
+        ws: true,
+        pathRewrite: {
+          '^/impala': '/impala',
+        },
+      },
+      '/hive': {
+        target: url,
+        ws: true,
+        pathRewrite: {
+          '^/hive': '/hive',
+        },
       },
       '/ram': {
         target: url,
         ws: true,
         pathRewrite: {
-          '^/ram': '/ram'
-        }
+          '^/ram': '/ram',
+        },
       },
-    }
-  }
-}
+    },
+  },
+};
